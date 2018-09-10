@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "/Users/Kevin/Desktop/Rover Ruckus Code/ftc_app/TeamCode/build/intermediates/res/merged/debug/menu/ftc_robot_controller.xml",
+        "source": "/Users/Kevin/Desktop/Rover Ruckus Code/ftc_app/FtcRobotController/build/intermediates/bundles/default/res/menu/ftc_robot_controller.xml"
+    },
+    {
+        "merged": "/Users/Kevin/Desktop/Rover Ruckus Code/ftc_app/TeamCode/build/intermediates/res/merged/debug/menu/main_menu.xml",
+        "source": "/Users/Kevin/.android/build-cache/66b341e31d2e146c97a4504b42e816d944aeb419/output/res/menu/main_menu.xml"
+    },
+    {
+        "merged": "/Users/Kevin/Desktop/eBorgRoboticsCoding/Rover Ruckus Code/ftc_app/TeamCode/build/intermediates/res/merged/debug/menu/menu_server.xml",
+        "source": "/Users/Kevin/.android/build-cache/372c5e2d115c25003f3da833dde7f85ab520c48b/output/res/menu/menu_server.xml"
+    },
+    {
+        "merged": "/Users/Kevin/Desktop/eBorgRoboticsCoding/Rover Ruckus Code/ftc_app/TeamCode/build/intermediates/res/merged/debug/menu/ftc_robot_controller.xml",
+        "source": "/Users/Kevin/Desktop/eBorgRoboticsCoding/Rover Ruckus Code/ftc_app/FtcRobotController/build/intermediates/bundles/default/res/menu/ftc_robot_controller.xml"
+    },
+    {
+        "merged": "/Users/Kevin/Desktop/eBorgRoboticsCoding/Rover Ruckus Code/ftc_app/TeamCode/build/intermediates/res/merged/debug/menu/main_menu.xml",
+        "source": "/Users/Kevin/.android/build-cache/392c19ea58c6cc40270cf3d6af12b80ccf9e06a1/output/res/menu/main_menu.xml"
+    },
+    {
+        "merged": "/Users/Kevin/Desktop/Rover Ruckus Code/ftc_app/TeamCode/build/intermediates/res/merged/debug/menu/menu_server.xml",
+        "source": "/Users/Kevin/.android/build-cache/85979b92290c5fb5af394a11e9754942f2c52f96/output/res/menu/menu_server.xml"
+    }
+]
