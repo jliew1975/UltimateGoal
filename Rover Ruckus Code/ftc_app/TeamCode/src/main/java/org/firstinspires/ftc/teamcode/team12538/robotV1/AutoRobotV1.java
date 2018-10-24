@@ -79,13 +79,13 @@ public class AutoRobotV1 extends RobotBase {
     public void moveForward(double power, double distance) {
         // limit power to 1
         power = limitPower(power);
-        encoderDrive(power, -distance, 5);
+        encoderDrive(power, distance, 5);
     }
 
     public void moveBackward(double power, double distance) {
         // limit power to 1
         power = limitPower(power);
-        encoderDrive(power, distance, 5);
+        encoderDrive(power, -distance, 5);
     }
 
     public void strafeLeft(double power, double distance) {
@@ -115,13 +115,6 @@ public class AutoRobotV1 extends RobotBase {
         // restart imu movement tracking.
         resetAngle();
 
-        pidRotate.reset();
-        pidRotate.setSetpoint(degrees);
-        pidRotate.setInputRange(0, 90);
-        pidRotate.setOutputRange(.20, power);
-        pidRotate.setTolerance(2);
-        pidRotate.enable();
-
         // getAngle() returns + when rotating counter clockwise (left) and - when rotating
         // clockwise (right).
         if (degrees < 0)
@@ -132,28 +125,21 @@ public class AutoRobotV1 extends RobotBase {
                 TimeUnit.MILLISECONDS.sleep(100);
             }
 
-            if(detector == null) {
-                do {
-                    power = pidRotate.performPID(getAngle()); // power will be - on right turn.
-                    turnLeft(power);
-                } while (OpModeUtils.opModeIsActive() && !pidRotate.onTarget());
-            } else {
-                do {
-                    power = pidRotate.performPID(getAngle()); // power will be - on right turn.
-                    turnLeft(power);
-                } while (OpModeUtils.opModeIsActive() && !pidRotate.onTarget() && !detector.isAligned());
+            while (OpModeUtils.opModeIsActive() && getAngle() > degrees) {
+               if(detector != null && detector.isFound()) {
+                   if(detector.isAligned()) {
+                       break;
+                   }
+               }
             }
         } else {  // left turn.
-            if(detector == null) {
-                do {
-                    power = pidRotate.performPID(getAngle()); // power will be + on left turn.
-                    turnLeft(power);
-                } while (OpModeUtils.opModeIsActive() && !pidRotate.onTarget());
-            } else {
-                do {
-                    power = pidRotate.performPID(getAngle()); // power will be + on left turn.
-                    turnLeft(power);
-                } while (OpModeUtils.opModeIsActive() && !pidRotate.onTarget() && !detector.isAligned());
+            turnLeft(power);
+            while (OpModeUtils.opModeIsActive() && getAngle() < degrees) {
+                if(detector != null && detector.isFound()) {
+                    if(detector.isAligned()) {
+                        break;
+                    }
+                }
             }
         }
 

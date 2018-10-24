@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.team12538.components.MineralCollector;
 
-@Autonomous(name="Auto (Blue Facing Crater)", group="Linear Opmode")
-public class BlueAllianceFacingCraterApp extends RoverRuckusAutoApp {
+@Autonomous(name="Auto (Facing Crater)", group="Linear Opmode")
+public class AutonomousFacingCraterApp extends RoverRuckusAutoApp {
 
     @Override
-    protected void moveToAllianceDepot(MineralLocation mineralLocation) {
+    protected void navigateToDepot(MineralLocation mineralLocation) {
         if(mineralLocation != MineralLocation.Unknown) {
             robot.moveBackward(0.3, 100);
             robot.stop();

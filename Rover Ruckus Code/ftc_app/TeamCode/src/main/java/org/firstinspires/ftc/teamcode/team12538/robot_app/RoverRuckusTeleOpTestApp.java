@@ -42,10 +42,10 @@ public class RoverRuckusTeleOpTestApp extends RoverRuckusAutoApp {
                 robot.controlMineralArm(gamepad2.left_stick_x);
 
                 if (gamepad1.a) {
-                    robot.rotate(23, 0.01);
+                    robot.rotate(23, 0.3);
                     robot.stop();
                 } else if (gamepad1.b) {
-                    robot.rotate(-23, 0.01);
+                    robot.rotate(-23, 0.3);
                     robot.stop();
                 }
 
@@ -70,7 +70,8 @@ public class RoverRuckusTeleOpTestApp extends RoverRuckusAutoApp {
                     */
                 }
 
-                robot.printDriveEncoderTelemtry();
+                // robot.printDriveEncoderTelemtry();
+                robot.printImuAngleTelemtry();
                 telemetry.addData("Gold Mineral Found", detector.isFound());
                 telemetry.addData( "Gold Mineral X-Pos", detector.getXPosition());
                 telemetry.update();

@@ -56,7 +56,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
 
             moveMineralOffTapedArea(mineralLocation);
             /*
-            moveToAllianceDepot(mineralLocation);
+            navigateToDepot(mineralLocation);
             navigateForParking(mineralLocation);
             */
             sleep(5000);
@@ -70,12 +70,12 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
 
     protected void moveMineralOffTapedArea(MineralLocation mineralLocation) {
         if(mineralLocation != MineralLocation.Unknown) {
-            robot.moveForward(0.5, 15);
+            robot.moveForward(0.5, 25);
             robot.stop();
         }
     }
 
-    protected void moveToAllianceDepot(MineralLocation mineralLocation) {
+    protected void navigateToDepot(MineralLocation mineralLocation) {
         if(mineralLocation != MineralLocation.Unknown) {
             if(mineralLocation == MineralLocation.Right) {
                 robot.moveForward(0.5, 500);
@@ -118,14 +118,14 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
         }
 
         // if not found try left side
-        robot.rotate(25, 0.05, detector);
+        robot.rotate(25, 0.1, detector);
         sleep(200);
 
         if(detector.isFound()) {
             return MineralLocation.Left;
         }
 
-        robot.rotate(-60, 0.05, detector);
+        robot.rotate(-60, 0.1, detector);
         sleep(200);
 
         if(detector.isFound()) {
