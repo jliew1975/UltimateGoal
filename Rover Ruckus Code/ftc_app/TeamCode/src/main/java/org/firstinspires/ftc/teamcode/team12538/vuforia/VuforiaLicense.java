@@ -1,0 +1,5 @@
+package org.firstinspires.ftc.teamcode.team12538.vuforia;
+
+public final class VuforiaLicense {
+    public static final String LICENSE_KEY = "AWVGefb/////AAAAGedlPmn1ZUEHqXFtAqsWMjgAUJIwIAU81tlTWgCANApawYPJnKlyulGxzZNv6luzr8M7+Ku74b/i3TL+zmaSGOO6IJYoKKKd1eCbbcZyJm31m1i7PfZu9+MREAOqPV3kf6shs2eZnw9SCLpoa4t2PKfCSRla2cP7gfPayKfZvyNHi3JLrbYcE/nTQr2+TLO++ndG3y9dl3yQ1Ca9Sj5ijTb+Q9JsCi0uoAcdNQtwODqcvUR2t/DTzFcjPKJJridzPLI73v/xFJMrQCY+J5kpcsgTiif9mqvQKSOgxBuZr8+MxeRBn0GYAXuWk7FW9+QYpPydhsynIyuNVpWwmTBVh2MdP5vvtv1hLO2buPcm9wi9";
+}
