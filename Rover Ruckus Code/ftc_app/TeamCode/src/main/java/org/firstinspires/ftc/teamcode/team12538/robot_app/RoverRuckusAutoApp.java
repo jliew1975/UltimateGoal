@@ -134,7 +134,6 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
     protected GoldAlignDetector createDetector() {
         GoldAlignDetector detector = new GoldAlignDetector();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
-        detector.useDefaults();
 
         detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
         detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
@@ -144,6 +143,8 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
         // detector.maxAreaScorer.weight = 0.005; // if using MAX_AREA scoring
         detector.ratioScorer.weight = 5;
         detector.ratioScorer.perfectRatio = 1.0;
+
+        detector.useDefaults();
 
         return detector;
     }

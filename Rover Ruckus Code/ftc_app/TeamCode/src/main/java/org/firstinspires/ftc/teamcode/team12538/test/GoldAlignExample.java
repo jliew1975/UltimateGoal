@@ -49,7 +49,6 @@ public class GoldAlignExample extends OpMode
 
         detector = new GoldAlignDetector();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
-        detector.useDefaults();
 
         // Optional Tuning
         detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
@@ -63,6 +62,7 @@ public class GoldAlignExample extends OpMode
         detector.ratioScorer.weight = 5;
         detector.ratioScorer.perfectRatio = 1.0;
 
+        detector.useDefaults();
         detector.enable();
 
 
@@ -86,6 +86,7 @@ public class GoldAlignExample extends OpMode
         telemetry.addData("IsFound" , detector.isFound());
         telemetry.addData("IsAligned" , detector.isAligned()); // Is the bot aligned with the gold mineral
         telemetry.addData("X Pos" , detector.getXPosition()); // Gold X pos.
+        telemetry.addData("Area", detector.getArea());
     }
 
     /*

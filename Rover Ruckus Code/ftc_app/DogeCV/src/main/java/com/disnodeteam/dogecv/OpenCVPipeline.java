@@ -59,6 +59,8 @@ public abstract class OpenCVPipeline implements CameraBridgeViewBase.CvCameraVie
     private boolean inited = false;
     private boolean isVuforia = false;
 
+    private boolean disabled = false;
+
     /**
      * Initializes the OpenCVPipeline, but implicitly uses the rear camera.
      * @param context the application context, usually hardwareMap.appContext
@@ -116,10 +118,12 @@ public abstract class OpenCVPipeline implements CameraBridgeViewBase.CvCameraVie
         if(isVuforia){
             viewDisplay.setCurrentView(context, rawView);
 
-        }else{
+        } else {
             cameraView.enableView();
             viewDisplay.setCurrentView(context, getCameraView());
         }
+
+        disabled = false;
     }
 
 
@@ -132,11 +136,14 @@ public abstract class OpenCVPipeline implements CameraBridgeViewBase.CvCameraVie
      * because dean kamen help you if something bad happens from that
      */
     public void disable() {
-
-        if(!isVuforia){
-            cameraView.disableView();
+        if(!disabled) {
+            if (!isVuforia) {
+                cameraView.disableView();
+            }
+            viewDisplay.removeCurrentView(context);
         }
-        viewDisplay.removeCurrentView(context);
+
+        disabled = true;
     }
 
     /**
