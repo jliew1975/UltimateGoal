@@ -42,6 +42,8 @@ public class GoldAlignDetector extends DogeCVDetector {
     private boolean aligned = false;
     private double goldXPos = 0;
 
+    private double area = 0;
+
     public boolean debugAlignment = true;
     public boolean debugContours  = true;
     public boolean stretch        = true;
@@ -80,13 +82,21 @@ public class GoldAlignDetector extends DogeCVDetector {
         Rect bestRect = null;
         double bestDiffrence = Double.MAX_VALUE;
 
-        for(MatOfPoint cont : contoursYellow){
-            double score = calculateScore(cont);
+        double minArea = 500;
+        double maxArea = 5000;
 
+        for(MatOfPoint cont : contoursYellow) {
             // Get bounding rect of contour
             Rect rect = Imgproc.boundingRect(cont);
             Imgproc.rectangle(workingMat, rect.tl(), rect.br(), new Scalar(0,0,255),2);
 
+            // need to determine if contour meet the area requirement
+            area = Imgproc.contourArea(cont);
+            if(area < minArea || area > maxArea) {
+                continue;
+            }
+
+            double score = calculateScore(cont);
             if(score < bestDiffrence){
                 bestDiffrence = score;
                 bestRect = rect;
@@ -118,6 +128,7 @@ public class GoldAlignDetector extends DogeCVDetector {
         } else {
             found = false;
             aligned = false;
+            goldXPos = 0;
         }
 
         if(debugAlignment) {
@@ -139,7 +150,6 @@ public class GoldAlignDetector extends DogeCVDetector {
         if (areaScoringMethod == DogeCV.AreaScoringMethod.PERFECT_AREA){
             addScorer(perfectAreaScorer);
         }
-
     }
 
     public boolean isAligned(){
@@ -152,6 +162,10 @@ public class GoldAlignDetector extends DogeCVDetector {
 
     public boolean isFound() {
         return found;
+    }
+
+    public double getArea() {
+        return area;
     }
 
     @Override

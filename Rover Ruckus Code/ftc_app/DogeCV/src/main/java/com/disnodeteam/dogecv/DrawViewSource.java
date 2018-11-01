@@ -92,7 +92,6 @@ public class DrawViewSource extends View {
 
         int deviceOrientation = getContext().getResources().getConfiguration().orientation;
 
-
         if(bitmap != null){
             canvas.drawBitmap(bitmap, 0, 0,null);
         }
