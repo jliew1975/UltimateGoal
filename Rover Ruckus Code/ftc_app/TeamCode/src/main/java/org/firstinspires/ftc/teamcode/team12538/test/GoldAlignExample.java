@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.team12538.test;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
@@ -45,6 +47,7 @@ public class GoldAlignExample extends OpMode
 
     @Override
     public void init() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
 
         detector = new GoldAlignDetector();
