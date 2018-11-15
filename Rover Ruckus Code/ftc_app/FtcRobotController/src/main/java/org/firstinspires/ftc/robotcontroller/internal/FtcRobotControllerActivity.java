@@ -57,6 +57,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -125,7 +126,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 @SuppressWarnings("WeakerAccess")
 public class FtcRobotControllerActivity extends Activity
-  {
+{
   public static final String TAG = "RCActivity";
   public String getTag() { return TAG; }
 
@@ -247,7 +248,7 @@ public class FtcRobotControllerActivity extends Activity
         RobotLog.vv(TAG, "disabling Dragonboard and exiting robot controller");
         DragonboardLynxDragonboardIsPresentPin.getInstance().setState(false);
         AppUtil.getInstance().finishRootActivityAndExitApp();
-        }
+      }
       else {
         // Double-sure check that we can talk to the DB over the serial TTY
         DragonboardLynxDragonboardIsPresentPin.getInstance().setState(true);
@@ -286,6 +287,8 @@ public class FtcRobotControllerActivity extends Activity
         popupMenu.show();
       }
     });
+
+    updateMonitorLayout(getResources().getConfiguration());
 
     BlocksOpMode.setActivityAndWebView(this, (WebView) findViewById(R.id.webViewBlocksRuntime));
 
@@ -506,8 +509,8 @@ public class FtcRobotControllerActivity extends Activity
       } else {
         Intent programmingModeIntent = new Intent(AppUtil.getDefContext(), ProgrammingModeActivity.class);
         programmingModeIntent.putExtra(
-            LaunchActivityConstantsList.PROGRAMMING_MODE_ACTIVITY_PROGRAMMING_WEB_HANDLERS,
-            new LocalByRefIntentExtraHolder(programmingWebHandlers));
+                LaunchActivityConstantsList.PROGRAMMING_MODE_ACTIVITY_PROGRAMMING_WEB_HANDLERS,
+                new LocalByRefIntentExtraHolder(programmingWebHandlers));
         startActivity(programmingModeIntent);
       }
       return true;
@@ -539,7 +542,7 @@ public class FtcRobotControllerActivity extends Activity
       startActivityForResult(intentConfigure, RequestCode.CONFIGURE_ROBOT_CONTROLLER.ordinal());
     }
     else if (id == R.id.action_settings) {
-	  // historical: this once erroneously used FTC_CONFIGURE_REQUEST_CODE_ROBOT_CONTROLLER
+      // historical: this once erroneously used FTC_CONFIGURE_REQUEST_CODE_ROBOT_CONTROLLER
       Intent settingsIntent = new Intent(AppUtil.getDefContext(), FtcRobotControllerSettingsActivity.class);
       startActivityForResult(settingsIntent, RequestCode.SETTINGS_ROBOT_CONTROLLER.ordinal());
       return true;
@@ -554,13 +557,38 @@ public class FtcRobotControllerActivity extends Activity
       return true;
     }
 
-   return super.onOptionsItemSelected(item);
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
     // don't destroy assets on screen rotation
+    updateMonitorLayout(newConfig);
+  }
+
+  /**
+   * Updates the orientation of monitorContainer (which contains cameraMonitorView and
+   * tfodMonitorView) based on the given configuration. Makes the children split the space.
+   */
+  private void updateMonitorLayout(Configuration configuration) {
+    LinearLayout monitorContainer = (LinearLayout) findViewById(R.id.monitorContainer);
+    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+      // When the phone is landscape, lay out the monitor views horizontally.
+      monitorContainer.setOrientation(LinearLayout.HORIZONTAL);
+      for (int i = 0; i < monitorContainer.getChildCount(); i++) {
+        View view = monitorContainer.getChildAt(i);
+        view.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 1 /* weight */));
+      }
+    } else {
+      // When the phone is portrait, lay out the monitor views vertically.
+      monitorContainer.setOrientation(LinearLayout.VERTICAL);
+      for (int i = 0; i < monitorContainer.getChildCount(); i++) {
+        View view = monitorContainer.getChildAt(i);
+        view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 0, 1 /* weight */));
+      }
+    }
+    monitorContainer.requestLayout();
   }
 
   @Override
@@ -605,12 +633,12 @@ public class FtcRobotControllerActivity extends Activity
       callback.updateRobotStatus(controllerService.getRobotStatus());
       // Only show this first-time toast on headless systems: what we have now on non-headless suffices
       requestRobotSetup(LynxConstants.isRevControlHub()
-        ? new Runnable() {
-            @Override public void run() {
-              showRestartRobotCompleteToast(R.string.toastRobotSetupComplete);
-            }
-          }
-        : null);
+              ? new Runnable() {
+        @Override public void run() {
+          showRestartRobotCompleteToast(R.string.toastRobotSetupComplete);
+        }
+      }
+              : null);
     }
   }
 
@@ -656,8 +684,8 @@ public class FtcRobotControllerActivity extends Activity
     requestRobotSetup(new Runnable() {
       @Override public void run() {
         showRestartRobotCompleteToast(R.string.toastRestartRobotComplete);
-        }
-      });
+      }
+    });
   }
 
   private void showRestartRobotCompleteToast(@StringRes int resid) {

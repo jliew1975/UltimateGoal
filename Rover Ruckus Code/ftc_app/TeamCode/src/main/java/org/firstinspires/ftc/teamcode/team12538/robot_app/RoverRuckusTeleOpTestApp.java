@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.team12538.robot_app;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.team12538.components.MineralCollector;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotTest;
-import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
-import org.firstinspires.ftc.teamcode.team12538.robotV1.TeleOpRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
+@Disabled
 public class RoverRuckusTeleOpTestApp extends RoverRuckusAutoApp {
 
     private ElapsedTime runtime = new ElapsedTime();

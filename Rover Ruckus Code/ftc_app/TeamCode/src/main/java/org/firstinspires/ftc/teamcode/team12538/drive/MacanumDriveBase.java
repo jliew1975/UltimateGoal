@@ -37,10 +37,10 @@ public abstract class MacanumDriveBase {
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftDrive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
-        rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftDrive");
-        rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightDrive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "left_forward_drive");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "right_forward_drive");
+        rearLeftDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
+        rearRightDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);

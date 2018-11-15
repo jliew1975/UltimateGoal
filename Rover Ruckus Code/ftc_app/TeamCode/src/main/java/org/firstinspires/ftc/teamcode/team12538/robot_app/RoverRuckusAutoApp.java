@@ -6,8 +6,12 @@ import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
+import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
+import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDebug;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 public abstract class RoverRuckusAutoApp extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -15,14 +19,12 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
     public enum MineralLocation { Left, Center, Right, Unknown }
 
     AutoRobotV1 robot = null;
-    GoldAlignDetector detector = null;
+    GoldAlignDetectorExt detector = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
         try {
-            OpModeUtils.getGlobalStore().setOpMode(this);
-            OpModeUtils.getGlobalStore().setHardwareMap(hardwareMap);
-            OpModeUtils.getGlobalStore().setTelemetry(telemetry);
+            OpModeUtils.init(this);
 
             robot = new AutoRobotV1();
             robot.init();
@@ -35,10 +37,11 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
 
             // deploy robot from lander
             robot.unlatchFromLander();
+            robot.expandMechanism();
 
             // move robot forward a little toward mineral
             // for gold mineral detection
-            robot.moveForward(0.5, 10);
+            // robot.moveForward(0.5, 10);
 
             // locate the gold mineral location
             MineralLocation mineralLocation = locateGoldMineral();
@@ -47,7 +50,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
             telemetry.update();
 
             // move the gold mineral off taped area
-            moveMineralOffTapedArea(mineralLocation);
+            collectMineralOffTapedAreaAndDepositToLander(mineralLocation);
 
             // navigate to depot area for team marker deployment
             navigateToDepot(mineralLocation);
@@ -61,13 +64,33 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
             if(detector != null) {
                 detector.disable();
             }
+
+            OpModeUtils.stop();
         }
     }
 
-    protected void moveMineralOffTapedArea(MineralLocation mineralLocation) {
+    protected void collectMineralOffTapedAreaAndDepositToLander(MineralLocation mineralLocation) throws InterruptedException {
+        robot.prepareMineralIntake();
+
         if(mineralLocation != MineralLocation.Unknown) {
-            robot.moveForward(0.5, 35);
+            robot.moveForward(0.5, 12);
             robot.stop();
+            robot.getCollector().autoMineralDeposit();
+
+            if(mineralLocation == MineralLocation.Center) {
+                robot.moveBackward(0.5, 10);
+            } else if(mineralLocation == MineralLocation.Left) {
+                robot.moveBackward(0.5, 10);
+                robot.rotate(-25, 0.5);
+            } else {
+                robot.moveBackward(0.5, 10);
+                robot.rotate(25 , 0.5);
+            }
+
+            // robot.getCollector().swingArmToDeposit(500);
+            robot.getCollector().controlReleaseMineral(MineralMechanism.MineralSide.Left, 0);
+            robot.getCollector().controlReleaseMineral(MineralMechanism.MineralSide.Right, 0);
+            // robot.getCollector().swingArmToDeposit(0);
         }
     }
 
@@ -109,7 +132,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
     private MineralLocation locateGoldMineral() throws InterruptedException {
         // assumed after deployment robot is center on the middle of mineral tape
         if(detector.isFound()) {
-            // TODO: need to adjust heading
+            // TODO: need to adjust heading to align with mineral
             return MineralLocation.Center;
         }
 
@@ -131,12 +154,12 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
         return MineralLocation.Unknown;
     }
 
-    protected GoldAlignDetector createDetector() {
-        GoldAlignDetector detector = new GoldAlignDetector();
+    protected GoldAlignDetectorExt createDetector() {
+        GoldAlignDetectorExt detector = new GoldAlignDetectorExtDebug();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
 
         detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
+        detector.alignPosOffset = 200; // How far from center frame to offset this alignment zone.
         detector.downscale = 0.4; // How much to downscale the input frames
         detector.areaScoringMethod = DogeCV.AreaScoringMethod.PERFECT_AREA;
         detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
@@ -150,6 +173,6 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
     }
 
     protected void placeTeamMarker() {
-
+        robot.placeTeamMarker();
     }
 }

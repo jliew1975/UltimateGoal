@@ -34,4 +34,10 @@ public class OpModeStore {
     public void setTelemetry(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
+
+    public void clear() {
+        opMode = null;
+        hardwareMap = null;
+        telemetry = null;
+    }
 }

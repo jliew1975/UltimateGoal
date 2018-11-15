@@ -33,16 +33,17 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
-import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
-import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
+import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDebug;
 
 
 @TeleOp(name="GoldAlign Example", group="DogeCV")
 public class GoldAlignExample extends OpMode
 {
-    private GoldAlignDetector detector;
+    private GoldAlignDetectorExt detector;
 
 
     @Override
@@ -50,12 +51,12 @@ public class GoldAlignExample extends OpMode
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
 
-        detector = new GoldAlignDetector();
+        detector = new GoldAlignDetectorExtDebug();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
 
         // Optional Tuning
         detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
+        detector.alignPosOffset = -200; // How far from center frame to offset this alignment zone.
         detector.downscale = 0.4; // How much to downscale the input frames
 
         detector.areaScoringMethod = DogeCV.AreaScoringMethod.PERFECT_AREA; // Can also be PERFECT_AREA
@@ -67,8 +68,6 @@ public class GoldAlignExample extends OpMode
 
         detector.useDefaults();
         detector.enable();
-
-
     }
 
     @Override

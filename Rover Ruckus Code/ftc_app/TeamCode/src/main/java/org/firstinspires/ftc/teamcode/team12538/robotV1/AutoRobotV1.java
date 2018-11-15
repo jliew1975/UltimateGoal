@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
-import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMUImpl;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -13,16 +11,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.team12538.controller.PIDController;
+import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
-import edu.spa.ftclib.internal.controller.ErrorTimeThresholdFinishingAlgorithm;
-import edu.spa.ftclib.internal.controller.FinishableIntegratedController;
-import edu.spa.ftclib.internal.drivetrain.HeadingableMecanumDrivetrain;
-import edu.spa.ftclib.internal.sensor.IntegratingGyroscopeSensor;
 
 public class AutoRobotV1 extends RobotBase {
     private final double COUNTS_PER_MOTOR_REV = 560; // andymark 20:1 gearbox
@@ -73,7 +68,12 @@ public class AutoRobotV1 extends RobotBase {
     }
 
     public void unlatchFromLander() {
-        // add code to lower and unlatch robot from lander support bracket
+        robotLatch.unlatch();
+    }
+
+    public void expandMechanism() {
+        collector.postionArm(255);
+        collector.swingArmToPosition(80, 0.2);
     }
 
     public void moveForward(double power, double distance) {
@@ -89,15 +89,23 @@ public class AutoRobotV1 extends RobotBase {
     }
 
     public void strafeLeft(double power, double distance) {
+        strafeLeft(power, distance, null);
+    }
+
+    public void strafeLeft(double power, double distance, GoldAlignDetectorExt detector) {
         // limit power to 1
         power = limitPower(power);
-        encoderStrafe(StrafingDirection.Left, power, distance, 5);
+        encoderStrafe(StrafingDirection.Left, power, distance, 5, detector);
     }
 
     public void strafeRight(double power, double distance) {
+        strafeRight(power, distance, null);
+    }
+
+    public void strafeRight(double power, double distance, GoldAlignDetectorExt detector) {
         // limit power to 1
         power = limitPower(power);
-        encoderStrafe(StrafingDirection.Right, power, distance, 5);
+        encoderStrafe(StrafingDirection.Right, power, distance, 5, detector);
 
     }
 
@@ -109,9 +117,7 @@ public class AutoRobotV1 extends RobotBase {
      * Rotate left or right the number of degrees. Does not support turning more than 180 degrees.
      * @param degrees Degrees to turn, + is left - is right
      */
-    public void rotate(int degrees, double power, GoldAlignDetector detector) throws InterruptedException {
-        double  leftPower, rightPower;
-
+    public void rotate(int degrees, double power, GoldAlignDetectorExt detector) throws InterruptedException {
         // restart imu movement tracking.
         resetAngle();
 
@@ -240,7 +246,7 @@ public class AutoRobotV1 extends RobotBase {
         }
     }
 
-    private void encoderStrafe(StrafingDirection direction, double speed, double distance, double timeout) {
+    private void encoderStrafe(StrafingDirection direction, double speed, double distance, double timeout, GoldAlignDetectorExt detector) {
         // reset encoders
         // MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motors);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motors);
@@ -274,8 +280,14 @@ public class AutoRobotV1 extends RobotBase {
             //keep looping until one of the motors finished its movement
             while (OpModeUtils.getOpMode().opModeIsActive() &&
                     (runtime.seconds() < timeout) &&
-                    (motors.get(0).isBusy() && motors.get(1).isBusy() && motors.get(2).isBusy() && motors.get(3).isBusy()))
+                    (motorsIsBusy(motors)))
             {
+                if(detector != null) {
+                    if(detector.isAligned()) {
+                        break;
+                    }
+                }
+
                 //report current and target positions to driver station
                 telemetry.addData("Path1", "Running to %7d :%7d",
                         targetPositions[0], targetPositions[1], targetPositions[2], targetPositions[3]);
@@ -290,6 +302,10 @@ public class AutoRobotV1 extends RobotBase {
 
             stop();
         }
+    }
+
+    private boolean motorsIsBusy(List<DcMotor> motors) {
+        return motors.get(0).isBusy() && motors.get(1).isBusy() && motors.get(2).isBusy() && motors.get(3).isBusy();
     }
 
     /**

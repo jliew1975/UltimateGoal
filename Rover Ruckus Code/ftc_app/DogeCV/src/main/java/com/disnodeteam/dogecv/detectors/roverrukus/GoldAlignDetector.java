@@ -1,7 +1,9 @@
 package com.disnodeteam.dogecv.detectors.roverrukus;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.DogeCVDetector;
 import com.disnodeteam.dogecv.filters.DogeCVColorFilter;
@@ -11,6 +13,7 @@ import com.disnodeteam.dogecv.scoring.MaxAreaScorer;
 import com.disnodeteam.dogecv.scoring.PerfectAreaScorer;
 import com.disnodeteam.dogecv.scoring.RatioScorer;
 
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -57,9 +60,12 @@ public class GoldAlignDetector extends DogeCVDetector {
     public MaxAreaScorer    maxAreaScorer      = new MaxAreaScorer( 0.01);
     public PerfectAreaScorer perfectAreaScorer = new PerfectAreaScorer(5000,0.05);
 
+    private FtcDashboard dashboard = null;
+
     public GoldAlignDetector() {
         super();
         detectorName = "Gold Align Detector";
+        dashboard = FtcDashboard.getInstance();
     }
 
     @Override
@@ -82,19 +88,10 @@ public class GoldAlignDetector extends DogeCVDetector {
         Rect bestRect = null;
         double bestDiffrence = Double.MAX_VALUE;
 
-        double minArea = 500;
-        double maxArea = 5000;
-
         for(MatOfPoint cont : contoursYellow) {
             // Get bounding rect of contour
             Rect rect = Imgproc.boundingRect(cont);
             Imgproc.rectangle(workingMat, rect.tl(), rect.br(), new Scalar(0,0,255),2);
-
-            // need to determine if contour meet the area requirement
-            area = Imgproc.contourArea(cont);
-            if(area < minArea || area > maxArea) {
-                continue;
-            }
 
             double score = calculateScore(cont);
             if(score < bestDiffrence){
@@ -137,7 +134,18 @@ public class GoldAlignDetector extends DogeCVDetector {
         }
 
         Imgproc.putText(workingMat,"Result: " + aligned,new Point(10,getAdjustedSize().height - 30),0,1, new Scalar(255,255,0),1);
+
+        publishViewToDashboard();
+
         return workingMat;
+    }
+
+    private void publishViewToDashboard() {
+        Bitmap bmp = Bitmap.createBitmap(workingMat.cols(), workingMat.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(workingMat, bmp);
+
+        dashboard.setImageQuality(30);
+        dashboard.sendImage(bmp);
     }
 
     @Override

@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Test_Mecanum", group="Linear Opmode")
+@Disabled
 public class Test_Mecanum extends LinearOpMode {
 
     // Declare OpMode members.
