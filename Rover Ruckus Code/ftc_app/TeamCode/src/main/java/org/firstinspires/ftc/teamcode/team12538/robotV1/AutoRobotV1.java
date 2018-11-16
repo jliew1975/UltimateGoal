@@ -10,10 +10,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.team12538.controller.PIDController;
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 import java.util.List;
 import java.util.Locale;
@@ -25,12 +25,10 @@ public class AutoRobotV1 extends RobotBase {
     private final double WHEEL_DIAMETER_INCHES = 4.0;
     private final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
-    protected BNO055IMUImpl imu = null;
+    private BNO055IMUImpl imu = null;
 
-    protected double globalAngle;
-    protected Orientation lastAngles = new Orientation();
-
-    PIDController pidRotate;
+    private double globalAngle;
+    private Orientation lastAngles = new Orientation();
 
     private Telemetry telemetry = null;
     private ElapsedTime runtime = new ElapsedTime();
@@ -53,14 +51,11 @@ public class AutoRobotV1 extends RobotBase {
         parameters.loggingEnabled = false;   //For debugging
         imu.initialize(parameters);
 
-        while (!imu.isGyroCalibrated()) {
-
-        };
+        while (OpModeUtils.opModeIsActive() && !imu.isGyroCalibrated()) {
+            ThreadUtils.idle();
+        }
 
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        // Set PID proportional value to start reducing power at about 50 degrees of rotation.
-        pidRotate = new PIDController(.005, 0, 0);
 
         telemetry.addData("imu", "finish imu calabration");
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
@@ -200,7 +195,7 @@ public class AutoRobotV1 extends RobotBase {
         telemetry.addData("rearRightDrive", rearRightDrive.getCurrentPosition());
     }
 
-    protected void encoderDrive(double speed, double distanceInInches, double timeout)
+    private void encoderDrive(double speed, double distanceInInches, double timeout)
     {
         // reset encoders
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motors);

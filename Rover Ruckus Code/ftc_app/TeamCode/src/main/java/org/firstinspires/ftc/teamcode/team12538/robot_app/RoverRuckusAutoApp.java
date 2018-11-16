@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.team12538.robot_app;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
-import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -11,7 +10,6 @@ import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDebug;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
-import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 public abstract class RoverRuckusAutoApp extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
