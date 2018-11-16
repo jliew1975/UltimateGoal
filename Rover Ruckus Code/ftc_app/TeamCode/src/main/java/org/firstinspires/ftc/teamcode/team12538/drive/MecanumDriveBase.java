@@ -24,7 +24,7 @@ import edu.spa.ftclib.internal.drivetrain.HeadingableMecanumDrivetrain;
 import edu.spa.ftclib.internal.drivetrain.MecanumDrivetrain;
 import edu.spa.ftclib.internal.sensor.IntegratingGyroscopeSensor;
 
-public abstract class MacanumDriveBase {
+public abstract class MecanumDriveBase {
     public enum StrafingDirection { Left, Right }
 
     protected DcMotor frontLeftDrive = null;

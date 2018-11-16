@@ -176,6 +176,7 @@ public class MineralMechanism implements RobotMechanic {
                     public void run() {
                         try {
                             RobotLog.d("starting autoMineralDeposit logic");
+                            disableIntake();
                             flipCollectorBox(0.6);
                             postionArm(255);
                             flipCollectorBox(1d);

@@ -36,7 +36,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
             waitForStart();
 
             // deploy robot from lander
-            robot.unlatchFromLander();
+            // robot.unlatchFromLander();
             robot.expandMechanism();
 
             // move robot forward a little toward mineral
@@ -73,6 +73,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
         robot.prepareMineralIntake();
 
         if(mineralLocation != MineralLocation.Unknown) {
+
             robot.moveForward(0.5, 12);
             robot.stop();
             robot.getCollector().autoMineralDeposit();

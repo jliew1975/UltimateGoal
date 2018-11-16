@@ -72,8 +72,10 @@ public class AutoRobotV1 extends RobotBase {
     }
 
     public void expandMechanism() {
+        collector.flipCollectorBox(0.6);
         collector.postionArm(255);
-        collector.swingArmToPosition(80, 0.2);
+        collector.flipCollectorBox(0d);
+        // collector.swingArmToPosition(80, 0.2);
     }
 
     public void moveForward(double power, double distance) {

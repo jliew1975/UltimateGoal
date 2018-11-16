@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotLatch;
-import org.firstinspires.ftc.teamcode.team12538.drive.MacanumDriveBase;
+import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public abstract class RobotBase extends MacanumDriveBase {
+public abstract class RobotBase extends MecanumDriveBase {
     protected ExecutorService executorService = null;
 
     protected MineralMechanism collector = null;
