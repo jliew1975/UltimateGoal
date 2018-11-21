@@ -5,7 +5,6 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDebug;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
@@ -36,10 +35,11 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
             // deploy robot from lander
             // robot.unlatchFromLander();
             robot.expandMechanism();
+            sleep(1000);
 
             // move robot forward a little toward mineral
             // for gold mineral detection
-            // robot.moveForward(0.5, 10);
+            robot.moveForward(0.1, 8);
 
             // locate the gold mineral location
             MineralLocation mineralLocation = locateGoldMineral();
@@ -56,7 +56,6 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
             // navigate to crater for parking
             navigateForParking(mineralLocation);
 
-            sleep(5000);
             robot.stop();
         } finally {
             if(detector != null) {
@@ -69,68 +68,55 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
 
     protected void collectMineralOffTapedAreaAndDepositToLander(MineralLocation mineralLocation) throws InterruptedException {
         robot.prepareMineralIntake();
+        robot.moveForward(0.1, 15);
+        sleep(500);
 
-        if(mineralLocation != MineralLocation.Unknown) {
+        robot.getCollector().disableIntake();
+        robot.getCollector().flipCollectorBox(0.8);
+        sleep(1000);
 
-            robot.moveForward(0.5, 12);
-            robot.stop();
-            robot.getCollector().autoMineralDeposit();
-
-            if(mineralLocation == MineralLocation.Center) {
-                robot.moveBackward(0.5, 10);
-            } else if(mineralLocation == MineralLocation.Left) {
-                robot.moveBackward(0.5, 10);
-                robot.rotate(-25, 0.5);
-            } else {
-                robot.moveBackward(0.5, 10);
-                robot.rotate(25 , 0.5);
-            }
-
-            // robot.getCollector().swingArmToDeposit(500);
-            robot.getCollector().controlReleaseMineral(MineralMechanism.MineralSide.Left, 0);
-            robot.getCollector().controlReleaseMineral(MineralMechanism.MineralSide.Right, 0);
-            // robot.getCollector().swingArmToDeposit(0);
+        if(mineralLocation == MineralLocation.Left) {
+            robot.moveForward(0.1, 20);
+        } else if(mineralLocation == MineralLocation.Right) {
+            robot.moveForward(0.1, 20);
+        } else {
+            robot.moveForward(0.1, 10);
         }
     }
 
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {
-        if(mineralLocation != MineralLocation.Unknown) {
-            if(mineralLocation == MineralLocation.Right) {
-                robot.rotate(80, 0.1);
-                robot.moveForward(0.5, 28);
-            } else if(mineralLocation == MineralLocation.Left) {
-                robot.rotate(-25, 0.1);
-                robot.moveForward(0.5, 28);
-            } else {
-                robot.moveForward(0.5, 40);
-            }
 
-            robot.stop();
-            robot.placeTeamMarker();
+        if(mineralLocation == MineralLocation.Left) {
+            robot.rotate(96, 0.2);
+            robot.moveBackward(0.2, 25);
+        } else if(mineralLocation == MineralLocation.Right) {
+            robot.rotate(80, 0.2);
+            robot.moveForward(0.2, 28);
+            robot.rotate(80, 0.2);
+        } else {
+            robot.moveForward(0.2, 18);
+            robot.rotate(45, 0.2);
+            robot.moveForward(0.2, 3);
+            robot.rotate(80, 0.2);
         }
+
+        robot.stop();
+        robot.placeTeamMarker();
     }
 
     protected void navigateForParking(MineralLocation mineralLocation) throws InterruptedException {
-        if(mineralLocation == MineralLocation.Right) {
-            robot.rotate(-45, 0.1);
-            robot.moveBackward(0.5, 80);
-        } else if(mineralLocation == MineralLocation.Left) {
-            robot.rotate(-80, 0.1);
-            robot.moveBackward(0.5, 80);
-        } else if(mineralLocation == MineralLocation.Center) {
-            robot.rotate(-45, 0.1);
-            robot.moveBackward(0.5, 80);
-        } else {
-            robot.rotate(45, 0.1);
-            robot.moveForward(0.5, 20);
-            robot.rotate(-45, 0.1);
-            robot.moveBackward(0.5, 80);
-        }
+        robot.moveForward(0.5, 80);
+        robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
     }
 
     private MineralLocation locateGoldMineral() throws InterruptedException {
-        // assumed after deployment robot is center on the middle of mineral tape
+        double xPos = -1;
         if(detector.isFound()) {
+            xPos = detector.getXPosition();
+        }
+
+        // assumed after deployment robot is center on the middle of mineral tape
+        if(detector.isFound() && detector.isAligned()) {
             // TODO: need to adjust heading to align with mineral
             return MineralLocation.Center;
         }
@@ -150,15 +136,18 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
             return MineralLocation.Right;
         }
 
-        return MineralLocation.Unknown;
+        // not able to determine the location of gold mineral so will try
+        // to use the x-position if gold mineral is found but not aligned and position is not known
+        // TODO: Need logic to strafe left or right to align with gold element
+        return MineralLocation.Center;
     }
 
     protected GoldAlignDetectorExt createDetector() {
         GoldAlignDetectorExt detector = new GoldAlignDetectorExtDebug();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
 
-        detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = 200; // How far from center frame to offset this alignment zone.
+        detector.alignSize = 80; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        detector.alignPosOffset = -100; // How far from center frame to offset this alignment zone.
         detector.downscale = 0.4; // How much to downscale the input frames
         detector.areaScoringMethod = DogeCV.AreaScoringMethod.PERFECT_AREA;
         detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring

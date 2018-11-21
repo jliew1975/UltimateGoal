@@ -56,7 +56,7 @@ public class AutoRobotV1 extends RobotBase {
         }
 
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
+        Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
         telemetry.addData("imu", "finish imu calabration");
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         telemetry.update();
@@ -67,22 +67,21 @@ public class AutoRobotV1 extends RobotBase {
     }
 
     public void expandMechanism() {
-        collector.flipCollectorBox(0.6);
-        collector.postionArm(255);
         collector.flipCollectorBox(0d);
+        // collector.adjustArmPosition(-200, false);
         // collector.swingArmToPosition(80, 0.2);
     }
 
     public void moveForward(double power, double distance) {
         // limit power to 1
         power = limitPower(power);
-        encoderDrive(power, distance, 5);
+        encoderDrive(power, -distance, 5);
     }
 
     public void moveBackward(double power, double distance) {
         // limit power to 1
         power = limitPower(power);
-        encoderDrive(power, -distance, 5);
+        encoderDrive(power, distance, 5);
     }
 
     public void strafeLeft(double power, double distance) {
@@ -125,7 +124,7 @@ public class AutoRobotV1 extends RobotBase {
             // On right turn we have to get off zero first.
             while (OpModeUtils.opModeIsActive() && getAngle() == 0) {
                 turnRight(power);
-                TimeUnit.MILLISECONDS.sleep(100);
+                ThreadUtils.idle();
             }
 
             while (OpModeUtils.opModeIsActive() && getAngle() > degrees) {

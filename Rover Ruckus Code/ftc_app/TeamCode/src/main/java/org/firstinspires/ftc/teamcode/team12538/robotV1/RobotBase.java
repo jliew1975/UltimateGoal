@@ -8,6 +8,13 @@ import org.firstinspires.ftc.teamcode.team12538.components.RobotLatch;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import static org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils.sleep;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
 public abstract class RobotBase extends MecanumDriveBase {
     MineralMechanism collector = null;
     RobotLatch robotLatch = null;
@@ -25,31 +32,20 @@ public abstract class RobotBase extends MecanumDriveBase {
         sheetMetal.setPosition(0d);
 
         // mineral collector mechanism
-        collector = new MineralMechanism(-100, 6900);
+        collector = new MineralMechanism(-100, 5000);
         collector.init();
 
         robotLatch = new RobotLatch();
         robotLatch.init();
     }
 
-    public void controlMineralArm(double power) {
-        if(collector != null) {
-            collector.controlArm(power);
-        }
-    }
-
     public void prepareMineralIntake() {
         collector.flipCollectorBox(0d);
-        collector.enableIntake(MineralMechanism.Direction.InTake);
+        collector.enableIntake(MineralMechanism.Direction.OutTake);
     }
-
-    public MineralMechanism getCollector() {
-        return collector;
-    }
-
-    public RobotLatch getRobotLatch() { return robotLatch; }
 
     public void placeTeamMarker() {
         sheetMetal.setPosition(1.0);
+        sleep(1000);
     }
 }

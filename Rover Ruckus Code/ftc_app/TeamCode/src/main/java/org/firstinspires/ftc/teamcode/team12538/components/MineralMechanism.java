@@ -68,8 +68,8 @@ public class MineralMechanism implements RobotMechanic {
         rightArm = hardwareMap.servo.get("r_flip");
         rightArm.setDirection(Servo.Direction.REVERSE);
 
-        leftArm.setPosition(0.9);
-        rightArm.setPosition(0.9);
+        leftArm.setPosition(0.8);
+        rightArm.setPosition(0.8);
 
         armExtension = hardwareMap.get(DcMotor.class, "extend");
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, armExtension);
@@ -123,39 +123,63 @@ public class MineralMechanism implements RobotMechanic {
                 }
             }
 
+            // negative => extend, positive => retract
             double effectivePower = power;
 
             int curPos = armExtension.getCurrentPosition();
-            if (power > 0 && curPos < upperLimit ) {
-                if(curPos >= upperSlowdownThreshold) {
+            if (power < 0d) {
+                if(Math.abs(curPos) >= upperSlowdownThreshold) {
                     effectivePower = Math.signum(power) * slowSpeed;
                 }
-
-                armExtension.setPower(effectivePower);
-            } else if (power < 0 && curPos >= lowerLimit) {
+            } else if (power > 0d) {
                 if(curPos <= lowerSlowdownThreshold) {
                     effectivePower = Math.signum(power) * slowSpeed;
                 }
-
-                armExtension.setPower(effectivePower);
             } else {
-                armExtension.setPower(0d);
+                effectivePower = 0d;
             }
 
-            if(curPos < 0) {
-                MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, armExtension);
+            armExtension.setPower(effectivePower);
+        }
+    }
+
+    public void adjustArmPosition(final int positionDelta, final boolean isNewZeroPosInd) {
+        synchronized (lock) {
+            if (!busy) {
+                busy = true;
+                ThreadUtils.getExecutorService().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            int targetPos = armExtension.getCurrentPosition() + positionDelta;
+                            positionArm(targetPos);
+
+                            if (isNewZeroPosInd) {
+                                // reset the encoder and make that position the new zero position
+                                MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, armExtension);
+                                MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, armExtension);
+                            }
+                        } finally {
+                            busy = false;
+                        }
+                    }
+                });
             }
         }
     }
 
-    public void postionArm(int targetPosition) {
+    public void positionArm(int targetPosition) {
+        positionArm(targetPosition, 1.0);
+    }
+
+    public void positionArm(int targetPosition, double power) {
         if(armExtension != null) {
             disableArmControl = true;
 
             try {
                 MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, armExtension);
                 armExtension.setTargetPosition(targetPosition);
-                armExtension.setPower(1.0);
+                armExtension.setPower(power);
                 while (OpModeUtils.opModeIsActive() && armExtension.isBusy()) {
                     ThreadUtils.idle();
                 }
@@ -178,11 +202,13 @@ public class MineralMechanism implements RobotMechanic {
                             RobotLog.d("starting autoMineralDeposit logic");
                             disableIntake();
                             flipCollectorBox(0.6);
-                            postionArm(255);
+                            positionArm(350);
                             flipCollectorBox(1d);
                             ThreadUtils.sleep(500);
-                            flipCollectorBox(0.6);
+                            flipCollectorBox(0.4);
                             RobotLog.d("done with autoMineralDeposit logic");
+                        } catch(Exception e) {
+                            RobotLog.dd("MineralMechanism", e, e.getMessage());
                         } finally {
                             busy = false;
                         }
@@ -267,7 +293,7 @@ public class MineralMechanism implements RobotMechanic {
     public void printTelemetry() {
         Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
         telemetry.addData("armExtension", armExtension.getCurrentPosition());
-        telemetry.addData("disableArmControl", disableArmControl);
+        telemetry.addData("armExtensionPower", armExtension.getPower());
         telemetry.addData("swingingArm", swingingArm.getCurrentPosition());
     }
 }

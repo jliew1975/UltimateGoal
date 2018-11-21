@@ -6,34 +6,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import lombok.Data;
+
+@Data
 public class OpModeStore {
     private LinearOpMode opMode = null;
     private HardwareMap hardwareMap = null;
     private Telemetry telemetry = null;
 
-    public LinearOpMode getOpMode() {
-        return opMode;
-    }
-
-    public void setOpMode(LinearOpMode opMode) {
-        this.opMode = opMode;
-    }
-
-    public HardwareMap getHardwareMap() {
-        return hardwareMap;
-    }
-
-    public void setHardwareMap(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap;
-    }
-
-    public Telemetry getTelemetry() {
-        return telemetry;
-    }
-
-    public void setTelemetry(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
+    private boolean disableLimit = false;
 
     public void clear() {
         opMode = null;

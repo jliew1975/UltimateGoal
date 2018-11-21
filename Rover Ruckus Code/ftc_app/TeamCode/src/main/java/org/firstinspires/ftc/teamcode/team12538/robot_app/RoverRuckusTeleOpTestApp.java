@@ -16,9 +16,7 @@ public class RoverRuckusTeleOpTestApp extends RoverRuckusAutoApp {
     @Override
     public void runOpMode() throws InterruptedException {
         try {
-            OpModeUtils.getGlobalStore().setOpMode(this);
-            OpModeUtils.getGlobalStore().setHardwareMap(hardwareMap);
-            OpModeUtils.getGlobalStore().setTelemetry(telemetry);
+            OpModeUtils.init(this);
 
             AutoRobotTest robot = new AutoRobotTest();
             robot.init();
@@ -35,8 +33,6 @@ public class RoverRuckusTeleOpTestApp extends RoverRuckusAutoApp {
             while (opModeIsActive()) {
                 robot.controlWithGamePad(gamepad1);
 
-                // mineral intake mechanis
-                robot.controlMineralArm(gamepad2.left_stick_x);
 
                 if (gamepad1.a) {
                     robot.rotate(23, 0.3);
@@ -46,32 +42,20 @@ public class RoverRuckusTeleOpTestApp extends RoverRuckusAutoApp {
                     robot.stop();
                 }
 
-                if(gamepad1.x) {
-                    robot.moveBackward(0.01);
-                    while (gamepad1.x) {
-                        idle();
-                    }
-
-                    robot.stop();
-                }
-
-                if(gamepad1.y) {
-                    robot.moveForward(0.5, 10);
-                    /*
-                    robot.moveForward(0.01);
-                    while (gamepad1.y) {
-                        idle();
-                    }
-
-                    robot.stop();
-                    */
-                }
-
-                // robot.printDriveEncoderTelemtry();
                 robot.printImuAngleTelemtry();
-                telemetry.addData("Gold Mineral Found", detector.isFound());
-                telemetry.addData( "Gold Mineral X-Pos", detector.getXPosition());
-                telemetry.update();
+
+                /*
+                // mineral intake mechanis
+                robot.getCollector().controlArm(-gamepad1.left_stick_x);
+
+                if(gamepad1.x) {
+                    robot.getCollector().adjustArmPosition(-100, false);
+                }
+
+                if(gamepad1.a) {
+                    robot.getCollector().flipCollectorBox(0.6);
+                }
+                */
             }
         } finally {
             if(detector != null) {

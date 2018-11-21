@@ -20,12 +20,16 @@ public class RobotLatch implements RobotMechanic {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
         hook = hardwareMap.get(Servo.class, "latch");
-        hook.setPosition(1.0);
+        hook.setPosition(0.0);
 
         scissorLift = hardwareMap.get(DcMotor.class, "lift");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLift);
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorLift);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorLift);
+    }
+
+    public void setHookPosition(double position) {
+        hook.setPosition(position);
     }
 
     public void autoHook() {
@@ -45,6 +49,16 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public void powerLift(double power) {
+        powerLift(power, -1);
+    }
+
+    public void powerLift(double power, int constraint) {
+        if(constraint != -1) {
+            if(scissorLift.getCurrentPosition() <= constraint) {
+                power = 0;
+            }
+        }
+
         scissorLift.setPower(power);
     }
 
