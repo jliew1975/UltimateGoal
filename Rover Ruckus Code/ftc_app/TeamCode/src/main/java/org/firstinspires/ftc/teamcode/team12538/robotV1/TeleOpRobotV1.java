@@ -49,17 +49,19 @@ public class TeleOpRobotV1 extends RobotBase {
             robotLatch.teleHook();
         } else if(gamepad.a) {
             robotLatch.teleUnhook();
-        } else if(gamepad.y) {
-            robotLatch.powerLift(-1.0);
         }
 
         if (gamepad.dpad_up) {
             robotLatch.powerLift(1.0);
         } else if (gamepad.dpad_down) {
             robotLatch.powerLift(-1.0, 100);
-        } else {
+        } else if(gamepad.y) {
+            robotLatch.powerLift(-1.0);
+        }
+        else {
             robotLatch.powerLift(0d);
         }
+
     }
 
     public void player2Controls(Gamepad gamepad) {
