@@ -64,6 +64,7 @@ public class AutoRobotV1 extends RobotBase {
 
     public void unlatchFromLander() {
         robotLatch.unlatch();
+        robotLatch.autoLegDown();
     }
 
     public void expandMechanism() {
