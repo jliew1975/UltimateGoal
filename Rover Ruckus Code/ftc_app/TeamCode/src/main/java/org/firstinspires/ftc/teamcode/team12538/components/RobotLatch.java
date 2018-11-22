@@ -51,10 +51,10 @@ public class RobotLatch implements RobotMechanic {
         hook.setPosition(1.0);
     }
 
-    public void autoLegUp() { hang_leg.setPosition(1.0); }
+    public void autoLegUp() { hang_leg.setPosition(0.0); }
 
     public void autoLegDown() {
-        hang_leg.setPosition(0.0);
+        hang_leg.setPosition(1.0);
     }
 
     public void powerLift(double power) {

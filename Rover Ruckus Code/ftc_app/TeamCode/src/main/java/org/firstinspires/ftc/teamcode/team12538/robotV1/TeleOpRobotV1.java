@@ -45,6 +45,7 @@ public class TeleOpRobotV1 extends RobotBase {
             }
         }
 
+
         if(gamepad.x) {
             robotLatch.teleHook();
         } else if(gamepad.a) {
