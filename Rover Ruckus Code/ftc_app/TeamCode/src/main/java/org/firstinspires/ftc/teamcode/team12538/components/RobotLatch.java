@@ -21,9 +21,9 @@ public class RobotLatch implements RobotMechanic {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
         hook = hardwareMap.get(Servo.class, "latch");
-        hang_leg = hardwareMap.get(Servo.class, "hang_leg");
+        //hang_leg = hardwareMap.get(Servo.class, "hang_leg");
         hook.setPosition(0.0);
-        hang_leg.setPosition(0.0);
+        //hang_leg.setPosition(0.0);
 
         scissorLift = hardwareMap.get(DcMotor.class, "lift");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLift);
