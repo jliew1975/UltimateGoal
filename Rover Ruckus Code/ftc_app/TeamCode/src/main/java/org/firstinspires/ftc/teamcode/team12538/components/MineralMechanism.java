@@ -132,7 +132,7 @@ public class MineralMechanism implements RobotMechanic {
                     effectivePower = Math.signum(power) * slowSpeed;
                 }
             } else if (power > 0d) {
-                if(curPos <= lowerSlowdownThreshold) {
+                if(Math.abs(curPos) <= lowerSlowdownThreshold) {
                     effectivePower = Math.signum(power) * slowSpeed;
                 }
             } else {
