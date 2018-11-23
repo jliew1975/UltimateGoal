@@ -21,9 +21,9 @@ public class RobotLatch implements RobotMechanic {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
         hook = hardwareMap.get(Servo.class, "latch");
-        //hang_leg = hardwareMap.get(Servo.class, "hang_leg");
+        hang_leg = hardwareMap.get(Servo.class, "hang_leg");
         hook.setPosition(0.0);
-        //hang_leg.setPosition(0.0);
+        hang_leg.setPosition(0.0);
 
         scissorLift = hardwareMap.get(DcMotor.class, "lift");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLift);
@@ -40,7 +40,7 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public void autoUnhook() {
-        hook.setPosition(0.0);
+        hook.setPosition(0.5);
     }
 
     public void teleHook() {
@@ -55,6 +55,12 @@ public class RobotLatch implements RobotMechanic {
 
     public void autoLegDown() {
         hang_leg.setPosition(1.0);
+    }
+
+    public void setHang_leg(double position) {
+        if(hang_leg.getPosition() < 1 || hang_leg.getPosition() > 0 ) {
+            hang_leg.setPosition(hang_leg.getPosition() + position);
+        }
     }
 
     public void powerLift(double power) {

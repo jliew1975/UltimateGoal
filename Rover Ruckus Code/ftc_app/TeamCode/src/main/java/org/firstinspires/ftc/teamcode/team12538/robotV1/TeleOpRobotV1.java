@@ -35,13 +35,6 @@ public class TeleOpRobotV1 extends RobotBase {
         rearLeftDrive.setPower(power * Math.signum(v3));
         rearRightDrive.setPower(power * Math.signum(v4));
 
-        if(gamepad.dpad_right){
-            hang_leg.setPosition(leg_position-=0.05);
-        }
-        if(gamepad.dpad_left){
-            hang_leg.setPosition(leg_position+=0.05);
-        }
-
 
         // Intake controls
         if(gamepad.right_bumper) {
@@ -59,6 +52,15 @@ public class TeleOpRobotV1 extends RobotBase {
             robotLatch.teleHook();
         } else if(gamepad.a) {
             robotLatch.teleUnhook();
+        } else if(gamepad.b) {
+            robotLatch.autoUnhook();
+        }
+
+        if (gamepad.dpad_right){
+            robotLatch.setHang_leg(0.01);
+        }
+        if (gamepad.dpad_left){
+            robotLatch.setHang_leg(-0.01);
         }
 
         if (gamepad.dpad_up) {
