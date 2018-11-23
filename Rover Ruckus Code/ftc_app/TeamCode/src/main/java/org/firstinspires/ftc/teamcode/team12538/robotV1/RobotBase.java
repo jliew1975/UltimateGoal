@@ -46,6 +46,5 @@ public abstract class RobotBase extends MecanumDriveBase {
 
     public void placeTeamMarker() {
         sheetMetal.setPosition(1.0);
-        sleep(1000);
     }
 }

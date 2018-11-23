@@ -105,17 +105,20 @@ public class AutoRobotV1 extends RobotBase {
 
     }
 
-    public void rotate(int degrees, double power) throws InterruptedException {
-        rotate(degrees, power, null);
+    public void rotate(int degrees, double power, double timeout) throws InterruptedException {
+        rotate(degrees, power, timeout, null);
     }
 
     /**
      * Rotate left or right the number of degrees. Does not support turning more than 180 degrees.
      * @param degrees Degrees to turn, + is left - is right
      */
-    public void rotate(int degrees, double power, GoldAlignDetectorExt detector) throws InterruptedException {
+    public void rotate(int degrees, double power, double timeout, GoldAlignDetectorExt detector) throws InterruptedException {
         // restart imu movement tracking.
         resetAngle();
+
+        runtime.reset();
+        runtime.startTime();
 
         // getAngle() returns + when rotating counter clockwise (left) and - when rotating
         // clockwise (right).
@@ -131,6 +134,8 @@ public class AutoRobotV1 extends RobotBase {
                if(detector != null && detector.isFound()) {
                    if(detector.isAligned()) {
                        break;
+                   } else if(runtime.milliseconds() > timeout) {
+                       break;
                    }
                }
             }
@@ -139,6 +144,8 @@ public class AutoRobotV1 extends RobotBase {
             while (OpModeUtils.opModeIsActive() && getAngle() < degrees) {
                 if(detector != null && detector.isFound()) {
                     if(detector.isAligned()) {
+                        break;
+                    } else if(runtime.milliseconds() > timeout) {
                         break;
                     }
                 }
@@ -249,14 +256,14 @@ public class AutoRobotV1 extends RobotBase {
 
         int[] targetPositions = new int[motors.size()];
 
-        double newDistance = (direction == StrafingDirection.Left) ? -1 * distance : distance;
+        double newDistance = (direction == StrafingDirection.Right) ? -1 * distance : distance;
 
         //ensure that the opmode is still active
         if(OpModeUtils.getOpMode().opModeIsActive()) {
             int index = 0;
             for(DcMotor motor : motors) {
                 // bleftDrive or frightDrive
-                if(index == 2 || index == 3) {
+                if(index == 1 || index == 2) {
                     targetPositions[index] = motor.getCurrentPosition() + (int) (-newDistance * Math.sqrt(2) * COUNTS_PER_INCH);
                 } else {
                     targetPositions[index] = motor.getCurrentPosition() + (int) (newDistance * Math.sqrt(2) * COUNTS_PER_INCH);

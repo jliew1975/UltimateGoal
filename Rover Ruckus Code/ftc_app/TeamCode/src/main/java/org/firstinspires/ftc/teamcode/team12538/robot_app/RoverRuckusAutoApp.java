@@ -87,17 +87,17 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {
 
         if(mineralLocation == MineralLocation.Left) {
-            robot.rotate(96, 0.2);
+            robot.rotate(96, 0.2, 5.0);
             robot.moveBackward(0.2, 25);
         } else if(mineralLocation == MineralLocation.Right) {
-            robot.rotate(80, 0.2);
+            robot.rotate(80, 0.2, 5.0);
             robot.moveForward(0.2, 28);
-            robot.rotate(80, 0.2);
+            robot.rotate(80, 0.2, 5.0);
         } else {
             robot.moveForward(0.2, 18);
-            robot.rotate(45, 0.2);
+            robot.rotate(45, 0.2, 5.0);
             robot.moveForward(0.2, 3);
-            robot.rotate(80, 0.2);
+            robot.rotate(80, 0.2, 5.0);
         }
 
         robot.stop();
@@ -111,8 +111,17 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
 
     private MineralLocation locateGoldMineral() throws InterruptedException {
         double xPos = -1;
-        if(detector.isFound()) {
+        boolean isFound = detector.isFound();
+        if(isFound) {
             xPos = detector.getXPosition();
+        }
+
+        if(isFound && !detector.isAligned()) {
+            if(xPos >= 300) {
+                robot.strafeRight(0.3, 14, detector);
+            } else {
+                robot.strafeLeft(0.3, 14, detector);
+            }
         }
 
         // assumed after deployment robot is center on the middle of mineral tape
@@ -122,15 +131,15 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
         }
 
         // if not found try left side
-        robot.rotate(25, 0.2, detector);
-        sleep(200);
+        robot.rotate(40, 0.2, 5.0, detector);
+
 
         if(detector.isFound()) {
             return MineralLocation.Left;
         }
 
-        robot.rotate(-60, 0.2, detector);
-        sleep(200);
+        robot.rotate(-60, 0.2, 5.0, detector);
+
 
         if(detector.isFound()) {
             return MineralLocation.Right;

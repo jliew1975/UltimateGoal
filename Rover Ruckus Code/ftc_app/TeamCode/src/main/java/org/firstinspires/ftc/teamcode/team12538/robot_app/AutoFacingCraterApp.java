@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.team12538.robot_app;
 
 
+import com.disnodeteam.dogecv.CameraViewDisplay;
+import com.disnodeteam.dogecv.DogeCV;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
+import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDebug;
 
 @Autonomous(name="Auto (Facing Crater)", group="Linear Opmode")
 public class AutoFacingCraterApp extends RoverRuckusAutoApp {
@@ -10,28 +14,26 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
     protected void collectMineralOffTapedAreaAndDepositToLander(MineralLocation mineralLocation) throws InterruptedException {
         robot.prepareMineralIntake();
         if(mineralLocation != MineralLocation.Unknown) {
-            robot.moveForward(0.1, 15);
-            sleep(500);
+            robot.moveForward(0.1, 10);
 
             robot.getCollector().disableIntake();
             robot.getCollector().flipCollectorBox(0.8);
-            sleep(1000);
 
             if(mineralLocation == MineralLocation.Left) {
-                robot.moveBackward(0.1, 20);
-                robot.rotate(90, 0.2);
-                robot.moveForward(0.2, 10);
-                robot.rotate(45, 0.2);
+                robot.moveBackward(0.1, 5);
+                robot.rotate(35, 0.2, 5.0);
+                robot.moveForward(0.2, 31);
+                robot.rotate(45, 0.2, 5.0);
             } else if(mineralLocation == MineralLocation.Right) {
-                robot.moveBackward(0.1, 20);
-                robot.rotate(90, 0.2);
-                robot.moveForward(0.2, 40);
-                robot.rotate(45, 0.2);
+                robot.moveBackward(0.1, 5);
+                robot.rotate(120, 0.2, 5.0);
+                robot.moveForward(0.5, 43);
+                robot.rotate(45, 0.2, 5.0);
             } else {
-                robot.moveBackward(0.1, 20);
-                robot.rotate(90, 0.2);
-                robot.moveForward(0.2, 25);
-                robot.rotate(45, 0.2);
+                robot.moveBackward(0.1, 4);
+                robot.rotate(85, 0.2, 5.0);
+                robot.moveForward(0.2, 46);
+                robot.rotate(40, 0.2, 5.0);
             }
         }
     }
@@ -39,22 +41,45 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
     @Override
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {
         if (mineralLocation == MineralLocation.Left) {
-            robot.moveForward(0.5, 70);
-            robot.stop();
+            robot.strafeRight(0.3, 5);
+            robot.moveForward(0.5, 40);
         } else if (mineralLocation == MineralLocation.Right) {
-            robot.moveForward(0.5, 70);
-            robot.stop();
+            robot.strafeRight(0.3, 5);
+            robot.moveForward(0.5, 40);
         } else {
-            robot.moveForward(0.5, 70);
-            robot.stop();
+            robot.strafeRight(0.3, 5);
+            robot.moveForward(0.5, 40);
         }
 
-        robot.rotate(90, 0.2);
+        robot.rotate(90, 0.2, 5.0);
         placeTeamMarker();
+        robot.rotate(90, 0.2, 5.0);
+        robot.strafeLeft(0.3, 4);
     }
 
     @Override
+    protected GoldAlignDetectorExt createDetector() {
+        GoldAlignDetectorExt detector = new GoldAlignDetectorExtDebug();
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
+
+        detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        detector.alignPosOffset = -60; // How far from center frame to offset this alignment zone.
+        detector.downscale = 0.4; // How much to downscale the input frames
+        detector.areaScoringMethod = DogeCV.AreaScoringMethod.PERFECT_AREA;
+        detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
+        // detector.maxAreaScorer.weight = 0.005; // if using MAX_AREA scoring
+        detector.ratioScorer.weight = 5;
+        detector.ratioScorer.perfectRatio = 1.0;
+
+        detector.useDefaults();
+
+        return detector;
+    }
+
+
+    @Override
     protected void navigateForParking(MineralLocation mineralLocation) {
-        robot.moveBackward(0.5, 80);
+        robot.moveForward(0.6, 65);
+        robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
     }
 }

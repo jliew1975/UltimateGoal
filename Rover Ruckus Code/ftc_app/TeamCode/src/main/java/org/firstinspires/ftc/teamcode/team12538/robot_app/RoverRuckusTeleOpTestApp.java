@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotTest;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
-@Disabled
 public class RoverRuckusTeleOpTestApp extends RoverRuckusAutoApp {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -35,17 +34,17 @@ public class RoverRuckusTeleOpTestApp extends RoverRuckusAutoApp {
 
 
                 if (gamepad1.a) {
-                    robot.rotate(23, 0.3);
+                    robot.strafeLeft(0.3, 20);
                     robot.stop();
                 } else if (gamepad1.b) {
-                    robot.rotate(-23, 0.3);
+                    robot.strafeRight(0.3, 20);
                     robot.stop();
                 }
 
                 robot.printImuAngleTelemtry();
 
                 /*
-                // mineral intake mechanis
+                // mineral intake mechanism
                 robot.getCollector().controlArm(-gamepad1.left_stick_x);
 
                 if(gamepad1.x) {
