@@ -64,12 +64,21 @@ public class AutoRobotV1 extends RobotBase {
 
     public void unlatchFromLander() {
         robotLatch.unlatch();
+        robotLatch.autoLegDown();
     }
 
     public void expandMechanism() {
         collector.flipCollectorBox(0d);
         // collector.adjustArmPosition(-200, false);
         // collector.swingArmToPosition(80, 0.2);
+    }
+
+    public void phoneUp() {
+        collector.setPhone_tilt(1);
+    }
+
+    public void phoneDown() {
+        collector.setPhone_tilt(0);
     }
 
     public void moveForward(double power, double distance) {

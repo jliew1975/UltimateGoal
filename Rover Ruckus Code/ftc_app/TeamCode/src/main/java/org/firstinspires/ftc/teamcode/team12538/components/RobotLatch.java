@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 public class RobotLatch implements RobotMechanic {
     private Servo hook;
+    private Servo hang_leg;
     private DcMotor scissorLift;
 
     private Object lock = new Object();
@@ -20,7 +21,9 @@ public class RobotLatch implements RobotMechanic {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
         hook = hardwareMap.get(Servo.class, "latch");
+        //hang_leg = hardwareMap.get(Servo.class, "hang_leg");
         hook.setPosition(0.0);
+        //hang_leg.setPosition(0.0);
 
         scissorLift = hardwareMap.get(DcMotor.class, "lift");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLift);
@@ -46,6 +49,12 @@ public class RobotLatch implements RobotMechanic {
 
     public void teleUnhook() {
         hook.setPosition(1.0);
+    }
+
+    public void autoLegUp() { hang_leg.setPosition(0.0); }
+
+    public void autoLegDown() {
+        hang_leg.setPosition(1.0);
     }
 
     public void powerLift(double power) {

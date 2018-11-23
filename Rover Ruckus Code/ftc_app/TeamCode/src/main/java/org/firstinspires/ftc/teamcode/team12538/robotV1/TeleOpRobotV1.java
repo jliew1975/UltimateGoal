@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism.Mine
 
 public class TeleOpRobotV1 extends RobotBase {
     private boolean isLatched = false;
+    private double leg_position = 0.0;
 
     @Override
     public void init() {
@@ -34,6 +35,14 @@ public class TeleOpRobotV1 extends RobotBase {
         rearLeftDrive.setPower(power * Math.signum(v3));
         rearRightDrive.setPower(power * Math.signum(v4));
 
+        if(gamepad.dpad_right){
+            hang_leg.setPosition(leg_position-=0.05);
+        }
+        if(gamepad.dpad_left){
+            hang_leg.setPosition(leg_position+=0.05);
+        }
+
+
         // Intake controls
         if(gamepad.right_bumper) {
             collector.enableIntake(MineralMechanism.Direction.InTake);
@@ -45,21 +54,24 @@ public class TeleOpRobotV1 extends RobotBase {
             }
         }
 
+
         if(gamepad.x) {
             robotLatch.teleHook();
         } else if(gamepad.a) {
             robotLatch.teleUnhook();
-        } else if(gamepad.y) {
-            robotLatch.powerLift(-1.0);
         }
 
         if (gamepad.dpad_up) {
             robotLatch.powerLift(1.0);
         } else if (gamepad.dpad_down) {
             robotLatch.powerLift(-1.0, 100);
-        } else {
+        } else if(gamepad.y) {
+            robotLatch.powerLift(-1.0);
+        }
+        else {
             robotLatch.powerLift(0d);
         }
+
     }
 
     public void player2Controls(Gamepad gamepad) {
