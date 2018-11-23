@@ -32,6 +32,7 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
                 robot.getRobotLatch().printTelemetry();
                 telemetry.update();
             }
+
         } finally {
             OpModeUtils.stop();
         }

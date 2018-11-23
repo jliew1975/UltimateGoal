@@ -73,6 +73,14 @@ public class AutoRobotV1 extends RobotBase {
         // collector.swingArmToPosition(80, 0.2);
     }
 
+    public void phoneUp() {
+        collector.setPhone_tilt(1);
+    }
+
+    public void phoneDown() {
+        collector.setPhone_tilt(0);
+    }
+
     public void moveForward(double power, double distance) {
         // limit power to 1
         power = limitPower(power);

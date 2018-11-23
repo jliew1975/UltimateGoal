@@ -22,6 +22,7 @@ public class MineralMechanism implements RobotMechanic {
 
     private Servo leftArm = null;
     private Servo rightArm = null;
+    private Servo phone_tilt = null;
     private DcMotor armExtension = null;
 
     private Servo leftRelease = null;
@@ -66,6 +67,7 @@ public class MineralMechanism implements RobotMechanic {
 
         leftArm = hardwareMap.servo.get("l_flip");
         rightArm = hardwareMap.servo.get("r_flip");
+        phone_tilt = hardwareMap.servo.get("phone_tilt");
         rightArm.setDirection(Servo.Direction.REVERSE);
 
         leftArm.setPosition(0.8);
@@ -89,12 +91,16 @@ public class MineralMechanism implements RobotMechanic {
         rightRelease.setPosition(0d);
     }
 
+    public void setPhone_tilt(double position){
+        phone_tilt.setPosition(position);
+    }
+
     public void enableIntake(Direction direction) {
         enableIntake(direction, false);
     }
 
     public void enableIntake(Direction direction, boolean intakeAutoOn) {
-        if(direction == Direction.InTake) {
+        if (direction == Direction.InTake) {
             intake.setPower(intakeSpeed);
             this.intakeAutoOn = intakeAutoOn;
         } else {
