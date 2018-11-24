@@ -66,6 +66,12 @@ public class RobotLatch implements RobotMechanic {
         hangLeg.setPosition(1.0);
     }
 
+    public void setHang_leg(double position) {
+        if(hang_leg.getPosition() < 1 || hang_leg.getPosition() > 0 ) {
+            hang_leg.setPosition(hang_leg.getPosition() + position);
+        }
+    }
+
     public void powerLift(double power) {
         powerLift(power, -1);
     }

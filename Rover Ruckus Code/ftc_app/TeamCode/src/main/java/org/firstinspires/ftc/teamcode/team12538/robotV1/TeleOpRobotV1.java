@@ -56,6 +56,15 @@ public class TeleOpRobotV1 extends RobotBase {
             robotLatch.teleHook();
         } else if(gamepad.a) {
             robotLatch.teleUnhook();
+        } else if(gamepad.b) {
+            robotLatch.autoUnhook();
+        }
+
+        if (gamepad.dpad_right){
+            robotLatch.setHang_leg(0.01);
+        }
+        if (gamepad.dpad_left){
+            robotLatch.setHang_leg(-0.01);
         }
 
         if (gamepad.dpad_up) {
