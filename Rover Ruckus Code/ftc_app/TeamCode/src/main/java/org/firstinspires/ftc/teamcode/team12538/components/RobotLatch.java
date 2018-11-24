@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
@@ -12,18 +13,22 @@ import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 public class RobotLatch implements RobotMechanic {
     private Servo hook;
-    private Servo hang_leg;
+    private Servo hangLeg;
     private DcMotor scissorLift;
 
-    private Object lock = new Object();
+    private ElapsedTime runtime = new ElapsedTime();
+
+    private volatile boolean scissorLiftBusy = false;
+    private volatile boolean scissorLiftUpPosInd = false;
 
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
         hook = hardwareMap.get(Servo.class, "latch");
-        //hang_leg = hardwareMap.get(Servo.class, "hang_leg");
-        hook.setPosition(0.0);
-        //hang_leg.setPosition(0.0);
+        hook.setPosition(0.1);
+
+        hangLeg = hardwareMap.get(Servo.class, "hang_leg");
+        hangLeg.setPosition(0d);
 
         scissorLift = hardwareMap.get(DcMotor.class, "lift");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLift);
@@ -40,7 +45,7 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public void autoUnhook() {
-        hook.setPosition(0.0);
+        hook.setPosition(0.5);
     }
 
     public void teleHook() {
@@ -51,10 +56,14 @@ public class RobotLatch implements RobotMechanic {
         hook.setPosition(1.0);
     }
 
-    public void autoLegUp() { hang_leg.setPosition(0.0); }
+    public void adjustHangLegPosition(double position) {
+        hangLeg.setPosition(hangLeg.getPosition() + position);
+    }
+
+    public void autoLegUp() { hangLeg.setPosition(0.0); }
 
     public void autoLegDown() {
-        hang_leg.setPosition(1.0);
+        hangLeg.setPosition(1.0);
     }
 
     public void powerLift(double power) {
@@ -71,34 +80,76 @@ public class RobotLatch implements RobotMechanic {
         scissorLift.setPower(power);
     }
 
-    public void setLiftOnUpPosition() {
-        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLift);
-        scissorLift.setTargetPosition(42000);
-        scissorLift.setPower(1);
+    public void powerLiftOnUpPosition(final double power, final int targetPosition) {
+        synchronized(scissorLift) {
+            if(!scissorLiftBusy) {
+                scissorLiftBusy = true;
+                if(!scissorLiftUpPosInd) {
+                    ThreadUtils.getExecutorService().submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLift);
+                                scissorLift.setTargetPosition(targetPosition);
+                                scissorLift.setPower(Math.abs(power));
 
-        while(scissorLift.isBusy()) {
-            ThreadUtils.idle();
+                                runtime.reset();
+                                while (OpModeUtils.opModeIsActive() && scissorLift.isBusy()) {
+                                    ThreadUtils.idle();
+                                }
+                            } finally {
+                                scissorLiftBusy = false;
+                                scissorLiftUpPosInd = true;
+                            }
+                        }
+                    });
+                } else {
+                    MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    scissorLift.setPower(Math.abs(power));
+                }
+            }
         }
     }
 
-    public void setLiftOnDownPosition() {
-        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLift);
-        scissorLift.setTargetPosition(0);
-        scissorLift.setPower(1);
+    public void powerLiftOnDownPosition(final double power, final int targetPosition) {
+        synchronized(scissorLift) {
+            if(!scissorLiftBusy) {
+                scissorLiftBusy = true;
+                if(scissorLiftUpPosInd) {
+                    ThreadUtils.getExecutorService().submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLift);
+                                scissorLift.setTargetPosition(targetPosition);
+                                scissorLift.setPower(Math.abs(power));
 
-        while(scissorLift.isBusy()) {
-            ThreadUtils.idle();
+                                while(OpModeUtils.opModeIsActive() && scissorLift.isBusy()) {
+                                    ThreadUtils.idle();
+                                }
+                            } finally {
+                                scissorLiftBusy = false;
+                                scissorLiftUpPosInd = false;
+                            }
+                        }
+                    });
+                } else {
+                    MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    scissorLift.setPower(-1 * Math.abs(power));
+                }
+            }
         }
     }
 
     public void unlatch() {
-        // setLiftOnUpPosition();
-        // unhook();
-        setLiftOnDownPosition();
+        powerLiftOnUpPosition(0d, 100);
+        autoUnhook();
+        powerLiftOnDownPosition(0d, 0);
     }
 
     public void printTelemetry() {
         Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
         telemetry.addData("lift", scissorLift.getCurrentPosition());
+        telemetry.addData("hangLeg", hangLeg.getPosition());
     }
 }

@@ -24,6 +24,9 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
 
             waitForStart();
 
+            // tilt the phone for mineral scanning
+            robot.getPhoneTilt().setPosition(0.23);
+
             while (opModeIsActive()) {
                 robot.player1controls(gamepad1);
                 robot.player2Controls(gamepad2);

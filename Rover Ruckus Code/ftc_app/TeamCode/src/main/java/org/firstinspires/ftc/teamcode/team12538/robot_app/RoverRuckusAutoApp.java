@@ -32,14 +32,19 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
 
             waitForStart();
 
+            // tilt the phone for mineral scanning
+            robot.getPhoneTilt().setPosition(0.23);
+
             // deploy robot from lander
-            // robot.unlatchFromLander();
+            robot.unlatchFromLander();
+
+            // expand mineral machenism for mineral collection
             robot.expandMechanism();
             sleep(1000);
 
             // move robot forward a little toward mineral
             // for gold mineral detection
-            robot.moveForward(0.1, 8);
+            robot.moveForward(0.1, 7);
 
             // locate the gold mineral location
             MineralLocation mineralLocation = locateGoldMineral();
@@ -68,7 +73,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
 
     protected void collectMineralOffTapedAreaAndDepositToLander(MineralLocation mineralLocation) throws InterruptedException {
         robot.prepareMineralIntake();
-        robot.moveForward(0.1, 15);
+        robot.moveForward(0.1, 17);
         sleep(500);
 
         robot.getCollector().disableIntake();

@@ -36,6 +36,7 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDebug;
@@ -44,6 +45,7 @@ import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDe
 @TeleOp(name="GoldAlign Example", group="DogeCV")
 public class GoldAlignExample extends OpMode
 {
+    private Servo phoneTilt;
     private GoldAlignDetectorExt detector;
 
 
@@ -51,6 +53,9 @@ public class GoldAlignExample extends OpMode
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
+
+        phoneTilt = hardwareMap.get(Servo.class, "phone_tilt");
+        phoneTilt.setPosition(0.1);
 
         detector = new GoldAlignDetectorExtDebug();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
@@ -80,7 +85,7 @@ public class GoldAlignExample extends OpMode
      */
     @Override
     public void start() {
-
+        phoneTilt.setPosition(0.23);
     }
 
 

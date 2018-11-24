@@ -127,7 +127,6 @@ public class AutoRobotV1 extends RobotBase {
         resetAngle();
 
         runtime.reset();
-        runtime.startTime();
 
         // getAngle() returns + when rotating counter clockwise (left) and - when rotating
         // clockwise (right).
@@ -143,7 +142,7 @@ public class AutoRobotV1 extends RobotBase {
                if(detector != null && detector.isFound()) {
                    if(detector.isAligned()) {
                        break;
-                   } else if(runtime.milliseconds() > timeout) {
+                   } else if(runtime.seconds() > timeout) {
                        break;
                    }
                }
@@ -154,7 +153,7 @@ public class AutoRobotV1 extends RobotBase {
                 if(detector != null && detector.isFound()) {
                     if(detector.isAligned()) {
                         break;
-                    } else if(runtime.milliseconds() > timeout) {
+                    } else if(runtime.seconds() > timeout) {
                         break;
                     }
                 }
