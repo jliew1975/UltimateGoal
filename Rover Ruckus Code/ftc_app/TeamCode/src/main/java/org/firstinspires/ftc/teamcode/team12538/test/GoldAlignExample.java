@@ -54,15 +54,20 @@ public class GoldAlignExample extends OpMode
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
 
-        phoneTilt = hardwareMap.get(Servo.class, "phone_tilt");
-        phoneTilt.setPosition(0.1);
+        try {
+            phoneTilt = hardwareMap.get(Servo.class, "phone_tilt");
+            phoneTilt.setPosition(0.1);
+        } catch(Exception e) {
+            telemetry.addData("phoneTilt", "Cannot initialize.");
+            telemetry.update();
+        }
 
         detector = new GoldAlignDetectorExtDebug();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
 
         // Optional Tuning
         detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = -60; // How far from center frame to offset this alignment zone.
+        detector.alignPosOffset = -120; // How far from center frame to offset this alignment zone.
         detector.downscale = 0.4; // How much to downscale the input frames
 
         detector.areaScoringMethod = DogeCV.AreaScoringMethod.PERFECT_AREA; // Can also be PERFECT_AREA
@@ -85,7 +90,9 @@ public class GoldAlignExample extends OpMode
      */
     @Override
     public void start() {
-        phoneTilt.setPosition(0.23);
+        if(phoneTilt != null) {
+            phoneTilt.setPosition(0.23);
+        }
     }
 
 

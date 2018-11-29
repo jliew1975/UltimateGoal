@@ -20,20 +20,20 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
             robot.getCollector().flipCollectorBox(0.8);
 
             if(mineralLocation == MineralLocation.Left) {
-                robot.moveBackward(0.1, 5);
-                robot.rotate(35, 0.2, 5.0);
-                robot.moveForward(0.2, 31);
-                robot.rotate(45, 0.2, 5.0);
+                robot.moveBackward(0.5, 5);
+                robot.rotate(35, 0.3, 5.0);
+                robot.moveForward(0.5, 31);
+                robot.rotate(45, 0.3, 5.0);
             } else if(mineralLocation == MineralLocation.Right) {
-                robot.moveBackward(0.1, 5);
+                robot.moveBackward(0.5, 5);
                 robot.rotate(120, 0.2, 5.0);
                 robot.moveForward(0.5, 43);
                 robot.rotate(45, 0.2, 5.0);
             } else {
-                robot.moveBackward(0.1, 4);
-                robot.rotate(85, 0.2, 5.0);
-                robot.moveForward(0.2, 46);
-                robot.rotate(40, 0.2, 5.0);
+                robot.moveBackward(0.5, 5);
+                robot.rotate(85, 0.3, 5.0);
+                robot.moveForward(0.5, 46);
+                robot.rotate(40, 0.3, 5.0);
             }
         }
     }
@@ -52,8 +52,9 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
         }
 
         robot.rotate(90, 0.2, 5.0);
-        placeTeamMarker();
         robot.rotate(90, 0.2, 5.0);
+        placeTeamMarker();
+        robot.moveForward(0.5, 10);
         robot.strafeLeft(0.3, 4);
     }
 
@@ -79,7 +80,7 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
 
     @Override
     protected void navigateForParking(MineralLocation mineralLocation) {
-        robot.moveForward(0.6, 65);
+        robot.moveForward(0.6, 55);
         robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
     }
 }

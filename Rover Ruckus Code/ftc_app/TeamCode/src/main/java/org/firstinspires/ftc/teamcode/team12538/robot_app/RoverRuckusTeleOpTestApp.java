@@ -21,40 +21,16 @@ public class RoverRuckusTeleOpTestApp extends RoverRuckusAutoApp {
             robot.init();
             robot.init_imu();
 
-            detector = createDetector();
-            detector.enable();
-
-            telemetry.addData("Angle", robot.getAngle());
-            telemetry.update();
+            // detector = createDetector();
+            // detector.enable();
 
             waitForStart();
 
             while (opModeIsActive()) {
-                robot.controlWithGamePad(gamepad1);
+                robot.player1controls(gamepad1);
 
-
-                if (gamepad1.a) {
-                    robot.strafeLeft(0.3, 20);
-                    robot.stop();
-                } else if (gamepad1.b) {
-                    robot.strafeRight(0.3, 20);
-                    robot.stop();
-                }
-
-                robot.printImuAngleTelemtry();
-
-                /*
-                // mineral intake mechanism
-                robot.getCollector().controlArm(-gamepad1.left_stick_x);
-
-                if(gamepad1.x) {
-                    robot.getCollector().adjustArmPosition(-100, false);
-                }
-
-                if(gamepad1.a) {
-                    robot.getCollector().flipCollectorBox(0.6);
-                }
-                */
+                robot.getRobotLatch().printTelemetry();
+                telemetry.update();
             }
         } finally {
             if(detector != null) {

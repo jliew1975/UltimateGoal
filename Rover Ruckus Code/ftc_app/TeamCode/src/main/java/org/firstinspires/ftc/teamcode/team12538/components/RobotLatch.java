@@ -15,6 +15,7 @@ public class RobotLatch implements RobotMechanic {
     private Servo hook;
     private Servo hangLeg;
     private DcMotor scissorLift;
+    private DcMotor scissorLiftHelp;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -28,12 +29,19 @@ public class RobotLatch implements RobotMechanic {
         hook.setPosition(0.1);
 
         hangLeg = hardwareMap.get(Servo.class, "hang_leg");
-        hangLeg.setPosition(0d);
+        hangLeg.setPosition(0.1d);
 
         scissorLift = hardwareMap.get(DcMotor.class, "lift");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLift);
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorLift);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorLift);
+
+        /*
+        scissorLiftHelp = hardwareMap.get(DcMotor.class, "liftHelp");
+        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLiftHelp);
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorLiftHelp);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorLiftHelp);
+        */
     }
 
     public void setHookPosition(double position) {
@@ -60,15 +68,21 @@ public class RobotLatch implements RobotMechanic {
         hangLeg.setPosition(hangLeg.getPosition() + position);
     }
 
-    public void autoLegUp() { hangLeg.setPosition(0.0); }
+    public boolean shouldLowerSupportLeg() {
+        return (scissorLift.getCurrentPosition() > 4500);
+    }
+
+    public void autoLegUp() {
+        hangLeg.setPosition(0.1);
+    }
 
     public void autoLegDown() {
         hangLeg.setPosition(1.0);
     }
 
-    public void setHang_leg(double position) {
-        if(hang_leg.getPosition() < 1 || hang_leg.getPosition() > 0 ) {
-            hang_leg.setPosition(hang_leg.getPosition() + position);
+    public void setHangLeg(double position) {
+        if(hangLeg.getPosition() < 1 || hangLeg.getPosition() > 0 ) {
+            hangLeg.setPosition(hangLeg.getPosition() + position);
         }
     }
 
@@ -87,70 +101,68 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public void powerLiftOnUpPosition(final double power, final int targetPosition) {
-        synchronized(scissorLift) {
-            if(!scissorLiftBusy) {
-                scissorLiftBusy = true;
-                if(!scissorLiftUpPosInd) {
-                    ThreadUtils.getExecutorService().submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLift);
-                                scissorLift.setTargetPosition(targetPosition);
-                                scissorLift.setPower(Math.abs(power));
+        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLift);
 
-                                runtime.reset();
-                                while (OpModeUtils.opModeIsActive() && scissorLift.isBusy()) {
-                                    ThreadUtils.idle();
-                                }
-                            } finally {
-                                scissorLiftBusy = false;
-                                scissorLiftUpPosInd = true;
-                            }
-                        }
-                    });
-                } else {
-                    MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    scissorLift.setPower(Math.abs(power));
-                }
+        double adjustedPower = power;
+        int currentPosition = scissorLift.getCurrentPosition();
+        if(currentPosition > targetPosition) {
+            adjustedPower = Math.abs(power) * -1;
+        }
+
+        scissorLift.setTargetPosition(targetPosition);
+        scissorLift.setPower(Math.abs(adjustedPower));
+
+        runtime.reset();
+        while (OpModeUtils.opModeIsActive() && scissorLift.isBusy()) {
+            ThreadUtils.idle();
+            if(shouldLowerSupportLeg()) {
+                autoLegDown();
             }
         }
     }
 
     public void powerLiftOnDownPosition(final double power, final int targetPosition) {
-        synchronized(scissorLift) {
-            if(!scissorLiftBusy) {
-                scissorLiftBusy = true;
-                if(scissorLiftUpPosInd) {
-                    ThreadUtils.getExecutorService().submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLift);
-                                scissorLift.setTargetPosition(targetPosition);
-                                scissorLift.setPower(Math.abs(power));
+        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLift);
 
-                                while(OpModeUtils.opModeIsActive() && scissorLift.isBusy()) {
-                                    ThreadUtils.idle();
-                                }
-                            } finally {
-                                scissorLiftBusy = false;
-                                scissorLiftUpPosInd = false;
-                            }
-                        }
-                    });
-                } else {
-                    MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    scissorLift.setPower(-1 * Math.abs(power));
-                }
+        double adjustedPower = power;
+        int currentPosition = scissorLift.getCurrentPosition();
+        if(currentPosition > targetPosition) {
+            adjustedPower = Math.abs(power) * -1;
+        }
+
+        scissorLift.setTargetPosition(targetPosition);
+        scissorLift.setPower(adjustedPower);
+
+        while(OpModeUtils.opModeIsActive() && scissorLift.isBusy()) {
+            ThreadUtils.idle();
+            if(!shouldLowerSupportLeg()) {
+                autoLegUp();
             }
         }
     }
 
     public void unlatch() {
-        powerLiftOnUpPosition(0d, 100);
+        // raise scissor lift for landing
+        powerLiftOnUpPosition(1d, 7250);
+        ThreadUtils.sleep(500);
+
+        //safe measure just incase encoder stop too early
+        if(scissorLift.getCurrentPosition() < 7250) {
+            scissorLift.setPower(0.1);
+            while(scissorLift.getCurrentPosition() < 7250) {
+                ThreadUtils.idle();
+            }
+        }
+
+        // unlatch robot from lander
         autoUnhook();
-        powerLiftOnDownPosition(0d, 0);
+        ThreadUtils.sleep(500);
+
+        // lower scissor lift
+        powerLiftOnDownPosition(1d, 10);
+        scissorLift.setPower(0);
+        printTelemetry();
+
     }
 
     public void printTelemetry() {

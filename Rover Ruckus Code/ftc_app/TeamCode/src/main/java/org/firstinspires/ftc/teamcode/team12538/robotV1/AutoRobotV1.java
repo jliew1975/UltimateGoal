@@ -64,21 +64,26 @@ public class AutoRobotV1 extends RobotBase {
 
     public void unlatchFromLander() {
         robotLatch.unlatch();
-        robotLatch.autoLegDown();
     }
 
     public void expandMechanism() {
         collector.flipCollectorBox(0d);
-        // collector.adjustArmPosition(-200, false);
-        // collector.swingArmToPosition(80, 0.2);
+        collector.positionArm(5000, 1.0);
+        ThreadUtils.sleep(500);
+
+        collector.swingArmToPosition(100, 0.3);
+        ThreadUtils.sleep(200);
+        collector.getOuttakeSlide().setPosition(1d);
+        collector.swingArmToPosition(0, 0.1);
+        collector.getSwingingArm().setPower(0);
     }
 
     public void phoneUp() {
-        collector.setPhone_tilt(1);
+        collector.setPhoneTilt(1);
     }
 
     public void phoneDown() {
-        collector.setPhone_tilt(0);
+        collector.setPhoneTilt(0);
     }
 
     public void moveForward(double power, double distance) {

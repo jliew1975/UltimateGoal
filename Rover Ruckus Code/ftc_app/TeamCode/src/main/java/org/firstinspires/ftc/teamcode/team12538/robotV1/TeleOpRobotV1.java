@@ -12,6 +12,7 @@ public class TeleOpRobotV1 extends RobotBase {
     @Override
     public void init() {
         super.init();
+        collector.flipCollectorBox(0d);
     }
 
     public void player1controls(Gamepad gamepad) {
@@ -61,18 +62,33 @@ public class TeleOpRobotV1 extends RobotBase {
         }
 
         if (gamepad.dpad_right){
-            robotLatch.setHang_leg(0.01);
+            robotLatch.setHangLeg(0.01);
         }
         if (gamepad.dpad_left){
-            robotLatch.setHang_leg(-0.01);
+            robotLatch.setHangLeg(-0.01);
         }
 
         if (gamepad.dpad_up) {
             robotLatch.powerLift(1.0);
+            if(robotLatch.shouldLowerSupportLeg()) {
+                robotLatch.autoLegDown();
+            } else {
+                robotLatch.autoLegUp();
+            }
         } else if (gamepad.dpad_down) {
             robotLatch.powerLift(-1.0, 100);
+            if(robotLatch.shouldLowerSupportLeg()) {
+                robotLatch.autoLegDown();
+            } else {
+                robotLatch.autoLegUp();
+            }
         } else if(gamepad.y) {
             robotLatch.powerLift(-1.0);
+            if(robotLatch.shouldLowerSupportLeg()) {
+                robotLatch.autoLegDown();
+            } else {
+                robotLatch.autoLegUp();
+            }
         } else {
             robotLatch.powerLift(0d);
         }
@@ -101,23 +117,22 @@ public class TeleOpRobotV1 extends RobotBase {
 
         // swinging arm control
         if(gamepad.left_bumper) {
-            collector.swingArmToPosition(450, 0.15);
+            collector.swingArmAsync(MineralMechanism.ArmDirection.Up);
         } else if(gamepad.right_bumper) {
-            collector.swingArmToPosition(80, 0.08);
-            collector.swingArmToPosition(0, 0.08);
+            collector.swingArmAsync(MineralMechanism.ArmDirection.Down);
         }
 
-        if(collector.isSwingArmUp()) {
+        if(collector.isSwingReadyForRelease()) {
             if (gamepad.right_trigger > 0) {
                 collector.controlReleaseMineral(MineralSide.Left, 0d);
             } else {
-                collector.controlReleaseMineral(MineralSide.Left, 0.5);
+                collector.controlReleaseMineral(MineralSide.Left, 1d);
             }
 
             if (gamepad.left_trigger > 0) {
                 collector.controlReleaseMineral(MineralSide.Right, 0d);
             } else {
-                collector.controlReleaseMineral(MineralSide.Right, 0.5);
+                collector.controlReleaseMineral(MineralSide.Right, 1d);
             }
         } else {
             collector.controlReleaseMineral(MineralSide.Both, 0d);
@@ -125,9 +140,9 @@ public class TeleOpRobotV1 extends RobotBase {
 
         // adjustment control
         if(gamepad.dpad_up) {
-            collector.swingArmPositionBy(20);
+            collector.swingArmPositionBy(100);
         } else if(gamepad.dpad_down) {
-            collector.swingArmPositionBy(-20);
+            collector.swingArmPositionBy(-100);
         } else if(gamepad.dpad_right) {
             collector.adjustArmPosition(-10, true);
         } else if(gamepad.dpad_left) {

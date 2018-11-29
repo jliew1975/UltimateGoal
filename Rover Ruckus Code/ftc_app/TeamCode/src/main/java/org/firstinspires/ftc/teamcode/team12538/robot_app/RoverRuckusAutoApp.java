@@ -32,15 +32,15 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
 
             waitForStart();
 
-            // tilt the phone for mineral scanning
-            robot.getPhoneTilt().setPosition(0.23);
-
             // deploy robot from lander
             robot.unlatchFromLander();
 
             // expand mineral machenism for mineral collection
             robot.expandMechanism();
-            sleep(1000);
+
+            // tilt the phone for mineral scanning
+            robot.getPhoneTilt().setPosition(0.23);
+            sleep(500);
 
             // move robot forward a little toward mineral
             // for gold mineral detection
@@ -55,12 +55,13 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
             // move the gold mineral off taped area
             collectMineralOffTapedAreaAndDepositToLander(mineralLocation);
 
+            /*
             // navigate to depot area for team marker deployment
             navigateToDepot(mineralLocation);
 
             // navigate to crater for parking
             navigateForParking(mineralLocation);
-
+            */
             robot.stop();
         } finally {
             if(detector != null) {
@@ -77,8 +78,8 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
         sleep(500);
 
         robot.getCollector().disableIntake();
-        robot.getCollector().flipCollectorBox(0.8);
-        sleep(1000);
+        robot.getCollector().flipCollectorBox(0.6);
+        sleep(500);
 
         if(mineralLocation == MineralLocation.Left) {
             robot.moveForward(0.1, 20);
@@ -92,17 +93,18 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {
 
         if(mineralLocation == MineralLocation.Left) {
-            robot.rotate(96, 0.2, 5.0);
-            robot.moveBackward(0.2, 25);
+            robot.rotate(96, 0.5, 5.0);
+            robot.moveBackward(0.5, 25);
+            robot.rotate(90, 0.5, 5.0);
         } else if(mineralLocation == MineralLocation.Right) {
-            robot.rotate(80, 0.2, 5.0);
-            robot.moveForward(0.2, 28);
-            robot.rotate(80, 0.2, 5.0);
+            robot.rotate(80, 0.5, 5.0);
+            robot.moveForward(0.5, 28);
+            robot.rotate(80, 0.5, 5.0);
         } else {
-            robot.moveForward(0.2, 18);
-            robot.rotate(45, 0.2, 5.0);
-            robot.moveForward(0.2, 3);
-            robot.rotate(80, 0.2, 5.0);
+            robot.moveForward(0.5, 18);
+            robot.rotate(45, 0.5, 5.0);
+            robot.moveForward(0.5, 3);
+            robot.rotate(80, 0.5, 5.0);
         }
 
         robot.stop();
@@ -135,7 +137,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
             return MineralLocation.Center;
         }
 
-        // if not found try left side
+        // try left side first with 5 seconds timeout on rotation
         robot.rotate(40, 0.2, 5.0, detector);
 
 
@@ -143,6 +145,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
             return MineralLocation.Left;
         }
 
+        // try right side to try to locate the mineral with 5 seconds timeout on rotation
         robot.rotate(-60, 0.2, 5.0, detector);
 
 
