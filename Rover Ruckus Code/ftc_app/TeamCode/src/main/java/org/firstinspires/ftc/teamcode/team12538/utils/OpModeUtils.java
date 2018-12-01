@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class OpModeUtils {
+    private static boolean disableInitPos;
     private static OpModeStore GLOBAL_STORE = new OpModeStore();
 
     public static LinearOpMode getOpMode() {
@@ -34,6 +35,14 @@ public class OpModeUtils {
     public static void stop() {
         getGlobalStore().clear();
         ThreadUtils.shutdown();
+    }
+
+    public static boolean isDisableInitPos() {
+        return disableInitPos;
+    }
+
+    public static void setDisableInitPos(boolean disableInitPos) {
+        disableInitPos = disableInitPos;
     }
 
 }

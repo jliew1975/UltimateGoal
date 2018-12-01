@@ -30,10 +30,10 @@ public abstract class RobotBase extends MecanumDriveBase {
 
         // Sheet Method (position: 1.0 => drop)
         sheetMetal = hardwareMap.get(Servo.class, "sheet_metal");
-        sheetMetal.setPosition(0d);
+        sheetMetal.setPosition(0.8);
 
         phoneTilt = hardwareMap.get(Servo.class, "phone_tilt");
-        phoneTilt.setPosition(0.1);
+        phoneTilt.setPosition(0.4);
 
         // mineral collector mechanism
         collector = new MineralMechanism(-100, 5000);
@@ -49,6 +49,6 @@ public abstract class RobotBase extends MecanumDriveBase {
     }
 
     public void placeTeamMarker() {
-        sheetMetal.setPosition(1.0);
+        sheetMetal.setPosition(0.2);
     }
 }

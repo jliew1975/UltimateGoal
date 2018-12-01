@@ -14,24 +14,24 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
     protected void collectMineralOffTapedAreaAndDepositToLander(MineralLocation mineralLocation) throws InterruptedException {
         robot.prepareMineralIntake();
         if(mineralLocation != MineralLocation.Unknown) {
-            robot.moveForward(0.1, 10);
+            robot.moveForward(0.1, 15);
 
             robot.getCollector().disableIntake();
-            robot.getCollector().flipCollectorBox(0.8);
+            robot.getCollector().flipCollectorBox(0.6);
 
             if(mineralLocation == MineralLocation.Left) {
-                robot.moveBackward(0.5, 5);
-                robot.rotate(35, 0.3, 5.0);
-                robot.moveForward(0.5, 31);
-                robot.rotate(45, 0.3, 5.0);
+                robot.moveBackward(0.5, 3);
+                robot.rotate(30, 0.3, 5.0);
+                robot.moveForward(0.5, 20);
+                robot.rotate(50, 0.3, 5.0);
             } else if(mineralLocation == MineralLocation.Right) {
-                robot.moveBackward(0.5, 5);
-                robot.rotate(120, 0.2, 5.0);
-                robot.moveForward(0.5, 43);
+                robot.moveBackward(0.5, 3);
+                robot.rotate(115, 0.2, 5.0);
+                robot.moveForward(0.5, 33);
                 robot.rotate(45, 0.2, 5.0);
             } else {
-                robot.moveBackward(0.5, 5);
-                robot.rotate(85, 0.3, 5.0);
+                robot.moveBackward(0.5, 3);
+                robot.rotate(75, 0.3, 5.0);
                 robot.moveForward(0.5, 46);
                 robot.rotate(40, 0.3, 5.0);
             }
@@ -42,20 +42,22 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {
         if (mineralLocation == MineralLocation.Left) {
             robot.strafeRight(0.3, 5);
-            robot.moveForward(0.5, 40);
+            robot.strafeLeft(0.3,1);
+            robot.moveForward(0.5, 60);
         } else if (mineralLocation == MineralLocation.Right) {
             robot.strafeRight(0.3, 5);
-            robot.moveForward(0.5, 40);
+            robot.strafeLeft(0.3,1);
+            robot.moveForward(0.5, 60);
         } else {
             robot.strafeRight(0.3, 5);
-            robot.moveForward(0.5, 40);
+            robot.strafeLeft(0.3,1);
+            robot.moveForward(0.5, 60);
         }
 
         robot.rotate(90, 0.2, 5.0);
-        robot.rotate(90, 0.2, 5.0);
         placeTeamMarker();
-        robot.moveForward(0.5, 10);
-        robot.strafeLeft(0.3, 4);
+        robot.rotate(90, 0.2, 5.0);
+        robot.strafeLeft(0.3, 9);
     }
 
     @Override

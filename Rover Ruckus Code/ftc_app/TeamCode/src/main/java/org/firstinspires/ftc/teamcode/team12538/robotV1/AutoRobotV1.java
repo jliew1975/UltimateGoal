@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
@@ -67,23 +68,18 @@ public class AutoRobotV1 extends RobotBase {
     }
 
     public void expandMechanism() {
-        collector.flipCollectorBox(0d);
-        collector.positionArm(5000, 1.0);
-        ThreadUtils.sleep(500);
+        synchronized (this) {
+            collector.flipCollectorBox(0d);
+            collector.positionArm(4000, 1.0);
+            ThreadUtils.sleep(500);
 
-        collector.swingArmToPosition(100, 0.3);
-        ThreadUtils.sleep(200);
-        collector.getOuttakeSlide().setPosition(1d);
-        collector.swingArmToPosition(0, 0.1);
-        collector.getSwingingArm().setPower(0);
-    }
-
-    public void phoneUp() {
-        collector.setPhoneTilt(1);
-    }
-
-    public void phoneDown() {
-        collector.setPhoneTilt(0);
+            collector.swingArmToPosition(200, 0.3);
+            ThreadUtils.sleep(200);
+            collector.getOuttakeSlide().setPosition(1d);
+            collector.swingArmToPosition(0, 0.1);
+            collector.getSwingingArm().setPower(0);
+            collector.controlReleaseMineral(MineralMechanism.MineralSide.Both, 0d);
+        }
     }
 
     public void moveForward(double power, double distance) {

@@ -16,18 +16,20 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtils.init(this);
+        OpModeUtils.getGlobalStore().setCloseDepoArm(false);
+        OpModeUtils.setDisableInitPos(false);
         OpModeUtils.getGlobalStore().setResetArmExtensionEncoderValue(false);
 
         try {
             TeleOpRobotV1 robot = new TeleOpRobotV1();
             robot.init();
-            robot.getSheetMetal().setPosition(1.0);
+            robot.getSheetMetal().setPosition(0.75);
             robot.getCollector().getOuttakeSlide().setPosition(1d);
 
             waitForStart();
 
             // tilt the phone for mineral scanning
-            // robot.getPhoneTilt().setPosition(0.23);
+            robot.getPhoneTilt().setPosition(0.4);
 
             while (opModeIsActive()) {
                 robot.player1controls(gamepad1);

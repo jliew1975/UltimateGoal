@@ -16,17 +16,17 @@ public class RoverRuckusTeleOpResetApp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtils.init(this);
+        OpModeUtils.setDisableInitPos(true);
         OpModeUtils.getGlobalStore().setDisableLimit(true);
 
         try {
             TeleOpRobotReset robot = new TeleOpRobotReset();
             robot.init();
-            robot.getSheetMetal().setPosition(1.0);
 
             waitForStart();
 
             // tilt the phone for mineral scanning
-            robot.getPhoneTilt().setPosition(0.23);
+            robot.getPhoneTilt().setPosition(0.4);
 
             while (opModeIsActive()) {
                 robot.player1controls(gamepad1);

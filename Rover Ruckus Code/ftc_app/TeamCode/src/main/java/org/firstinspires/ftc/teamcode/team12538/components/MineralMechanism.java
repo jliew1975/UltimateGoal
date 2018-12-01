@@ -27,7 +27,6 @@ public class MineralMechanism implements RobotMechanic {
 
     private Servo leftArm = null;
     private Servo rightArm = null;
-    private Servo phoneTilt = null;
 
     private DcMotor armExtension = null;
 
@@ -75,11 +74,12 @@ public class MineralMechanism implements RobotMechanic {
         leftArm = hardwareMap.servo.get("l_flip");
         rightArm = hardwareMap.servo.get("r_flip");
 
-        phoneTilt = hardwareMap.servo.get("phone_tilt");
         rightArm.setDirection(Servo.Direction.REVERSE);
 
-        leftArm.setPosition(0.8);
-        rightArm.setPosition(0.8);
+        if(!OpModeUtils.isDisableInitPos()) {
+            leftArm.setPosition(0.8);
+            rightArm.setPosition(0.8);
+        }
 
         armExtension = hardwareMap.get(DcMotor.class, "extend");
         if(OpModeUtils.getGlobalStore().isResetArmExtensionEncoderValue()) {
@@ -99,15 +99,20 @@ public class MineralMechanism implements RobotMechanic {
         rightRelease = hardwareMap.get(Servo.class, "r_depo");
         rightRelease.setDirection(Servo.Direction.REVERSE);
 
+        if(!OpModeUtils.isDisableInitPos()) {
+            if (OpModeUtils.getGlobalStore().isCloseDepoArm()) {
+                leftRelease.setPosition(1d);
+                rightRelease.setPosition(1d);
+            } else {
+                leftRelease.setPosition(0d);
+                rightRelease.setPosition(0d);
+            }
+        }
+
         outtakeSlide = hardwareMap.get(Servo.class, "outtake_slide");
-        outtakeSlide.setPosition(0.3);
-
-        leftRelease.setPosition(0.0d);
-        rightRelease.setPosition(0.0d);
-    }
-
-    public void setPhoneTilt(double position){
-        phoneTilt.setPosition(position);
+        if(!OpModeUtils.isDisableInitPos()) {
+            outtakeSlide.setPosition(0.3);
+        }
     }
 
     public void enableIntake(Direction direction) {
@@ -202,6 +207,7 @@ public class MineralMechanism implements RobotMechanic {
             try {
                 int currentPosition = armExtension.getCurrentPosition();
                 double effectivePower = power;
+
                 if(targetPosition < currentPosition) {
                     effectivePower = -1 * effectivePower;
                 }
@@ -213,6 +219,8 @@ public class MineralMechanism implements RobotMechanic {
                 while (OpModeUtils.opModeIsActive() && armExtension.isBusy()) {
                     ThreadUtils.idle();
                 }
+
+                armExtension.setPower(0);
             } finally {
                 disableArmControl = false;
                 MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, armExtension);
@@ -282,7 +290,7 @@ public class MineralMechanism implements RobotMechanic {
 
     private void swingArm(final ArmDirection armDirection) {
         int armCurrentPosition = swingingArm.getCurrentPosition();
-        int targetPosition = armDirection == ArmDirection.Up ? 650 : 100;
+        int targetPosition = armDirection == ArmDirection.Up ? 750 : 100;
 
         if(Math.abs(targetPosition - armCurrentPosition) < 10) {
             return;

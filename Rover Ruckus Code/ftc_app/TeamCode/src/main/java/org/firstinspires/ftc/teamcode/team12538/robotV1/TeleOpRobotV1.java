@@ -12,7 +12,6 @@ public class TeleOpRobotV1 extends RobotBase {
     @Override
     public void init() {
         super.init();
-        collector.flipCollectorBox(0d);
     }
 
     public void player1controls(Gamepad gamepad) {
