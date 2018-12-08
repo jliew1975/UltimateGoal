@@ -71,10 +71,7 @@ public class AutoRobotV1 extends RobotBase {
         synchronized (this) {
             collector.flipCollectorBox(0d);
             collector.positionArm(4000, 1.0);
-            ThreadUtils.sleep(500);
-
             collector.swingArmToPosition(200, 0.3);
-            ThreadUtils.sleep(200);
             collector.getOuttakeSlide().setPosition(1d);
             collector.swingArmToPosition(0, 0.1);
             collector.getSwingingArm().setPower(0);
@@ -115,15 +112,15 @@ public class AutoRobotV1 extends RobotBase {
 
     }
 
-    public void rotate(int degrees, double power, double timeout) throws InterruptedException {
-        rotate(degrees, power, timeout, null);
+    public double rotate(int degrees, double power, double timeout) throws InterruptedException {
+        return rotate(degrees, power, timeout, null);
     }
 
     /**
      * Rotate left or right the number of degrees. Does not support turning more than 180 degrees.
      * @param degrees Degrees to turn, + is left - is right
      */
-    public void rotate(int degrees, double power, double timeout, GoldAlignDetectorExt detector) throws InterruptedException {
+    public double rotate(int degrees, double power, double timeout, GoldAlignDetectorExt detector) throws InterruptedException {
         // restart imu movement tracking.
         resetAngle();
 
@@ -140,13 +137,15 @@ public class AutoRobotV1 extends RobotBase {
             }
 
             while (OpModeUtils.opModeIsActive() && getAngle() > degrees) {
-               if(detector != null && detector.isFound()) {
+                if(detector != null && detector.isFound()) {
                    if(detector.isAligned()) {
                        break;
-                   } else if(runtime.seconds() > timeout) {
-                       break;
                    }
-               }
+                }
+
+                if(runtime.seconds() > timeout) {
+                    break;
+                }
             }
         } else {  // left turn.
             turnLeft(power);
@@ -154,9 +153,11 @@ public class AutoRobotV1 extends RobotBase {
                 if(detector != null && detector.isFound()) {
                     if(detector.isAligned()) {
                         break;
-                    } else if(runtime.seconds() > timeout) {
-                        break;
                     }
+                }
+
+                if(runtime.seconds() > timeout) {
+                    break;
                 }
             }
         }
@@ -164,8 +165,12 @@ public class AutoRobotV1 extends RobotBase {
         stop();
         TimeUnit.MILLISECONDS.sleep(200);
 
+        double rotateAngle = getAngle();
+
         // reset angle tracking on new heading.
         resetAngle();
+
+        return rotateAngle;
     }
 
     /**

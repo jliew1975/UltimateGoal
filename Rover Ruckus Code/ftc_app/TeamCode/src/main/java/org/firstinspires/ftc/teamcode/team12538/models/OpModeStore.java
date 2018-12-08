@@ -15,6 +15,7 @@ public class OpModeStore {
     private Telemetry telemetry = null;
 
     private boolean disableLimit = false;
+    private boolean disableInitPos = false;
     private boolean closeDepoArm = false;
     private boolean resetArmExtensionEncoderValue = true;
 

@@ -43,6 +43,7 @@ import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDe
 
 
 @TeleOp(name="GoldAlign Example", group="DogeCV")
+@Disabled
 public class GoldAlignExample extends OpMode
 {
     private Servo phoneTilt;
@@ -51,7 +52,7 @@ public class GoldAlignExample extends OpMode
 
     @Override
     public void init() {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        // telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
 
         try {
@@ -62,7 +63,7 @@ public class GoldAlignExample extends OpMode
             telemetry.update();
         }
 
-        detector = new GoldAlignDetectorExtDebug();
+        detector = new GoldAlignDetectorExt();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
 
         // Optional Tuning

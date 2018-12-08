@@ -29,7 +29,7 @@ public class RobotLatch implements RobotMechanic {
         hook.setPosition(0.1);
 
         hangLeg = hardwareMap.get(Servo.class, "hang_leg");
-        hangLeg.setPosition(0.1d);
+        hangLeg.setPosition(0d);
 
         scissorLift = hardwareMap.get(DcMotor.class, "lift");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLift);
@@ -66,7 +66,7 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public void autoLegUp() {
-        hangLeg.setPosition(0.1);
+        hangLeg.setPosition(0.0);
     }
 
     public void autoLegDown() {
@@ -98,22 +98,19 @@ public class RobotLatch implements RobotMechanic {
 
         double adjustedPower = power;
         int currentPosition = scissorLift.getCurrentPosition();
-        if(currentPosition > targetPosition) {
-            adjustedPower = Math.abs(power) * -1;
-        }
 
         scissorLift.setTargetPosition(targetPosition);
         scissorLift.setPower(Math.abs(adjustedPower));
 
         runtime.reset();
-        while (OpModeUtils.opModeIsActive() && scissorLift.isBusy() && runtime.seconds() < 5d) {
+        while (OpModeUtils.opModeIsActive() && scissorLift.isBusy() && runtime.seconds() < 8d) {
             ThreadUtils.idle();
             if(shouldLowerSupportLeg()) {
                 autoLegDown();
             }
         }
 
-        scissorLift.setPower(0);
+        scissorLift.setPower(0d);
     }
 
     public void powerLiftOnDownPosition(final double power, final int targetPosition) {
@@ -121,9 +118,6 @@ public class RobotLatch implements RobotMechanic {
 
         double adjustedPower = power;
         int currentPosition = scissorLift.getCurrentPosition();
-        if(currentPosition > targetPosition) {
-            adjustedPower = Math.abs(power) * -1;
-        }
 
         scissorLift.setTargetPosition(targetPosition);
         scissorLift.setPower(adjustedPower);
@@ -134,20 +128,14 @@ public class RobotLatch implements RobotMechanic {
                 autoLegUp();
             }
         }
+
+        scissorLift.setPower(0d);
     }
 
     public void unlatch() {
         // raise scissor lift for landing
-        powerLiftOnUpPosition(1d, 7250);
+        powerLiftOnUpPosition(1d, 7850);
         ThreadUtils.sleep(500);
-
-        //safe measure just incase encoder stop too early
-        if(scissorLift.getCurrentPosition() < 7250) {
-            scissorLift.setPower(0.1);
-            while(scissorLift.getCurrentPosition() < 7250) {
-                ThreadUtils.idle();
-            }
-        }
 
         // unlatch robot from lander
         autoUnhook();

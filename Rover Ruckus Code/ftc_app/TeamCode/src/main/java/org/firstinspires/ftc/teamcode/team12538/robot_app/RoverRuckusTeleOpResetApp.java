@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538.robot_app;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,20 +9,23 @@ import org.firstinspires.ftc.teamcode.team12538.robotV1.TeleOpRobotReset;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.TeleOpRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
-@TeleOp(name="Robot Tele (Reset)", group="Linear Opmode")
-public class RoverRuckusTeleOpResetApp extends LinearOpMode {
+@TeleOp(name="Robot Tele v1 (Reset)", group="Linear Opmode")
+public class RoverRuckusTeleOpResetApp extends RoverRuckusTeleOpApp {
 
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtils.init(this);
-        OpModeUtils.setDisableInitPos(true);
-        OpModeUtils.getGlobalStore().setDisableLimit(true);
+        OpModeUtils.getGlobalStore().setCloseDepoArm(false);
+        OpModeUtils.getGlobalStore().setDisableInitPos(true);
+        OpModeUtils.getGlobalStore().setResetArmExtensionEncoderValue(true);
 
         try {
-            TeleOpRobotReset robot = new TeleOpRobotReset();
+            TeleOpRobotV1 robot = new TeleOpRobotV1();
             robot.init();
+            robot.getSheetMetal().setPosition(0.75);
+            robot.getCollector().getOuttakeSlide().setPosition(1d);
 
             waitForStart();
 

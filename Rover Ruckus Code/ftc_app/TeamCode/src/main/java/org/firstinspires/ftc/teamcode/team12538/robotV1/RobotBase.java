@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotLatch;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -50,5 +51,6 @@ public abstract class RobotBase extends MecanumDriveBase {
 
     public void placeTeamMarker() {
         sheetMetal.setPosition(0.2);
+        ThreadUtils.sleep(200);
     }
 }

@@ -111,7 +111,7 @@ public class MineralMechanism implements RobotMechanic {
 
         outtakeSlide = hardwareMap.get(Servo.class, "outtake_slide");
         if(!OpModeUtils.isDisableInitPos()) {
-            outtakeSlide.setPosition(0.3);
+            outtakeSlide.setPosition(0.5);
         }
     }
 
@@ -240,7 +240,7 @@ public class MineralMechanism implements RobotMechanic {
                             RobotLog.d("starting autoMineralDeposit logic");
                             disableIntake();
                             flipCollectorBox(0.6);
-                            positionArm(5000, 1d);
+                            positionArm(6000, 1d);
                             flipCollectorBox(1d);
                             ThreadUtils.sleep(500);
                             flipCollectorBox(0.4);

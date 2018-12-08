@@ -2,101 +2,31 @@ package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
+import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
+import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
-import edu.spa.ftclib.internal.drivetrain.MecanumDrivetrain;
+import java.util.List;
 
-public class AutoRobotTest extends AutoRobotV1 {
+public class AutoRobotTest extends MecanumDriveBase {
+    private final double COUNTS_PER_MOTOR_REV = 560; // andymark 20:1 gearbox
+    private final double DRIVE_GEAR_REDUCTION = 1.0;  // drive train geared down 1:2
+    private final double WHEEL_DIAMETER_INCHES = 4.0;
+    private final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+
+
     Telemetry telemetry = null;
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void init() {
         super.init();
-        super.init_imu();
         telemetry = OpModeUtils.getGlobalStore().getTelemetry();
-    }
-
-    public void player1controls(Gamepad gamepad) {
-        // Drive mode for mecanum wheel
-        double r = Math.hypot(gamepad.left_stick_x, gamepad.left_stick_y);
-        double robotAngle = Math.atan2(gamepad.left_stick_y, gamepad.left_stick_x) - Math.PI / 4;
-        double rightX = gamepad.right_stick_x;
-
-        final double v1 = r * Math.sin(robotAngle) - rightX;
-        final double v2 = r * Math.cos(robotAngle) + rightX;
-        final double v3 = r * Math.cos(robotAngle) - rightX;
-        final double v4 = r * Math.sin(robotAngle) + rightX;
-
-        double power = 1.0;
-        if(gamepad.left_trigger > 0 || gamepad.right_trigger > 0) {
-            power = 0.3; // slowdown robot on left or right trigger
-        }
-
-        frontLeftDrive.setPower(power * Math.signum(v1));
-        frontRightDrive.setPower(power * Math.signum(v2));
-        rearLeftDrive.setPower(power * Math.signum(v3));
-        rearRightDrive.setPower(power * Math.signum(v4));
-
-        if(gamepad.dpad_right){
-            robotLatch.adjustHangLegPosition(0.05);
-        } else if(gamepad.dpad_left){
-            robotLatch.adjustHangLegPosition(-0.05);
-        }
-
-        // Intake controls
-        if(gamepad.right_bumper) {
-            collector.enableIntake(MineralMechanism.Direction.InTake);
-        } else if(gamepad.left_bumper) {
-            collector.enableIntake(MineralMechanism.Direction.OutTake);
-        } else {
-            if(!collector.isIntakeAutoOn()) {
-                collector.disableIntake();
-            }
-        }
-
-        if(gamepad.x) {
-            robotLatch.teleHook();
-        } else if(gamepad.a) {
-            robotLatch.teleUnhook();
-        } else if(gamepad.b) {
-            robotLatch.autoUnhook();
-        }
-
-        if (gamepad.dpad_right){
-            robotLatch.setHangLeg(0.05);
-        }
-        if (gamepad.dpad_left){
-            robotLatch.setHangLeg(-0.05);
-        }
-
-        if (gamepad.dpad_up) {
-            robotLatch.powerLift(1.0);
-            if(robotLatch.shouldLowerSupportLeg()) {
-                robotLatch.autoLegDown();
-            } else {
-                robotLatch.autoLegUp();
-            }
-        } else if (gamepad.dpad_down) {
-            robotLatch.powerLift(-1.0, 100);
-            if(robotLatch.shouldLowerSupportLeg()) {
-                robotLatch.autoLegDown();
-            } else {
-                robotLatch.autoLegUp();
-            }
-        } else if(gamepad.y) {
-            robotLatch.powerLift(-1.0);
-            if(robotLatch.shouldLowerSupportLeg()) {
-                robotLatch.autoLegDown();
-            } else {
-                robotLatch.autoLegUp();
-            }
-        } else {
-            robotLatch.powerLift(0d);
-        }
     }
 
     public void printMotorTelemetry() {
@@ -110,5 +40,88 @@ public class AutoRobotTest extends AutoRobotV1 {
                 motors.get(2).getCurrentPosition(),
                 motors.get(3).getCurrentPosition());
         telemetry.update();
+    }
+
+    public void strafeLeft(double power, double distance) {
+        strafeLeft(power, distance, null);
+    }
+
+    public void strafeLeft(double power, double distance, GoldAlignDetectorExt detector) {
+        // limit power to 1
+        power = limitPower(power);
+        encoderStrafe(StrafingDirection.Left, power, distance, 5, detector);
+    }
+
+    public void strafeRight(double power, double distance) {
+        strafeRight(power, distance, null);
+    }
+
+    public void strafeRight(double power, double distance, GoldAlignDetectorExt detector) {
+        // limit power to 1
+        power = limitPower(power);
+        encoderStrafe(StrafingDirection.Right, power, distance, 5, detector);
+
+    }
+
+    private void encoderStrafe(StrafingDirection direction, double speed, double distance, double timeout, GoldAlignDetectorExt detector) {
+        // reset encoders
+        // MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motors);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motors);
+
+        int[] targetPositions = new int[motors.size()];
+
+        double newDistance = (direction == StrafingDirection.Right) ? -1 * distance : distance;
+
+        //ensure that the opmode is still active
+        if(OpModeUtils.getOpMode().opModeIsActive()) {
+            int index = 0;
+            for(DcMotor motor : motors) {
+                // bleftDrive or frightDrive
+                if(index == 1 || index == 2) {
+                    targetPositions[index] = motor.getCurrentPosition() + (int) (-newDistance * Math.sqrt(2) * COUNTS_PER_INCH);
+                } else {
+                    targetPositions[index] = motor.getCurrentPosition() + (int) (newDistance * Math.sqrt(2) * COUNTS_PER_INCH);
+                }
+                motor.setTargetPosition(targetPositions[index]);
+                index++;
+            }
+
+            MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, motors);
+
+            runtime.reset();
+
+            for(DcMotor motor : motors) {
+                motor.setPower(Math.abs(speed));
+            }
+
+            //keep looping until one of the motors finished its movement
+            while (OpModeUtils.getOpMode().opModeIsActive() &&
+                    (runtime.seconds() < timeout) &&
+                    (motorsIsBusy(motors)))
+            {
+                if(detector != null) {
+                    if(detector.isAligned()) {
+                        break;
+                    }
+                }
+
+                //report current and target positions to driver station
+                telemetry.addData("Path1", "Running to %7d :%7d",
+                        targetPositions[0], targetPositions[1], targetPositions[2], targetPositions[3]);
+
+                telemetry.addData("Path2", "Running at %7d :%7d",
+                        motors.get(0).getCurrentPosition(),
+                        motors.get(1).getCurrentPosition(),
+                        motors.get(2).getCurrentPosition(),
+                        motors.get(3).getCurrentPosition());
+                telemetry.update();
+            }
+
+            stop();
+        }
+    }
+
+    private boolean motorsIsBusy(List<DcMotor> motors) {
+        return motors.get(0).isBusy() && motors.get(1).isBusy() && motors.get(2).isBusy() && motors.get(3).isBusy();
     }
 }

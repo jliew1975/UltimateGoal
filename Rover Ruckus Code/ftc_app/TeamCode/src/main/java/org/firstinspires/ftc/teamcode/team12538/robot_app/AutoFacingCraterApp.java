@@ -11,53 +11,64 @@ import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDe
 @Autonomous(name="Auto (Facing Crater)", group="Linear Opmode")
 public class AutoFacingCraterApp extends RoverRuckusAutoApp {
     @Override
-    protected void collectMineralOffTapedAreaAndDepositToLander(MineralLocation mineralLocation) throws InterruptedException {
+    public void runOpMode() throws InterruptedException {
+        super.phoneTiltPosition = 0.22;
+        super.moveForwardPosition = 5.0;
+        super.runOpMode();
+    }
+
+    @Override
+    protected void collectMineralOffTapedArea(MineralLocation mineralLocation) throws InterruptedException {
         robot.prepareMineralIntake();
         if(mineralLocation != MineralLocation.Unknown) {
-            robot.moveForward(0.1, 15);
+            if(mineralLocation == MineralLocation.Center) {
+                robot.moveForward(0.1, 10);
+            } else {
+                robot.moveForward(0.1, 15);
+            }
 
             robot.getCollector().disableIntake();
             robot.getCollector().flipCollectorBox(0.6);
-
-            if(mineralLocation == MineralLocation.Left) {
-                robot.moveBackward(0.5, 3);
-                robot.rotate(30, 0.3, 5.0);
-                robot.moveForward(0.5, 20);
-                robot.rotate(50, 0.3, 5.0);
-            } else if(mineralLocation == MineralLocation.Right) {
-                robot.moveBackward(0.5, 3);
-                robot.rotate(115, 0.2, 5.0);
-                robot.moveForward(0.5, 33);
-                robot.rotate(45, 0.2, 5.0);
-            } else {
-                robot.moveBackward(0.5, 3);
-                robot.rotate(75, 0.3, 5.0);
-                robot.moveForward(0.5, 46);
-                robot.rotate(40, 0.3, 5.0);
-            }
         }
     }
 
     @Override
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {
-        if (mineralLocation == MineralLocation.Left) {
-            robot.strafeRight(0.3, 5);
-            robot.strafeLeft(0.3,1);
-            robot.moveForward(0.5, 60);
-        } else if (mineralLocation == MineralLocation.Right) {
-            robot.strafeRight(0.3, 5);
-            robot.strafeLeft(0.3,1);
-            robot.moveForward(0.5, 60);
-        } else {
-            robot.strafeRight(0.3, 5);
-            robot.strafeLeft(0.3,1);
-            robot.moveForward(0.5, 60);
-        }
+        if(mineralLocation != MineralLocation.Right) {
+            robot.moveBackward(0.5, 3);
 
-        robot.rotate(90, 0.2, 5.0);
-        placeTeamMarker();
-        robot.rotate(90, 0.2, 5.0);
-        robot.strafeLeft(0.3, 9);
+            if (mineralLocation == MineralLocation.Left) {
+                robot.rotate(30, 0.5, 5.0);
+                robot.moveForward(0.5, 20);
+                robot.rotate(50, 0.5, 5.0);
+                robot.strafeRight(0.3, 20);
+                robot.strafeLeft(0.3,1);
+                robot.moveForward(0.5, 60);
+            } else {
+                robot.rotate(78, 0.3, 5.0);
+                robot.moveForward(0.5, 28);
+                robot.rotate(40, 0.3, 5.0);
+                robot.strafeRight(0.3, 20);
+                robot.strafeLeft(0.3,1);
+                robot.moveForward(0.5, 50);
+            }
+
+            robot.rotate(90, 0.2, 5.0);
+            placeTeamMarker();
+            robot.rotate(90, 0.2, 5.0);
+            robot.strafeLeft(0.3, 9);
+        }
+    }
+
+    @Override
+    protected void navigateForParking(MineralLocation mineralLocation) {
+        if(mineralLocation == MineralLocation.Right) {
+            robot.moveForward(0.5, 20);
+            robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
+        } else {
+            robot.moveForward(0.6, 60);
+            robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
+        }
     }
 
     @Override
@@ -77,12 +88,5 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
         detector.useDefaults();
 
         return detector;
-    }
-
-
-    @Override
-    protected void navigateForParking(MineralLocation mineralLocation) {
-        robot.moveForward(0.6, 55);
-        robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
     }
 }

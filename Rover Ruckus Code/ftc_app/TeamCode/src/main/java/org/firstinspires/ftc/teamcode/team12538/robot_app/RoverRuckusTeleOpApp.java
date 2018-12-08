@@ -17,7 +17,7 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         OpModeUtils.init(this);
         OpModeUtils.getGlobalStore().setCloseDepoArm(false);
-        OpModeUtils.setDisableInitPos(false);
+        OpModeUtils.getGlobalStore().setDisableInitPos(true);
         OpModeUtils.getGlobalStore().setResetArmExtensionEncoderValue(false);
 
         try {
