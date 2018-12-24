@@ -1,11 +1,10 @@
-package com.disnodeteam.dogecv.detectors.roverrukus;
+package com.disnodeteam.dogecv.detectors.roverruckus;
 
 import android.util.Log;
 
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.DogeCVDetector;
 import com.disnodeteam.dogecv.filters.DogeCVColorFilter;
-import com.disnodeteam.dogecv.filters.HSVColorFilter;
 import com.disnodeteam.dogecv.filters.HSVRangeFilter;
 import com.disnodeteam.dogecv.filters.LeviColorFilter;
 import com.disnodeteam.dogecv.scoring.MaxAreaScorer;
@@ -21,24 +20,12 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.HOGDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Victo on 9/10/2018.
- */
-
-public class SamplingOrderDetector extends DogeCVDetector {
-
-    public enum GoldLocation {
-        UNKNOWN,
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
-
+public class SamplingOrderDetectorExt extends DogeCVDetector {
     public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA;
 
     public RatioScorer ratioScorer = new RatioScorer(1.0,5);
@@ -49,22 +36,26 @@ public class SamplingOrderDetector extends DogeCVDetector {
     public DogeCVColorFilter yellowFilter = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW,100);
     public DogeCVColorFilter whiteFilter  = new HSVRangeFilter(new Scalar(0,0,200), new Scalar(50,40,255));
 
-    private GoldLocation currentOrder = GoldLocation.UNKNOWN;
-    private GoldLocation lastOrder    = GoldLocation.UNKNOWN;
-    private Rect         foundRect    = null;
-    private boolean      isFound      = false;
+    private SamplingOrder currentOrder = SamplingOrder.UNKNOWN;
+    private SamplingOrder lastOrder    = SamplingOrder.UNKNOWN;
+    private Rect foundRect    = null;
+
+    private boolean found   = false;
+    private boolean aligned = false;
+    private double goldXPos = 0;
 
     private Mat workingMat  = new Mat();
-    private Mat blurredMat  = new Mat();
     private Mat yellowMask  = new Mat();
     private Mat whiteMask   = new Mat();
     private Mat hiarchy     = new Mat();
-    private Mat structure   = new Mat();
 
     private Size stretchKernal = new Size(10,10);
     private Size newSize = new Size();
 
-    public SamplingOrderDetector() {
+    public double alignPosOffset = 0;
+    public double alignSize = 100;
+
+    public SamplingOrderDetectorExt() {
         super();
         this.detectorName = "Sampling Order Detector";
     }
@@ -135,8 +126,6 @@ public class SamplingOrderDetector extends DogeCVDetector {
         List<Rect>   choosenWhiteRect  = new ArrayList<>();
         List<Double> chosenWhiteScore  = new ArrayList<>();;
 
-
-
         for(MatOfPoint c : contoursWhite){
             MatOfPoint2f contour2f = new MatOfPoint2f(c.toArray());
 
@@ -182,6 +171,11 @@ public class SamplingOrderDetector extends DogeCVDetector {
 
         }
 
+        double alignX = (getAdjustedSize().width / 2) + alignPosOffset;
+        double alignXMin = alignX - (alignSize / 2);
+        double alignXMax = alignX +(alignSize / 2);
+        double xPos = 0;
+
         if(chosenYellowRect != null){
             Imgproc.rectangle(workingMat,
                     new Point(chosenYellowRect.x, chosenYellowRect.y),
@@ -196,9 +190,24 @@ public class SamplingOrderDetector extends DogeCVDetector {
                     new Scalar(0, 255, 255),
                     2);
 
+            xPos = chosenYellowRect.x + (chosenYellowRect.width / 2);
+            goldXPos = xPos;
+            Imgproc.circle(workingMat, new Point( xPos, chosenYellowRect.y + (chosenYellowRect.height / 2)), 5, new Scalar(0,255,0),2);
+
+            if(xPos < alignXMax && xPos > alignXMin) {
+                aligned = true;
+            } else {
+                aligned = false;
+            }
+
+            Imgproc.line(workingMat,new Point(xPos, getAdjustedSize().height), new Point(xPos, getAdjustedSize().height - 30),new Scalar(255,255,0), 2);
+
+            if(choosenWhiteRect.size() < 2) {
+                found = true;
+            }
         }
 
-        if(choosenWhiteRect != null){
+        if(choosenWhiteRect != null) {
             for(int i=0;i<choosenWhiteRect.size();i++){
                 Rect rect = choosenWhiteRect.get(i);
                 double score = chosenWhiteScore.get(i);
@@ -213,40 +222,48 @@ public class SamplingOrderDetector extends DogeCVDetector {
                         1.3,
                         new Scalar(255, 255, 255),
                         2);
-
             }
         }
 
-        if(choosenWhiteRect.size() >= 2 && chosenYellowRect != null){
+        if(choosenWhiteRect.size() != 0 && chosenYellowRect != null) {
             int leftCount = 0;
-            for(int i=0;i<choosenWhiteRect.size();i++){
+            for (int i = 0; i < choosenWhiteRect.size(); i++) {
                 Rect rect = choosenWhiteRect.get(i);
-                if(chosenYellowRect.x > rect.x){
+                if (chosenYellowRect.x > rect.x) {
                     leftCount++;
                 }
             }
-            if(leftCount == 0){
-                currentOrder = SamplingOrderDetector.GoldLocation.LEFT;
+
+            if (leftCount == 0) {
+                currentOrder = SamplingOrder.LEFT;
             }
 
-            if(leftCount == 1){
-                currentOrder = SamplingOrderDetector.GoldLocation.CENTER;
+            if (leftCount == 1) {
+                currentOrder = SamplingOrder.CENTER;
             }
 
-            if(leftCount >= 2){
-                currentOrder = SamplingOrderDetector.GoldLocation.RIGHT;
+            if (leftCount >= 2 && choosenWhiteRect.size() >= 2) {
+                currentOrder = SamplingOrder.RIGHT;
             }
-            isFound = true;
+            found = true;
             lastOrder = currentOrder;
+        } else if(choosenWhiteRect.size() >= 2 && chosenYellowRect == null) {
+            currentOrder = SamplingOrder.RIGHT;
+            found = true;
+            lastOrder = currentOrder;
+        } else {
+            currentOrder = SamplingOrder.UNKNOWN;
 
-        }else{
-            currentOrder = SamplingOrderDetector.GoldLocation.UNKNOWN;
-            isFound = false;
+            if(chosenYellowRect == null) {
+                found = false;
+            }
         }
 
-        Imgproc.putText(workingMat,"Gold Position: " + lastOrder.toString(),new Point(10,getAdjustedSize().height - 30),0,1, new Scalar(255,255,0),1);
-        Imgproc.putText(workingMat,"Current Track: " + currentOrder.toString(),new Point(10,getAdjustedSize().height - 10),0,0.5, new Scalar(255,255,255),1);
+        Imgproc.line(workingMat,new Point(alignXMin, getAdjustedSize().height), new Point(alignXMin, getAdjustedSize().height - 40),new Scalar(0,255,0), 2);
+        Imgproc.line(workingMat,new Point(alignXMax, getAdjustedSize().height), new Point(alignXMax,getAdjustedSize().height - 40),new Scalar(0,255,0), 2);
 
+        Imgproc.putText(workingMat,"Gold Position: " + lastOrder.toString(),new Point(10,getAdjustedSize().height - 10),0,0.5, new Scalar(255,255,0),1);
+        Imgproc.putText(workingMat,"Is Aligned: " + aligned,new Point(10,getAdjustedSize().height - 30),0,0.5, new Scalar(255,255,0),1);
         return workingMat;
     }
 
@@ -262,15 +279,33 @@ public class SamplingOrderDetector extends DogeCVDetector {
         addScorer(ratioScorer);
     }
 
-    public boolean isFound() {
-        return isFound;
+    @Override
+    public void disable() {
+        super.disable();
+
+        workingMat.release();
+        yellowMask.release();
+        whiteMask.release();
+        hiarchy.release();
     }
 
-    public GoldLocation getCurrentOrder() {
+    public boolean isFound() {
+        return found;
+    }
+
+    public SamplingOrder getCurrentOrder() {
         return currentOrder;
     }
 
-    public GoldLocation getLastOrder() {
+    public SamplingOrder getLastOrder() {
         return lastOrder;
+    }
+
+    public boolean isAligned(){
+        return aligned;
+    }
+
+    public double getXPosition(){
+        return goldXPos;
     }
 }

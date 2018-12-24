@@ -89,7 +89,7 @@ public class MineralMechanism implements RobotMechanic {
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, armExtension);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, armExtension);
 
-        swingingArm = hardwareMap.get(DcMotor.class, "swing");
+        swingingArm = hardwareMap.get(DcMotor.class, "depo_lift");
         swingingArm.setDirection(DcMotorSimple.Direction.REVERSE);
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, swingingArm);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, swingingArm);

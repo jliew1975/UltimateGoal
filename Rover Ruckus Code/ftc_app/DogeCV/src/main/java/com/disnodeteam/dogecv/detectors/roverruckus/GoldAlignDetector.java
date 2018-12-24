@@ -1,4 +1,4 @@
-package com.disnodeteam.dogecv.detectors.roverrukus;
+package com.disnodeteam.dogecv.detectors.roverruckus;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -8,7 +8,6 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.DogeCVDetector;
 import com.disnodeteam.dogecv.filters.DogeCVColorFilter;
 import com.disnodeteam.dogecv.filters.LeviColorFilter;
-import com.disnodeteam.dogecv.scoring.DogeCVScorer;
 import com.disnodeteam.dogecv.scoring.MaxAreaScorer;
 import com.disnodeteam.dogecv.scoring.PerfectAreaScorer;
 import com.disnodeteam.dogecv.scoring.RatioScorer;
@@ -16,7 +15,6 @@ import com.disnodeteam.dogecv.scoring.RatioScorer;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;

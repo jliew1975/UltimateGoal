@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,13 +13,11 @@ import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 public class RobotLatch implements RobotMechanic {
     private Servo hook;
     private Servo hangLeg;
-    private DcMotor scissorLift;
-    private DcMotor scissorLiftHelp;
+
+    private DcMotor scissorLiftMotor1;
+    private DcMotor scissorLiftMotor2;
 
     private ElapsedTime runtime = new ElapsedTime();
-
-    private volatile boolean scissorLiftBusy = false;
-    private volatile boolean scissorLiftUpPosInd = false;
 
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
@@ -31,10 +28,15 @@ public class RobotLatch implements RobotMechanic {
         hangLeg = hardwareMap.get(Servo.class, "hang_leg");
         hangLeg.setPosition(0d);
 
-        scissorLift = hardwareMap.get(DcMotor.class, "lift");
-        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLift);
-        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorLift);
-        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorLift);
+        scissorLiftMotor1 = hardwareMap.get(DcMotor.class, "lift_1");
+        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLiftMotor1);
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorLiftMotor1);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorLiftMotor1);
+
+        scissorLiftMotor2 = hardwareMap.get(DcMotor.class, "lift_2");
+        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLiftMotor2);
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorLiftMotor2);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorLiftMotor2);
     }
 
     public void setHookPosition(double position) {
@@ -62,7 +64,7 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public boolean shouldLowerSupportLeg() {
-        return (scissorLift.getCurrentPosition() > 4500);
+        return (scissorLiftMotor1.getCurrentPosition() > 4500 || scissorLiftMotor2.getCurrentPosition() > 4500);
     }
 
     public void autoLegUp() {
@@ -74,8 +76,10 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public void setHangLeg(double position) {
-        if(hangLeg.getPosition() < 1 || hangLeg.getPosition() > 0 ) {
-            hangLeg.setPosition(hangLeg.getPosition() + position);
+        if(position > 0d && position < 1.0) {
+            if (hangLeg.getPosition() < 1 || hangLeg.getPosition() > 0) {
+                hangLeg.setPosition(position);
+            }
         }
     }
 
@@ -85,51 +89,59 @@ public class RobotLatch implements RobotMechanic {
 
     public void powerLift(double power, int constraint) {
         if(constraint != -1) {
-            if(scissorLift.getCurrentPosition() <= constraint) {
+            if(scissorLiftMotor1.getCurrentPosition() <= constraint || scissorLiftMotor2.getCurrentPosition() <= constraint) {
                 power = 0;
             }
         }
 
-        scissorLift.setPower(power);
+        scissorLiftMotor1.setPower(power);
+        scissorLiftMotor2.setPower(power);
     }
 
     public void powerLiftOnUpPosition(final double power, final int targetPosition) {
-        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLift);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLiftMotor1);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLiftMotor2);
 
         double adjustedPower = power;
-        int currentPosition = scissorLift.getCurrentPosition();
 
-        scissorLift.setTargetPosition(targetPosition);
-        scissorLift.setPower(Math.abs(adjustedPower));
+        scissorLiftMotor1.setTargetPosition(targetPosition);
+        scissorLiftMotor2.setTargetPosition(targetPosition);
+
+        scissorLiftMotor1.setPower(Math.abs(adjustedPower));
+        scissorLiftMotor2.setPower(Math.abs(adjustedPower));
 
         runtime.reset();
-        while (OpModeUtils.opModeIsActive() && scissorLift.isBusy() && runtime.seconds() < 8d) {
-            ThreadUtils.idle();
+        while (OpModeUtils.opModeIsActive() && scissorLiftMotor1.isBusy() && scissorLiftMotor2.isBusy() && runtime.seconds() < 8d) {
             if(shouldLowerSupportLeg()) {
                 autoLegDown();
             }
         }
 
-        scissorLift.setPower(0d);
+        scissorLiftMotor1.setPower(0d);
+        scissorLiftMotor2.setPower(0d);
     }
 
     public void powerLiftOnDownPosition(final double power, final int targetPosition) {
-        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLift);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLiftMotor1);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLiftMotor2);
 
         double adjustedPower = power;
-        int currentPosition = scissorLift.getCurrentPosition();
 
-        scissorLift.setTargetPosition(targetPosition);
-        scissorLift.setPower(adjustedPower);
+        scissorLiftMotor1.setTargetPosition(targetPosition);
+        scissorLiftMotor2.setTargetPosition(targetPosition);
 
-        while(OpModeUtils.opModeIsActive() && scissorLift.isBusy()) {
-            ThreadUtils.idle();
+        scissorLiftMotor1.setPower(adjustedPower);
+        scissorLiftMotor2.setPower(adjustedPower);
+
+        runtime.reset();
+        while(OpModeUtils.opModeIsActive() && scissorLiftMotor1.isBusy() && scissorLiftMotor2.isBusy() && runtime.seconds() < 8d) {
             if(!shouldLowerSupportLeg()) {
                 autoLegUp();
             }
         }
 
-        scissorLift.setPower(0d);
+        scissorLiftMotor1.setPower(0d);
+        scissorLiftMotor2.setPower(0d);
     }
 
     public void unlatch() {
@@ -143,12 +155,12 @@ public class RobotLatch implements RobotMechanic {
 
         // lower scissor lift
         powerLiftOnDownPosition(1d, 10);
-        scissorLift.setPower(0);
     }
 
     public void printTelemetry() {
         Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
-        telemetry.addData("lift", scissorLift.getCurrentPosition());
+        telemetry.addData("lift_1", scissorLiftMotor1.getCurrentPosition());
+        telemetry.addData("lift_2", scissorLiftMotor2.getCurrentPosition());
         telemetry.addData("hangLeg", hangLeg.getPosition());
     }
 }

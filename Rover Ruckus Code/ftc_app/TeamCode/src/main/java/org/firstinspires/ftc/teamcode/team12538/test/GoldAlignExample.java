@@ -43,7 +43,6 @@ import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDe
 
 
 @TeleOp(name="GoldAlign Example", group="DogeCV")
-@Disabled
 public class GoldAlignExample extends OpMode
 {
     private Servo phoneTilt;

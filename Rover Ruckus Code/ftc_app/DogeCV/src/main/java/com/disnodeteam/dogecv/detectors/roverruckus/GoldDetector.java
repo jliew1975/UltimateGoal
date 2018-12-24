@@ -1,4 +1,4 @@
-package com.disnodeteam.dogecv.detectors.roverrukus;
+package com.disnodeteam.dogecv.detectors.roverruckus;
 
 import android.util.Log;
 
@@ -12,8 +12,6 @@ import com.disnodeteam.dogecv.scoring.RatioScorer;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;

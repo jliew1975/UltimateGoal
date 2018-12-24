@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDe
 public class AutoFacingCraterApp extends RoverRuckusAutoApp {
     @Override
     public void runOpMode() throws InterruptedException {
-        super.phoneTiltPosition = 0.22;
+        super.phoneTiltPosition = 0.6;
         super.moveForwardPosition = 5.0;
         super.runOpMode();
     }
@@ -71,6 +71,7 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
         }
     }
 
+    /*
     @Override
     protected GoldAlignDetectorExt createDetector() {
         GoldAlignDetectorExt detector = new GoldAlignDetectorExtDebug();
@@ -89,4 +90,5 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
 
         return detector;
     }
+    */
 }

@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode.team12538.test;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
-import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
+import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name="Sampling Order Example", group="DogeCV")
 public class SamplingOrderExample extends OpMode {
     // Detector object
-    private SamplingOrderDetector detector;
+    private SamplingOrderDetectorExt detector;
 
 
     @Override
@@ -47,11 +47,13 @@ public class SamplingOrderExample extends OpMode {
         telemetry.addData("Status", "DogeCV 2018.0 - Sampling Order Example");
 
         // Setup detector
-        detector = new SamplingOrderDetector(); // Create the detector
+        detector = new SamplingOrderDetectorExt(); // Create the detector
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize detector with app context and camera
         detector.useDefaults(); // Set detector to use default settings
 
         detector.downscale = 0.4; // How much to downscale the input frames
+        detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
 
         // Optional tuning
         detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
@@ -85,8 +87,10 @@ public class SamplingOrderExample extends OpMode {
      */
     @Override
     public void loop() {
-        telemetry.addData("Current Order" , detector.getCurrentOrder().toString()); // The current result for the frame
         telemetry.addData("Last Order" , detector.getLastOrder().toString()); // The last known result
+        telemetry.addData("IsFound" , detector.isFound());
+        telemetry.addData("IsAligned" , detector.isAligned()); // Is the bot aligned with the gold mineral
+        telemetry.addData("X Pos" , detector.getXPosition()); // Gold X pos.
     }
 
     /*

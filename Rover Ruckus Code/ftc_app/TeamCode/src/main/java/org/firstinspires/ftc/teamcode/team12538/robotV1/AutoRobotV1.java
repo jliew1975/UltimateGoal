@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
+import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetector;
+import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -95,7 +97,7 @@ public class AutoRobotV1 extends RobotBase {
         strafeLeft(power, distance, null);
     }
 
-    public void strafeLeft(double power, double distance, GoldAlignDetectorExt detector) {
+    public void strafeLeft(double power, double distance, SamplingOrderDetectorExt detector) {
         // limit power to 1
         power = limitPower(power);
         encoderStrafe(StrafingDirection.Left, power, distance, 5, detector);
@@ -105,7 +107,7 @@ public class AutoRobotV1 extends RobotBase {
         strafeRight(power, distance, null);
     }
 
-    public void strafeRight(double power, double distance, GoldAlignDetectorExt detector) {
+    public void strafeRight(double power, double distance, SamplingOrderDetectorExt detector) {
         // limit power to 1
         power = limitPower(power);
         encoderStrafe(StrafingDirection.Right, power, distance, 5, detector);
@@ -120,7 +122,7 @@ public class AutoRobotV1 extends RobotBase {
      * Rotate left or right the number of degrees. Does not support turning more than 180 degrees.
      * @param degrees Degrees to turn, + is left - is right
      */
-    public double rotate(int degrees, double power, double timeout, GoldAlignDetectorExt detector) throws InterruptedException {
+    public double rotate(int degrees, double power, double timeout, SamplingOrderDetectorExt detector) throws InterruptedException {
         // restart imu movement tracking.
         resetAngle();
 
@@ -263,7 +265,7 @@ public class AutoRobotV1 extends RobotBase {
         }
     }
 
-    private void encoderStrafe(StrafingDirection direction, double speed, double distance, double timeout, GoldAlignDetectorExt detector) {
+    private void encoderStrafe(StrafingDirection direction, double speed, double distance, double timeout, SamplingOrderDetectorExt detector) {
         // reset encoders
         // MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motors);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motors);

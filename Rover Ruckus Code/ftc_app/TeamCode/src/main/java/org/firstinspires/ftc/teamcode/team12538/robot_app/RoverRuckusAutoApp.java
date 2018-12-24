@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.team12538.robot_app;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
+import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrder;
+import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
@@ -15,9 +16,9 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
     public enum MineralLocation { Left, Center, Right, Unknown }
 
     AutoRobotV1 robot = null;
-    GoldAlignDetectorExt detector = null;
+    SamplingOrderDetectorExt detector = null;
 
-    public double phoneTiltPosition = 0.23;
+    public double phoneTiltPosition = 0.6;
     public double moveForwardPosition = 6.0;
 
     @Override
@@ -83,12 +84,10 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
     }
 
     protected void collectMineralOffTapedArea(MineralLocation mineralLocation) throws InterruptedException {
-        robot.prepareMineralIntake();
+        // robot.prepareMineralIntake();
         robot.moveForward(0.1, 17);
-        sleep(500);
-
-        robot.getCollector().disableIntake();
-        robot.getCollector().flipCollectorBox(0.6);
+        // robot.getCollector().disableIntake();
+        // robot.getCollector().flipCollectorBox(0.6);
     }
 
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {
@@ -120,76 +119,66 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode {
         robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
     }
 
-    // TODO: Incorporate TensorFlow to determine location of gold mineral to save time
-    // TODO: on locate mineral
     private MineralLocation locateGoldMineral() throws InterruptedException {
         double xPos = -1;
         boolean isFound = detector.isFound();
+
+        SamplingOrder samplingOrder = SamplingOrder.UNKNOWN;
+
         if(isFound) {
-            xPos = detector.getXPosition();
+            samplingOrder = detector.getLastOrder();
         }
 
-        if(isFound && !detector.isAligned()) {
-            if(xPos >= 300) {
-                robot.strafeRight(0.5, 5, detector);
-            } else {
-                robot.strafeLeft(0.5, 5, detector);
-            }
+        MineralLocation location = MineralLocation.Unknown;
 
-            return MineralLocation.Center;
+        switch(samplingOrder) {
+            case CENTER:
+                if(isFound && !detector.isAligned() && samplingOrder == SamplingOrder.CENTER) {
+                    if(xPos >= 300) {
+                        robot.strafeRight(0.5, 5, detector);
+                    } else {
+                        robot.strafeLeft(0.5, 5, detector);
+                    }
+                }
+                location = MineralLocation.Center;
+                break;
+
+            case LEFT:
+                robot.rotate(30, 0.1, 5.0, detector);
+                location = MineralLocation.Left;
+                break;
+
+            case RIGHT:
+                robot.rotate(-30, 0.1,5.0, detector);
+                location = MineralLocation.Right;
+                break;
+
+            default:
+                robot.rotate(30, 0.1, 5.0);
+                double angleRotated = Math.abs(robot.rotate(-60, 0.1, 5.0, detector));
+                if(angleRotated < 20) {
+                    location = MineralLocation.Left;
+                } else if(angleRotated > 40) {
+                    location = MineralLocation.Right;
+                } else {
+                    location = MineralLocation.Center;
+                }
         }
 
-        // assumed after deployment robot is center on the middle of mineral tape
-        if(detector.isFound() && detector.isAligned()) {
-            // TODO: need to adjust heading to align with mineral
-            return MineralLocation.Center;
-        }
-
-        // try left side first with 5 seconds timeout on rotation
-        robot.rotate(30, 0.1, 5.0, detector);
-
-
-        if(detector.isFound()) {
-            return MineralLocation.Left;
-        }
-
-        // try right side to try to locate the mineral with 5 seconds timeout on rotation
-        double angleRotated = Math.abs(robot.rotate(-60, 0.2, 5.0, detector));
-        if(detector.isFound()) {
-            if(angleRotated < 20) {
-                return MineralLocation.Center;
-            }
-
-            return MineralLocation.Right;
-        }
-
-        // not able to determine the location of gold mineral so will try
-        // to use the x-position if gold mineral is found but not aligned and position is not known
-        robot.getPhoneTilt().setPosition(0.25);
-        sleep(200);
-
-        // rotate back
-        angleRotated = Math.abs(robot.rotate(20, 0.1, 5.0, detector));
-
-        if(angleRotated < 20) {
-            return MineralLocation.Right;
-        } else if(angleRotated > 40) {
-            return MineralLocation.Left;
-        } else {
-            return MineralLocation.Center;
-        }
+        return location;
     }
 
-    protected GoldAlignDetectorExt createDetector() {
-        GoldAlignDetectorExt detector = new GoldAlignDetectorExt();
+    protected SamplingOrderDetectorExt createDetector() {
+        SamplingOrderDetectorExt detector = new SamplingOrderDetectorExt();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
 
         detector.alignSize = 80; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = -80; // How far from center frame to offset this alignment zone.
+        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
         detector.downscale = 0.4; // How much to downscale the input frames
-        detector.areaScoringMethod = DogeCV.AreaScoringMethod.PERFECT_AREA;
-        detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
-        // detector.maxAreaScorer.weight = 0.005; // if using MAX_AREA scoring
+        // detector.areaScoringMethod = DogeCV.AreaScoringMethod.PERFECT_AREA;
+        // detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
+        detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA;
+        detector.maxAreaScorer.weight = 0.001; // if using MAX_AREA scoring
         detector.ratioScorer.weight = 5;
         detector.ratioScorer.perfectRatio = 1.0;
 
