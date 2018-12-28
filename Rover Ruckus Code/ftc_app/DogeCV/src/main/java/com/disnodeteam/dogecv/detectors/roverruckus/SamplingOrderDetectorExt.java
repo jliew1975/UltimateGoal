@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.DogeCVDetector;
+import com.disnodeteam.dogecv.detectors.listeners.DetectorListener;
 import com.disnodeteam.dogecv.filters.DogeCVColorFilter;
 import com.disnodeteam.dogecv.filters.HSVRangeFilter;
 import com.disnodeteam.dogecv.filters.LeviColorFilter;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SamplingOrderDetectorExt extends DogeCVDetector {
+    public DetectorListener listener = null;
     public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA;
 
     public RatioScorer ratioScorer = new RatioScorer(1.0,5);
@@ -54,6 +56,8 @@ public class SamplingOrderDetectorExt extends DogeCVDetector {
 
     public double alignPosOffset = 0;
     public double alignSize = 100;
+
+    public boolean disableSampling = false;
 
     public SamplingOrderDetectorExt() {
         super();
@@ -225,37 +229,39 @@ public class SamplingOrderDetectorExt extends DogeCVDetector {
             }
         }
 
-        if(choosenWhiteRect.size() != 0 && chosenYellowRect != null) {
-            int leftCount = 0;
-            for (int i = 0; i < choosenWhiteRect.size(); i++) {
-                Rect rect = choosenWhiteRect.get(i);
-                if (chosenYellowRect.x > rect.x) {
-                    leftCount++;
+        if(!disableSampling) {
+            if (choosenWhiteRect.size() != 0 && chosenYellowRect != null) {
+                int leftCount = 0;
+                for (int i = 0; i < choosenWhiteRect.size(); i++) {
+                    Rect rect = choosenWhiteRect.get(i);
+                    if (chosenYellowRect.x > rect.x) {
+                        leftCount++;
+                    }
                 }
-            }
 
-            if (leftCount == 0) {
-                currentOrder = SamplingOrder.LEFT;
-            }
+                if (leftCount == 0) {
+                    currentOrder = SamplingOrder.LEFT;
+                }
 
-            if (leftCount == 1) {
-                currentOrder = SamplingOrder.CENTER;
-            }
+                if (leftCount == 1) {
+                    currentOrder = SamplingOrder.CENTER;
+                }
 
-            if (leftCount >= 2 && choosenWhiteRect.size() >= 2) {
+                if (leftCount >= 2 && choosenWhiteRect.size() >= 2) {
+                    currentOrder = SamplingOrder.RIGHT;
+                }
+                found = true;
+                lastOrder = currentOrder;
+            } else if (choosenWhiteRect.size() >= 2 && chosenYellowRect == null) {
                 currentOrder = SamplingOrder.RIGHT;
-            }
-            found = true;
-            lastOrder = currentOrder;
-        } else if(choosenWhiteRect.size() >= 2 && chosenYellowRect == null) {
-            currentOrder = SamplingOrder.RIGHT;
-            found = true;
-            lastOrder = currentOrder;
-        } else {
-            currentOrder = SamplingOrder.UNKNOWN;
+                found = true;
+                lastOrder = currentOrder;
+            } else {
+                currentOrder = SamplingOrder.UNKNOWN;
 
-            if(chosenYellowRect == null) {
-                found = false;
+                if (chosenYellowRect == null) {
+                    found = false;
+                }
             }
         }
 
@@ -264,6 +270,11 @@ public class SamplingOrderDetectorExt extends DogeCVDetector {
 
         Imgproc.putText(workingMat,"Gold Position: " + lastOrder.toString(),new Point(10,getAdjustedSize().height - 10),0,0.5, new Scalar(255,255,0),1);
         Imgproc.putText(workingMat,"Is Aligned: " + aligned,new Point(10,getAdjustedSize().height - 30),0,0.5, new Scalar(255,255,0),1);
+
+        if(!disableSampling && listener != null) {
+            listener.onEvent();
+        }
+
         return workingMat;
     }
 
@@ -277,6 +288,10 @@ public class SamplingOrderDetectorExt extends DogeCVDetector {
             addScorer(perfectAreaScorer);
         }
         addScorer(ratioScorer);
+    }
+
+    public void disableSampling() {
+        this.disableSampling = true;
     }
 
     @Override

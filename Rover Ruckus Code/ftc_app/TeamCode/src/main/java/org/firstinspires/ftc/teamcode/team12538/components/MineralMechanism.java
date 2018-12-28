@@ -30,12 +30,16 @@ public class MineralMechanism implements RobotMechanic {
 
     private DcMotor armExtension = null;
 
-    private Servo leftRelease = null;
-    private Servo rightRelease = null;
+    private Servo parkingRod = null;
 
-    private Servo outtakeSlide = null;
+    // private Servo leftRelease = null;
+    // private Servo rightRelease = null;
 
-    private DcMotor swingingArm = null;
+    // private Servo outtakeSlide = null;
+
+    // private DcMotor swingingArm = null;
+
+    private DcMotor depoLift = null;
 
     private int upperLimit;
     private int lowerLimit;
@@ -77,8 +81,8 @@ public class MineralMechanism implements RobotMechanic {
         rightArm.setDirection(Servo.Direction.REVERSE);
 
         if(!OpModeUtils.isDisableInitPos()) {
-            leftArm.setPosition(0.8);
-            rightArm.setPosition(0.8);
+            leftArm.setPosition(0.2);
+            rightArm.setPosition(0.2);
         }
 
         armExtension = hardwareMap.get(DcMotor.class, "extend");
@@ -89,11 +93,22 @@ public class MineralMechanism implements RobotMechanic {
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, armExtension);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, armExtension);
 
-        swingingArm = hardwareMap.get(DcMotor.class, "depo_lift");
+        depoLift = hardwareMap.get(DcMotor.class, "depo_lift");
+        depoLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, depoLift);
+        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, depoLift);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, depoLift);
+
+        parkingRod = hardwareMap.get(Servo.class, "parking_rod");
+        parkingRod.setPosition(0d);
+
+        /* Old Mechanism
+        swingingArm = hardwareMap.get(DcMotor.class, "swing_arm");
         swingingArm.setDirection(DcMotorSimple.Direction.REVERSE);
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, swingingArm);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, swingingArm);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, swingingArm);
+
 
         leftRelease = hardwareMap.get(Servo.class, "l_depo");
         rightRelease = hardwareMap.get(Servo.class, "r_depo");
@@ -113,6 +128,7 @@ public class MineralMechanism implements RobotMechanic {
         if(!OpModeUtils.isDisableInitPos()) {
             outtakeSlide.setPosition(0.5);
         }
+        */
     }
 
     public void enableIntake(Direction direction) {
@@ -126,6 +142,10 @@ public class MineralMechanism implements RobotMechanic {
         } else {
             intake.setPower(-intakeSpeed);
         }
+    }
+
+    public boolean isNotCompletelyLowered() {
+        return (leftArm.getPosition() < 1d || rightArm.getPosition() < 1d);
     }
 
     public void disableIntake() {
@@ -153,20 +173,6 @@ public class MineralMechanism implements RobotMechanic {
             double effectivePower = power;
 
             int curPos = armExtension.getCurrentPosition();
-            /*
-            if (power < 0d) {
-                if(Math.abs(curPos) >= upperSlowdownThreshold) {
-                    effectivePower = Math.signum(power) * slowSpeed;
-                }
-            } else if (power > 0d) {
-                if(Math.abs(curPos) <= lowerSlowdownThreshold) {
-                    effectivePower = Math.signum(power) * slowSpeed;
-                }
-            } else {
-                effectivePower = 0d;
-            }
-            */
-
             armExtension.setPower(effectivePower);
         }
     }
@@ -256,6 +262,7 @@ public class MineralMechanism implements RobotMechanic {
         }
     }
 
+    /*
     public void swingArmSync(final ArmDirection armDirection) {
         synchronized (lock) {
             if (!swingArmBusy) {
@@ -368,11 +375,27 @@ public class MineralMechanism implements RobotMechanic {
             rightRelease.setPosition(position);
         }
     }
+    */
+
+    public void liftDepo() {
+        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
+        depoLift.setTargetPosition(3030);
+        depoLift.setPower(1);
+    }
+
+    public void lowerDepo() {
+        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
+        depoLift.setTargetPosition(0);
+        depoLift.setPower(-1);
+
+        while(OpModeUtils.opModeIsActive() && depoLift.isBusy()) {
+
+        }
+    }
 
     public void printTelemetry() {
         Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
         telemetry.addData("armExtension", armExtension.getCurrentPosition());
         telemetry.addData("armExtensionPower", armExtension.getPower());
-        telemetry.addData("swingingArm", swingingArm.getCurrentPosition());
     }
 }

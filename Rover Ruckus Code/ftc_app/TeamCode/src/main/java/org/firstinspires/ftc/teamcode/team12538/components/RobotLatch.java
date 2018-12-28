@@ -23,7 +23,7 @@ public class RobotLatch implements RobotMechanic {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
         hook = hardwareMap.get(Servo.class, "latch");
-        hook.setPosition(0.1);
+        hook.setPosition(0d);
 
         hangLeg = hardwareMap.get(Servo.class, "hang_leg");
         hangLeg.setPosition(0d);
@@ -44,7 +44,7 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public void autoHook() {
-        hook.setPosition(1.0);
+        hook.setPosition(0d);
     }
 
     public void autoUnhook() {
@@ -52,11 +52,11 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public void teleHook() {
-        hook.setPosition(0.0);
+        hook.setPosition(1d);
     }
 
     public void teleUnhook() {
-        hook.setPosition(1.0);
+        hook.setPosition(0.5);
     }
 
     public void adjustHangLegPosition(double position) {
@@ -146,7 +146,7 @@ public class RobotLatch implements RobotMechanic {
 
     public void unlatch() {
         // raise scissor lift for landing
-        powerLiftOnUpPosition(1d, 7850);
+        powerLiftOnUpPosition(1d, 6600);
         ThreadUtils.sleep(500);
 
         // unlatch robot from lander
@@ -154,7 +154,7 @@ public class RobotLatch implements RobotMechanic {
         ThreadUtils.sleep(500);
 
         // lower scissor lift
-        powerLiftOnDownPosition(1d, 10);
+        powerLiftOnDownPosition(1d, 0);
     }
 
     public void printTelemetry() {

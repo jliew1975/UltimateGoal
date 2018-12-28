@@ -9,17 +9,9 @@ import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDebug;
 
 @Autonomous(name="Auto (Facing Crater - Park Only)", group="Linear Opmode")
-public class AutoFacingCraterParkOnlyApp extends RoverRuckusAutoApp {
-    @Override
-    public void runOpMode() throws InterruptedException {
-        super.phoneTiltPosition = 0.22;
-        super.moveForwardPosition = 5.0;
-        super.runOpMode();
-    }
-
+public class AutoFacingCraterParkOnlyApp extends AutoFacingCraterApp {
     @Override
     protected void collectMineralOffTapedArea(MineralLocation mineralLocation) throws InterruptedException {
-        robot.prepareMineralIntake();
         if(mineralLocation != MineralLocation.Unknown) {
             if(mineralLocation == MineralLocation.Center) {
                 robot.moveForward(0.1, 10);
@@ -39,7 +31,6 @@ public class AutoFacingCraterParkOnlyApp extends RoverRuckusAutoApp {
 
     @Override
     protected void navigateForParking(MineralLocation mineralLocation) {
-        robot.moveForward(0.5, 20.0);
-        robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
+        robot.getCollector().flipCollectorBox(1d); // for touching the crater to score points
     }
 }

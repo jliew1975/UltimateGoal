@@ -20,7 +20,6 @@ public abstract class RobotBase extends MecanumDriveBase {
     MineralMechanism collector = null;
     RobotLatch robotLatch = null;
 
-    Servo sheetMetal = null; // team marker mechanism
     Servo phoneTilt = null;
 
     @Override
@@ -29,12 +28,8 @@ public abstract class RobotBase extends MecanumDriveBase {
 
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
-        // Sheet Method (position: 1.0 => drop)
-        sheetMetal = hardwareMap.get(Servo.class, "sheet_metal");
-        sheetMetal.setPosition(0.8);
-
         phoneTilt = hardwareMap.get(Servo.class, "phone_tilt");
-        phoneTilt.setPosition(0.4);
+        phoneTilt.setPosition(0.74);
 
         // mineral collector mechanism
         collector = new MineralMechanism(-100, 5000);
@@ -50,7 +45,13 @@ public abstract class RobotBase extends MecanumDriveBase {
     }
 
     public void placeTeamMarker() {
-        sheetMetal.setPosition(0.2);
-        ThreadUtils.sleep(200);
+        // collector.positionArm(800);
+        collector.flipCollectorBox(0.75);
+        sleep(500);
+        collector.enableIntake(MineralMechanism.Direction.OutTake);
+        sleep(500);
+        collector.flipCollectorBox(0.2);
+        collector.disableIntake();
+        // collector.positionArm(0);
     }
 }

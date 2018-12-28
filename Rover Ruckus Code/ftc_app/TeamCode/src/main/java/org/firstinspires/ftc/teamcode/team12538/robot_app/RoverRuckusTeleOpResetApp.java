@@ -24,13 +24,11 @@ public class RoverRuckusTeleOpResetApp extends RoverRuckusTeleOpApp {
         try {
             TeleOpRobotV1 robot = new TeleOpRobotV1();
             robot.init();
-            robot.getSheetMetal().setPosition(0.75);
-            robot.getCollector().getOuttakeSlide().setPosition(1d);
 
             waitForStart();
 
             // tilt the phone for mineral scanning
-            robot.getPhoneTilt().setPosition(0.4);
+            robot.getPhoneTilt().setPosition(1d);
 
             while (opModeIsActive()) {
                 robot.player1controls(gamepad1);

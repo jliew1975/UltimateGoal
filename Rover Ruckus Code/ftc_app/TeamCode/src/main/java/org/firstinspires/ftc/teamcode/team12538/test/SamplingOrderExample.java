@@ -32,11 +32,13 @@ package org.firstinspires.ftc.teamcode.team12538.test;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
 @TeleOp(name="Sampling Order Example", group="DogeCV")
+@Disabled
 public class SamplingOrderExample extends OpMode {
     // Detector object
     private SamplingOrderDetectorExt detector;
@@ -53,7 +55,7 @@ public class SamplingOrderExample extends OpMode {
 
         detector.downscale = 0.4; // How much to downscale the input frames
         detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
+        detector.alignPosOffset = 150; // How far from center frame to offset this alignment zone.
 
         // Optional tuning
         detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
