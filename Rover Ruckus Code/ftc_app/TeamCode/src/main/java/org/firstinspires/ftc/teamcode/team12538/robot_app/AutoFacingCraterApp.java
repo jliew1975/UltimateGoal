@@ -61,7 +61,7 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
             robot.moveForward(0.5, 35);
             robot.rotate(55, 0.3, 5.0);
             robot.strafeRight(0.5, 5.0);
-            if(OpModeUtils.getTimeRemaining() >= 8) {
+            if(OpModeUtils.getTimeRemaining() >= 10) {
                 // sleep for 2 seconds for other robot to move out of the way
                 sleep(2000);
             }
@@ -71,7 +71,7 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
             robot.moveForward(0.5, 55);
             robot.rotate(40, 0.3, 5.0);
             robot.strafeRight(0.5, 5.0);
-            if(OpModeUtils.getTimeRemaining() >= 8) {
+            if(OpModeUtils.getTimeRemaining() >= 10) {
                 // sleep for 2 seconds for other robot to move out of the way
                 sleep(2000);
             }
@@ -81,7 +81,7 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
             robot.moveForward(0.5, 45);
             robot.rotate(40, 0.3, 5.0);
             robot.strafeRight(0.5, 5.0);
-            if(OpModeUtils.getTimeRemaining() >= 8) {
+            if(OpModeUtils.getTimeRemaining() >= 10) {
                 // sleep for 2 seconds for other robot to move out of the way
                 sleep(2000);
             }
