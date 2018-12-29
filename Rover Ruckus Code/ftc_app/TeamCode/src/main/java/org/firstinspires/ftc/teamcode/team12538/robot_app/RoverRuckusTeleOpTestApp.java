@@ -3,22 +3,19 @@ package org.firstinspires.ftc.teamcode.team12538.robot_app;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotTest;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
-@Disabled
 public class RoverRuckusTeleOpTestApp extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -28,6 +25,11 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode {
 
     Servo hook = null;
     Servo phoneTilt = null;
+
+    Servo parkingRod = null;
+    volatile boolean isBusy = false;
+
+    private DcMotor armExtension = null;
 
     AutoRobotV1 robot = null;
     SamplingOrderDetectorExt detector = null;
@@ -56,8 +58,14 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode {
             leftArm.setPosition(0.2);
             rightArm.setPosition(0.2);
 
-            detector = createDetector();
-            detector.enable();
+            armExtension = hardwareMap.get(DcMotor.class, "extend");
+            armExtension.setDirection(DcMotorSimple.Direction.REVERSE);
+            MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, armExtension);
+            MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, armExtension);
+            MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, armExtension);
+
+            parkingRod = hardwareMap.get(Servo.class, "parking_rod");
+            parkingRod.setPosition(0d);
 
             waitForStart();
 
@@ -74,11 +82,41 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode {
                     robot.rotate(-30, 0.1, 5.0, detector);
                 }
 
+                robot.getCollector().controlArmExt(-gamepad1.left_stick_x);
+
                 if(gamepad1.y) {
+                    robot.getCollector().autoMineralDeposit();
+                }
+
+                if(gamepad1.x) {
                     robot.placeTeamMarker();
                 }
 
-                telemetry.addData("phoneTilt", phoneTilt.getPosition());
+                if(gamepad1.right_bumper) {
+                    synchronized (parkingRod) {
+                        if(!isBusy) {
+                            isBusy = true;
+                            ThreadUtils.getExecutorService().submit(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        if(parkingRod.getPosition() == 0d) {
+                                            parkingRod.setPosition(0.5);
+                                        } else {
+                                            parkingRod.setPosition(0d);
+                                        }
+                                    } finally {
+                                        synchronized (parkingRod) {
+                                            isBusy = false;
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+
+                telemetry.addData("armExt Position", armExtension.getCurrentPosition());
                 telemetry.update();
             }
         } finally {

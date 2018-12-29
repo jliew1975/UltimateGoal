@@ -73,7 +73,7 @@ public class AutoRobotV1 extends RobotBase {
         /*
         synchronized (this) {
             collector.flipCollectorBox(0d);
-            collector.positionArm(4000, 1.0);
+            collector.positionArmExt(4000, 1.0);
             collector.swingArmToPosition(200, 0.3);
             collector.getOuttakeSlide().setPosition(1d);
             collector.swingArmToPosition(0, 0.1);

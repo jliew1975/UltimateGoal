@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
-import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism.MineralSide;
-
 public class TeleOpRobotReset extends TeleOpRobotV1 {
     private boolean isLatched = false;
 
@@ -35,6 +32,6 @@ public class TeleOpRobotReset extends TeleOpRobotV1 {
         }
 
         // arm extension control
-        collector.controlArm(-gamepad.left_stick_x);
+        collector.controlArmExt(-gamepad.left_stick_x);
     }
 }

@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
-import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism.MineralSide;
-
 public class TeleOpRobotV1 extends RobotBase {
     private boolean isLatched = false;
     private double leg_position = 0.0;
@@ -14,7 +11,7 @@ public class TeleOpRobotV1 extends RobotBase {
     @Override
     public void init() {
         super.init();
-        prevCollectorBoxPosition = getCollector().getLeftArm().getPosition();
+        prevCollectorBoxPosition = getCollector().getLeftFlip().getPosition();
     }
 
     public void player1controls(Gamepad gamepad) {
@@ -38,33 +35,10 @@ public class TeleOpRobotV1 extends RobotBase {
         rearLeftDrive.setPower(power * Math.signum(v3));
         rearRightDrive.setPower(power * Math.signum(v4));
 
-        if(gamepad.dpad_right){
-            robotLatch.adjustHangLegPosition(0.05);
-        } else if(gamepad.dpad_left){
-            robotLatch.adjustHangLegPosition(-0.05);
-        }
-
-        // Intake controls
-        if(gamepad.right_bumper) {
-            if(collector.isNotCompletelyLowered()) {
-                collector.flipCollectorBox(1d);
-            }
-
-            collector.enableIntake(MineralMechanism.Direction.InTake);
-        } else if(gamepad.left_bumper) {
-            collector.enableIntake(MineralMechanism.Direction.OutTake);
-        } else {
-            if(!collector.isIntakeAutoOn()) {
-                collector.disableIntake();
-            }
-        }
-
         if(gamepad.x) {
             robotLatch.teleHook();
         } else if(gamepad.a) {
             robotLatch.teleUnhook();
-        } else if(gamepad.b) {
-            robotLatch.autoUnhook();
         }
 
         if (gamepad.dpad_up) {
@@ -96,7 +70,7 @@ public class TeleOpRobotV1 extends RobotBase {
     public void player2Controls(Gamepad gamepad) {
         if(gamepad.x) {
             // lower
-            collector.flipCollectorBox(1d);
+            collector.flipCollectorBox(0.9);
             // collector.enableIntake(MineralMechanism.Direction.InTake, true);
         } else if(gamepad.a) {
             // prepare
@@ -111,45 +85,18 @@ public class TeleOpRobotV1 extends RobotBase {
             collector.autoMineralDeposit();
         } else {
             // arm extension control
-            collector.controlArm(-gamepad.left_stick_x);
+            collector.controlArmExt(-gamepad.left_stick_x);
         }
 
-        /*
-        // swinging arm control
-        if(gamepad.left_bumper) {
-            collector.swingArmAsync(MineralMechanism.ArmDirection.Up);
-        } else if(gamepad.right_bumper) {
-            collector.swingArmAsync(MineralMechanism.ArmDirection.Down);
-        }
-
-        if(collector.isSwingReadyForRelease()) {
-            if (gamepad.right_trigger > 0) {
-                collector.controlReleaseMineral(MineralSide.Left, 0d);
-            } else {
-                collector.controlReleaseMineral(MineralSide.Left, 1d);
-            }
-
-            if (gamepad.left_trigger > 0) {
-                collector.controlReleaseMineral(MineralSide.Right, 0d);
-            } else {
-                collector.controlReleaseMineral(MineralSide.Right, 1d);
-            }
-        } else {
-            collector.controlReleaseMineral(MineralSide.Both, 0d);
-        }
-        */
-
-        // adjustment control
+        // deposit box controls
         if(gamepad.dpad_up) {
-            // collector.swingArmPositionBy(100);
             collector.liftDepo();
         } else if(gamepad.dpad_down) {
-            // collector.swingArmPositionBy(-100);
             collector.lowerDepo();
-        } else if(gamepad.dpad_right) {
-            collector.adjustArmPosition(-10, true);
-        } else if(gamepad.dpad_left) {
-            collector.adjustArmPosition(10, false);
+        } else if(gamepad.right_bumper) {
+            collector.getDepo().setPosition(0.8);
+        } else {
+            collector.getDepo().setPosition(0d);
         }
     }
 }

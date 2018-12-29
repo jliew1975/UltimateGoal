@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDebug;
+import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 @Autonomous(name="Auto (Facing Crater)", group="Linear Opmode")
 public class AutoFacingCraterApp extends RoverRuckusAutoApp {
@@ -60,29 +61,40 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
             robot.moveForward(0.5, 35);
             robot.rotate(55, 0.3, 5.0);
             robot.strafeRight(0.5, 5.0);
+            if(OpModeUtils.getTimeRemaining() >= 8) {
+                // sleep for 2 seconds for other robot to move out of the way
+                sleep(2000);
+            }
             robot.moveForward(0.5, 30);
         } else if(mineralLocation == MineralLocation.Right) {
             robot.rotate(105, 0.3, 5.0);
-            robot.moveForward(0.5, 50);
+            robot.moveForward(0.5, 55);
             robot.rotate(40, 0.3, 5.0);
             robot.strafeRight(0.5, 5.0);
+            if(OpModeUtils.getTimeRemaining() >= 8) {
+                // sleep for 2 seconds for other robot to move out of the way
+                sleep(2000);
+            }
             robot.moveForward(0.5, 30);
         } else {
             robot.rotate(78, 0.3, 5.0);
             robot.moveForward(0.5, 45);
             robot.rotate(40, 0.3, 5.0);
             robot.strafeRight(0.5, 5.0);
+            if(OpModeUtils.getTimeRemaining() >= 8) {
+                // sleep for 2 seconds for other robot to move out of the way
+                sleep(2000);
+            }
             robot.moveForward(0.5, 30);
         }
 
         placeTeamMarker();
-
     }
 
     @Override
     protected void navigateForParking(MineralLocation mineralLocation) {
         robot.moveBackward(0.5, 60);
-        robot.getCollector().getParkingRod().setPosition(0.5); // for breaking the crater plain to score parking points
+        robot.getParkingRod().setPosition(0.5); // for breaking the crater plain to score parking points
         sleep(500);
     }
 

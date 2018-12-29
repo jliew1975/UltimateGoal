@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.team12538.robotV1.TeleOpRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 @TeleOp(name="Robot Tele v1 (Reset)", group="Linear Opmode")
+@Disabled
 public class RoverRuckusTeleOpResetApp extends RoverRuckusTeleOpApp {
 
     private ElapsedTime runtime = new ElapsedTime();

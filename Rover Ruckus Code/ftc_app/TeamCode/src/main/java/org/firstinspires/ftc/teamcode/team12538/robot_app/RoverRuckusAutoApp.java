@@ -54,11 +54,13 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
 
             waitForStart();
 
+            // stamp start time for calculation of remaining seconds in autonomous
+            OpModeUtils.stampStartTime();
+
+            // disable sampling logic
             detector.disableSampling();
 
             while(opModeIsActive()) {
-
-
                 // deploy robot from lander
                 robot.unlatchFromLander();
 
@@ -164,11 +166,11 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
 
     protected void navigateForParking(MineralLocation mineralLocation) throws InterruptedException {
         if(mineralLocation != MineralLocation.Left) {
-            robot.moveForward(0.5, 60);
+            robot.moveForward(0.5, 50);
             robot.getCollector().flipCollectorBox(1d); // for breaking the crater plain to score parking points
         } else {
-            robot.moveBackward(0.5, 60);
-            robot.getCollector().getParkingRod().setPosition(0.5); // for breaking the crater plain to score parking points
+            robot.moveBackward(0.5, 50);
+            robot.getParkingRod().setPosition(0.5); // for breaking the crater plain to score parking points
         }
 
         sleep(500);
