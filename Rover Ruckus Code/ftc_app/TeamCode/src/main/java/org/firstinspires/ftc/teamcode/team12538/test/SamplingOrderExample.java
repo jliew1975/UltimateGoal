@@ -38,7 +38,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
 @TeleOp(name="Sampling Order Example", group="DogeCV")
-@Disabled
 public class SamplingOrderExample extends OpMode {
     // Detector object
     private SamplingOrderDetectorExt detector;

@@ -48,7 +48,7 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public void autoUnhook() {
-        hook.setPosition(0.5);
+        hook.setPosition(0.45);
     }
 
     public void teleHook() {

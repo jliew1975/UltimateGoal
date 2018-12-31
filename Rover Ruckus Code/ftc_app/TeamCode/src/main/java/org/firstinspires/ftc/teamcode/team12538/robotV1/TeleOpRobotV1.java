@@ -2,6 +2,11 @@ package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
+
+import static org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils.sleep;
+
 public class TeleOpRobotV1 extends RobotBase {
     private boolean isLatched = false;
     private double leg_position = 0.0;
@@ -35,10 +40,30 @@ public class TeleOpRobotV1 extends RobotBase {
         rearLeftDrive.setPower(power * Math.signum(v3));
         rearRightDrive.setPower(power * Math.signum(v4));
 
+        // Intake controls
+        if(gamepad.right_bumper) {
+            if(collector.getCollectorBoxPosition() == 0.9) {
+                collector.flipCollectorBox(1d);
+            }
+            collector.enableIntake(MineralMechanism.Direction.InTake);
+        } else if(gamepad.left_bumper) {
+            collector.enableIntake(MineralMechanism.Direction.OutTake);
+        } else {
+            if(collector.getCollectorBoxPosition() == 1d) {
+                collector.flipCollectorBox(0.9);
+            }
+            collector.disableIntake();
+        }
+
+        // latch controls
         if(gamepad.x) {
             robotLatch.teleHook();
+            collector.flipCollectorBox(0.2);
         } else if(gamepad.a) {
+            collector.liftDepo(2600, false);
             robotLatch.teleUnhook();
+        } else if(gamepad.b) {
+            robotLatch.autoHook();
         }
 
         if (gamepad.dpad_up) {
@@ -68,16 +93,18 @@ public class TeleOpRobotV1 extends RobotBase {
     }
 
     public void player2Controls(Gamepad gamepad) {
+        // intake box controls
         if(gamepad.x) {
             // lower
             collector.flipCollectorBox(0.9);
-            // collector.enableIntake(MineralMechanism.Direction.InTake, true);
         } else if(gamepad.a) {
             // prepare
             collector.flipCollectorBox(0.6);
         } else if (gamepad.b){
             // deposit
             collector.flipCollectorBox(0.2);
+        } else if(gamepad.right_trigger > 0d) {
+            collector.jerkCollectorBox();
         }
 
         if(gamepad.y) {
@@ -90,13 +117,15 @@ public class TeleOpRobotV1 extends RobotBase {
 
         // deposit box controls
         if(gamepad.dpad_up) {
-            collector.liftDepo();
+            collector.liftDepo(2600, true);
         } else if(gamepad.dpad_down) {
             collector.lowerDepo();
-        } else if(gamepad.right_bumper) {
-            collector.getDepo().setPosition(0.8);
-        } else {
-            collector.getDepo().setPosition(0d);
+        } else if(gamepad.right_bumper && collector.canFlipDepoBox()) {
+            collector.rotateDepositBox(0.9, 1d);
+        } else if(gamepad.left_bumper && collector.canFlipDepoBox()) {
+            collector.jerkDepositBox();
+        } else if(!collector.canFlipDepoBox()){
+            collector.getDepo().setPosition(0.195);
         }
     }
 }

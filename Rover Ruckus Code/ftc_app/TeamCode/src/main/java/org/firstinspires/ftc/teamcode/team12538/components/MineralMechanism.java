@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 import lombok.Data;
 
+import static org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils.sleep;
+
 @Data
 public class MineralMechanism implements RobotMechanic {
     public enum Direction { InTake, OutTake }
@@ -44,6 +46,8 @@ public class MineralMechanism implements RobotMechanic {
     private volatile boolean busy = false;
     private volatile boolean swingArmBusy = false;
     private volatile boolean disableArmControl = false;
+
+    private double depoLowerPos = 0.195;
 
     public MineralMechanism(int lowerLimit, int upperLimit) {
         this.lowerLimit = lowerLimit;
@@ -98,7 +102,7 @@ public class MineralMechanism implements RobotMechanic {
         // Deposit box servo initialization
         depo = hardwareMap.get(Servo.class, "depo");
         depo.setDirection(Servo.Direction.REVERSE);
-        depo.setPosition((0d));
+        depo.setPosition((depoLowerPos));
     }
 
     public void enableIntake(Direction direction) {
@@ -109,8 +113,14 @@ public class MineralMechanism implements RobotMechanic {
         }
     }
 
-    public boolean isNotCompletelyLowered() {
-        return (leftFlip.getPosition() < 1d || rightFlip.getPosition() < 1d);
+    public double getCollectorBoxPosition() {
+        if(busy) {
+            // when collector is performing autoMineralDeposit routine
+            // return 0
+            return 0d;
+        }
+
+        return Math.max(leftFlip.getPosition(), rightFlip.getPosition());
     }
 
     public void disableIntake() {
@@ -120,6 +130,17 @@ public class MineralMechanism implements RobotMechanic {
     public void flipCollectorBox(double position) {
         leftFlip.setPosition(position);
         rightFlip.setPosition(position);
+    }
+
+    public void jerkCollectorBox() {
+        ThreadUtils.getExecutorService().submit(new Runnable() {
+            @Override
+            public void run() {
+                flipCollectorBox(0.3);
+                sleep(30);
+                flipCollectorBox(0.2);
+            }
+        });
     }
 
     public void controlArmExt(double power) {
@@ -206,10 +227,10 @@ public class MineralMechanism implements RobotMechanic {
                         try {
                             RobotLog.d("starting autoMineralDeposit logic");
                             // disableIntake();
-                            // flipCollectorBox(0.6);
-                            positionArmExt(-5, 1d);
-                            // flipCollectorBox(1d);
-                            ThreadUtils.sleep(500);
+                            flipCollectorBox(0.6);
+                            positionArmExt(150, 1d);
+                            flipCollectorBox(0.2d);
+                            sleep(500);
                             // flipCollectorBox(0.4);
                             RobotLog.d("done with autoMineralDeposit logic");
                         } catch(Exception e) {
@@ -223,20 +244,78 @@ public class MineralMechanism implements RobotMechanic {
         }
     }
 
-    public void liftDepo() {
+    public void liftDepo(int targetPosition, boolean isRotateDepoBox) {
+        // make sure collector box is not in the way
+        flipCollectorBox(0.6);
+        sleep(500);
+
         MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
-        depoLift.setTargetPosition(3030);
+        depoLift.setTargetPosition(targetPosition);
         depoLift.setPower(1);
+
+        while(OpModeUtils.opModeIsActive() &&  depoLift.isBusy()) {
+            // wait for motor to stop
+        }
+
+        // slowly rotate the depo servo
+        if(isRotateDepoBox) {
+            rotateDepositBox(0.4, 0.4);
+        }
+    }
+
+    public void rotateDepositBox(final double slowPosition, final double finalPosition) {
+        ThreadUtils.getExecutorService().submit(new Runnable() {
+            @Override
+            public void run() {
+                double depoInc = 0.05;
+                double depoPosAdj = 0.2 - depoLowerPos;
+
+                while(OpModeUtils.opModeIsActive() && depo.getPosition() < slowPosition) {
+                    if(depo.getPosition() == depoLowerPos) {
+                        depo.setPosition((depo.getPosition() + depoInc + depoPosAdj));
+                    } else {
+                        depo.setPosition(depo.getPosition() + depoInc);
+                    }
+
+                    sleep(100);
+                }
+
+                depo.setPosition(finalPosition);
+                return;
+            }
+        });
+    }
+
+    public void jerkDepositBox() {
+        ThreadUtils.getExecutorService().submit(new Runnable() {
+            @Override
+            public void run() {
+                depo.setPosition(0.9);
+                sleep(30);
+                depo.setPosition(1d);
+            }
+        });
     }
 
     public void lowerDepo() {
+        depo.setPosition(0.4);
+        depo.setPosition(depoLowerPos);
+
+        flipCollectorBox(0.6);
+
         MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
-        depoLift.setTargetPosition(0);
+        depoLift.setTargetPosition(10);
         depoLift.setPower(-1);
 
         while(OpModeUtils.opModeIsActive() && depoLift.isBusy()) {
             // intentionally left blank
         }
+
+        depoLift.setPower(0);
+    }
+
+    public boolean canFlipDepoBox() {
+        return depoLift.getCurrentPosition() > 1500;
     }
 
     public void printTelemetry() {

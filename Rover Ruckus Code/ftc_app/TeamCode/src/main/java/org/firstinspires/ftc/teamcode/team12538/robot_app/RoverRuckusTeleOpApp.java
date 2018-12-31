@@ -35,7 +35,6 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
 
                 robot.getCollector().printTelemetry();
                 robot.getRobotLatch().printTelemetry();
-                telemetry.addData("gamepad2.left_stick_x", gamepad2.left_stick_x);
                 telemetry.update();
             }
 
