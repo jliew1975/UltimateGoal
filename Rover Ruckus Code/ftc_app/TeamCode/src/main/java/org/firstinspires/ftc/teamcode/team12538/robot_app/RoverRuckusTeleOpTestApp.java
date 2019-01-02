@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.team12538.robot_app;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
+@Disabled
 public class RoverRuckusTeleOpTestApp extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

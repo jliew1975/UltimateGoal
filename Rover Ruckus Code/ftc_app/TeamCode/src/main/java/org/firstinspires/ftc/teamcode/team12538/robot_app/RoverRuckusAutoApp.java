@@ -132,8 +132,6 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         }
 
         robot.moveForward(0.5, 30);
-        // robot.getCollector().disableIntake();
-        // robot.getCollector().flipCollectorBox(0.6);
     }
 
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {
@@ -234,9 +232,5 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         detector.useDefaults();
         detector.listener = this;
         return detector;
-    }
-
-    protected void placeTeamMarker() {
-        robot.placeTeamMarker();
     }
 }

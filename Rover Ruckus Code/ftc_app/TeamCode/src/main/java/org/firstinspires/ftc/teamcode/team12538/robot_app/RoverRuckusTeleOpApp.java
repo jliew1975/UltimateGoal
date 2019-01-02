@@ -23,6 +23,7 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
         try {
             TeleOpRobotV1 robot = new TeleOpRobotV1();
             robot.init();
+            robot.getRobotLatch().autoHook();
 
             waitForStart();
 
@@ -34,7 +35,7 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
                 robot.player2Controls(gamepad2);
 
                 robot.getCollector().printTelemetry();
-                robot.getRobotLatch().printTelemetry();
+                // robot.getRobotLatch().printTelemetry();
                 telemetry.update();
             }
 

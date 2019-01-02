@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.team12538.components.EventCallback;
 import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
-import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 import static org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils.sleep;
 
@@ -57,13 +57,27 @@ public class TeleOpRobotV1 extends RobotBase {
 
         // latch controls
         if(gamepad.x) {
-            robotLatch.teleHook();
-            collector.flipCollectorBox(0.2);
+            collector.flipCollectorBox(0.6);
+            collector.liftDepo(2000, false, new EventCallback() {
+                @Override
+                public void callbackEvent() {
+                    robotLatch.teleHook();
+                    collector.flipCollectorBox(0.19);
+                }
+            });
+
         } else if(gamepad.a) {
-            collector.liftDepo(2600, false);
-            robotLatch.teleUnhook();
+            collector.flipCollectorBox(0.6);
+            collector.liftDepo(2000, false, new EventCallback() {
+                @Override
+                public void callbackEvent() {
+                    robotLatch.teleUnhook();
+                }
+            });
         } else if(gamepad.b) {
             robotLatch.autoHook();
+            sleep(500);
+            collector.lowerDepo();
         }
 
         if (gamepad.dpad_up) {
@@ -102,7 +116,7 @@ public class TeleOpRobotV1 extends RobotBase {
             collector.flipCollectorBox(0.6);
         } else if (gamepad.b){
             // deposit
-            collector.flipCollectorBox(0.2);
+            collector.flipCollectorBox(0.19);
         } else if(gamepad.right_trigger > 0d) {
             collector.jerkCollectorBox();
         }

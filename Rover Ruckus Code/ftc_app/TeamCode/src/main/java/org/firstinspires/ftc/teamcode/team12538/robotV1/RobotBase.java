@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -37,7 +38,7 @@ public abstract class RobotBase extends MecanumDriveBase {
         parkingRod.setPosition(0d);
 
         // mineral collector mechanism initialization
-        collector = new MineralMechanism(-100, 5000);
+        collector = new MineralMechanism(0, 5000);
         collector.init();
 
         // latching mechanism initialization

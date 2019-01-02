@@ -87,7 +87,7 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
             robot.moveForward(0.5, 30);
         }
 
-        placeTeamMarker();
+        robot.placeTeamMarker();
     }
 
     @Override

@@ -35,13 +35,14 @@ import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 
 @TeleOp(name="Sampling Order Example", group="DogeCV")
+@Disabled
 public class SamplingOrderExample extends OpMode {
     // Detector object
     private SamplingOrderDetectorExt detector;
-
 
     @Override
     public void init() {
@@ -92,6 +93,7 @@ public class SamplingOrderExample extends OpMode {
         telemetry.addData("IsFound" , detector.isFound());
         telemetry.addData("IsAligned" , detector.isAligned()); // Is the bot aligned with the gold mineral
         telemetry.addData("X Pos" , detector.getXPosition()); // Gold X pos.
+        telemetry.update();
     }
 
     /*
@@ -99,7 +101,7 @@ public class SamplingOrderExample extends OpMode {
      */
     @Override
     public void stop() {
-        detector.disable();
+        // detector.disable();
     }
 
 }
