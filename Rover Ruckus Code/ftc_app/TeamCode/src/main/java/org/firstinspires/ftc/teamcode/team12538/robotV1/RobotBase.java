@@ -31,7 +31,7 @@ public abstract class RobotBase extends MecanumDriveBase {
 
         // phone tilting servo initialization
         phoneTilt = hardwareMap.get(Servo.class, "phone_tilt");
-        phoneTilt.setPosition(0.74);
+        phoneTilt.setPosition(0.73);
 
         // parking rod initialization
         parkingRod = hardwareMap.get(Servo.class, "parking_rod");

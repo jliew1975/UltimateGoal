@@ -58,7 +58,7 @@ public class TeleOpRobotV1 extends RobotBase {
         // latch controls
         if(gamepad.x) {
             collector.flipCollectorBox(0.6);
-            collector.liftDepo(2000, false, new EventCallback() {
+            collector.liftDepo(3000, false, new EventCallback() {
                 @Override
                 public void callbackEvent() {
                     robotLatch.teleHook();
@@ -68,7 +68,7 @@ public class TeleOpRobotV1 extends RobotBase {
 
         } else if(gamepad.a) {
             collector.flipCollectorBox(0.6);
-            collector.liftDepo(2000, false, new EventCallback() {
+            collector.liftDepo(3000, false, new EventCallback() {
                 @Override
                 public void callbackEvent() {
                     robotLatch.teleUnhook();
@@ -116,7 +116,7 @@ public class TeleOpRobotV1 extends RobotBase {
             collector.flipCollectorBox(0.6);
         } else if (gamepad.b){
             // deposit
-            collector.flipCollectorBox(0.19);
+            collector.flipCollectorBox(0.2);
         } else if(gamepad.right_trigger > 0d) {
             collector.jerkCollectorBox();
         }
@@ -139,7 +139,7 @@ public class TeleOpRobotV1 extends RobotBase {
         } else if(gamepad.left_bumper && collector.canFlipDepoBox()) {
             collector.jerkDepositBox();
         } else if(!collector.canFlipDepoBox()){
-            collector.getDepo().setPosition(0.195);
+            collector.getDepo().setPosition(0.22);
         }
     }
 }

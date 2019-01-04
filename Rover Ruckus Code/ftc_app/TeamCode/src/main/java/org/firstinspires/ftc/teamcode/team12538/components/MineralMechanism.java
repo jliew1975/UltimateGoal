@@ -53,18 +53,18 @@ public class MineralMechanism implements RobotMechanic {
     private volatile boolean depoBoxBusy = false;
     private volatile boolean depoLiftBusy = false;
 
-    private double depoLowerPos = 0.195;
+    private double depoLowerPos = 0.22;
 
     public MineralMechanism(int lowerLimit, int upperLimit) {
         this.lowerLimit = lowerLimit;
         this.upperLimit = upperLimit;
 
         if(upperLimit < upperSlowdownThreshold) {
-            upperSlowdownThreshold = upperLimit - 500;
+            upperSlowdownThreshold = upperLimit - 200;
         }
 
         if(lowerLimit > lowerSlowdownThreshold) {
-            lowerSlowdownThreshold = lowerLimit + 300;
+            lowerSlowdownThreshold = lowerLimit + 200;
         }
     }
 
@@ -169,7 +169,9 @@ public class MineralMechanism implements RobotMechanic {
                 slowDownArmMovement = true;
             } else if(power < 0 && armExtension.getCurrentPosition() < lowerSlowdownThreshold) {
                 slowDownArmMovement = true;
-            } else if(armExtension.getCurrentPosition() < lowerLimit || armExtension.getCurrentPosition() > upperLimit) {
+            } else if(power < 0 && armExtension.getCurrentPosition() < lowerLimit) {
+                disableArmExtMovement = true;
+            } else if(power > 0 && armExtension.getCurrentPosition() > upperLimit) {
                 disableArmExtMovement = true;
             }
 
@@ -282,7 +284,7 @@ public class MineralMechanism implements RobotMechanic {
                             flipCollectorBox(0.6);
                             // positionArmExt(150, 1d);
                             positionArmExtForMineralTransfer();
-                            flipCollectorBox(0.2d);
+                            flipCollectorBox(0.19);
                             sleep(500);
                             // flipCollectorBox(0.4);
                             RobotLog.d("done with autoMineralDeposit logic");
