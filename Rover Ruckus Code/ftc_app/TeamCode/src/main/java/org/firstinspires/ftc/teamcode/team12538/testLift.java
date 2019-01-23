@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.team12538;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -58,7 +59,7 @@ public class testLift extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor scissorJack = null;
-
+    private CRServo hook = null;
 
     @Override
     public void runOpMode() {
@@ -76,6 +77,7 @@ public class testLift extends LinearOpMode {
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorJack);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorJack);
 
+        hook = hardwareMap.get(CRServo.class, "hook");
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -91,6 +93,18 @@ public class testLift extends LinearOpMode {
            else{
                scissorJack.setPower(0);
            }
+
+           if(gamepad1.dpad_right){
+                hook.setPower(1);
+            }
+            else if(gamepad1.dpad_left){
+                hook.setPower(-1);
+            }
+            else{
+                hook.setPower(0);
+            }
         }
+
+
     }
 }
