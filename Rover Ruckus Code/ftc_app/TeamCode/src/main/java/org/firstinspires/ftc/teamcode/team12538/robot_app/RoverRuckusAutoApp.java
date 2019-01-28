@@ -33,6 +33,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
 
     public double phoneTiltPosition = 0.74;
     public double moveForwardPosition = 4.0;
+    public boolean enableLanding = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -62,7 +63,9 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
 
             while(opModeIsActive()) {
                 // deploy robot from lander
-                robot.unlatchFromLander();
+                if(enableLanding) {
+                    robot.unlatchFromLander();
+                }
 
                 // expand mineral machenism for mineral detection and collection
                 // robot.expandMechanism();

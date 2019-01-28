@@ -17,32 +17,6 @@ public class PushBot {
 
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         rightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        stop();
     }
 
-    public void pivotLeft() {
-        rightDrive.setPower(0.1);
-        leftDrive.setPower(0);
-    }
-
-    public void pivotRight() {
-        leftDrive.setPower(0.1);
-        rightDrive.setPower(0);
-    }
-
-    public void stop() {
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
-    }
-
-    public void goForward() {
-        leftDrive.setPower(0.2);
-        rightDrive.setPower(0.2);
-    }
-
-    public void goBackward() {
-        leftDrive.setPower(-0.2);
-        rightDrive.setPower(-0.2);
-    }
 }

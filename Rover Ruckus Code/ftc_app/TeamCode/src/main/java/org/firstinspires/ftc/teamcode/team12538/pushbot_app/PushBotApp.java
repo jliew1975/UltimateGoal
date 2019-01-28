@@ -1,92 +1,50 @@
 package org.firstinspires.ftc.teamcode.team12538.pushbot_app;
 
-import com.disnodeteam.dogecv.CameraViewDisplay;
-import com.disnodeteam.dogecv.DogeCV;
-import com.disnodeteam.dogecv.detectors.roverruckus.GoldAlignDetector;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.team12538.pushbot.PushBot;
-import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
-
-@Autonomous(name = "Pushbot Auto", group = "Test")
+@TeleOp(name = "Pushbot - MLK", group = "Test")
 @Disabled
 public class PushBotApp extends LinearOpMode {
-    GoldAlignDetector detector;
+    DcMotor leftDrive;
+    DcMotor rightDrive;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        OpModeUtils.getGlobalStore().setHardwareMap(hardwareMap);
-        OpModeUtils.getGlobalStore().setTelemetry(telemetry);
+        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
 
-        PushBot robot = new PushBot();
-        robot.init();
-
-        detector = new GoldAlignDetector();
-        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
-        detector.useDefaults();
-
-        // Optional Tuning
-        detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
-        detector.downscale = 0.4; // How much to downscale the input frames
-
-        detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
-        //detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
-        detector.maxAreaScorer.weight = 0.005;
-
-        detector.ratioScorer.weight = 5;
-        detector.ratioScorer.perfectRatio = 1.0;
-
-        detector.enable();
+        leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
         waitForStart();
 
-        doTelemetry();
-
-        sleep(2000);
-
-        /*
-        while(opModeIsActive() && !detector.isFound()) {
-            robot.pivotLeft();
-        }
-        */
-
-        // stop the robot so it doesn't overshoot
-        robot.stop();
-
-        doTelemetry();
-
-        // get the xPos from detector to determine if we need to adjust angle
-        double xPos = detector.getXPosition();
-        if (xPos < 270) {
-            double curXPos = xPos;
-            while(curXPos < 270) {
-                robot.pivotLeft();
-                curXPos = detector.getXPosition();
-            }
-        } else if (xPos > 370) {
-            double curXPos = xPos;
-            while(xPos > 370) {
-                robot.pivotRight();
-                curXPos = detector.getXPosition();
+        while (opModeIsActive()) {
+            if(gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0) {
+                if (gamepad1.left_stick_y < 0) {
+                    //forward
+                    leftDrive.setPower(gamepad1.left_stick_y);
+                    rightDrive.setPower(gamepad1.left_stick_y);
+                } else if (gamepad1.left_stick_y > 0) {
+                    //backwards
+                    leftDrive.setPower(gamepad1.left_stick_y);
+                    rightDrive.setPower(gamepad1.left_stick_y);
+                } else if (gamepad1.right_stick_x > 0) {
+                    //right
+                    leftDrive.setPower(gamepad1.right_stick_x);
+                    rightDrive.setPower(-gamepad1.right_stick_x);
+                } else if (gamepad1.right_stick_x < 0) {
+                    //left
+                    leftDrive.setPower(gamepad1.right_stick_x);
+                    rightDrive.setPower(-gamepad1.right_stick_x);
+                }
+            } else {
+                leftDrive.setPower(0);
+                rightDrive.setPower(0);
             }
         }
-
-        robot.stop();
-
-        doTelemetry();
-
-        robot.goForward();
-        sleep(2000);
-        robot.stop();
-    }
-
-    private void doTelemetry() {
-        telemetry.addData("IsFound", detector.isFound());
-        telemetry.addData("IsAligned", detector.isAligned());
-        telemetry.addData("X-Pos", detector.getXPosition());
-        telemetry.update();
     }
 }

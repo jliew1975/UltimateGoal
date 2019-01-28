@@ -146,7 +146,7 @@ public class RobotLatch implements RobotMechanic {
 
     public void unlatch() {
         // raise scissor lift for landing
-        powerLiftOnUpPosition(1d, 6600);
+        powerLiftOnUpPosition(1d, 6500);
         ThreadUtils.sleep(500);
 
         // unlatch robot from lander
