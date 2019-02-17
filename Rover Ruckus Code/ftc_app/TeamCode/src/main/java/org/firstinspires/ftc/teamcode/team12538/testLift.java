@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -52,7 +53,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="testLift", group="Linear Opmode")
+@TeleOp(name="testBot", group="Linear Opmode")
 
 public class testLift extends LinearOpMode {
 
@@ -60,6 +61,14 @@ public class testLift extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor scissorJack = null;
     private CRServo hook = null;
+    private CRServo intake = null;
+
+    private DcMotor frontLeftDrive = null;
+    private DcMotor frontRightDrive = null;
+    private DcMotor rearLeftDrive = null;
+    private DcMotor rearRightDrive = null;
+    private DcMotor intakeFlip = null;
+    private DcMotor linearSlides = null;
 
     @Override
     public void runOpMode() {
@@ -77,13 +86,34 @@ public class testLift extends LinearOpMode {
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorJack);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorJack);
 
+
+
         hook = hardwareMap.get(CRServo.class, "hook");
+        intake = hardwareMap.get(CRServo.class, "intake");
+
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "left_forward_drive");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "right_forward_drive");
+        rearLeftDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
+        rearRightDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+
+        intakeFlip = hardwareMap.get(DcMotor.class, "intake_flip");
+        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, intakeFlip);
+
+        linearSlides = hardwareMap.get(DcMotor.class, "linear_slides");
+
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+           //scissor lift code
            if(gamepad1.dpad_up){
                scissorJack.setPower(-1);
            }
@@ -94,6 +124,40 @@ public class testLift extends LinearOpMode {
                scissorJack.setPower(0);
            }
 
+           //intake flip code
+            if(gamepad2.dpad_up){
+                intakeFlip.setPower(-0.9);
+            }
+            else if(gamepad2.dpad_down){
+                intakeFlip.setPower(0.9);
+            }
+            else{
+                intakeFlip.setPower(0);
+            }
+
+           //intake code
+           if(gamepad1.right_bumper){
+               intake.setPower(1);
+           }
+           else if(gamepad1.left_bumper){
+               intake.setPower(-1);
+           }
+           else{
+               intake.setPower(0);
+           }
+
+           //linear slide horizontal extension
+            if(gamepad2.dpad_left){
+                linearSlides.setPower(-1);
+            }
+            else if(gamepad2.dpad_right){
+                linearSlides.setPower(1);
+            }
+            else{
+                linearSlides.setPower(0);
+            }
+
+           //hook code
            if(gamepad1.dpad_right){
                 hook.setPower(1);
             }
@@ -103,6 +167,26 @@ public class testLift extends LinearOpMode {
             else{
                 hook.setPower(0);
             }
+
+            //wheel code
+            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+            double rightX = gamepad1.right_stick_x;
+
+            final double v1 = r * Math.sin(robotAngle) - rightX;
+            final double v2 = r * Math.cos(robotAngle) + rightX;
+            final double v3 = r * Math.cos(robotAngle) - rightX;
+            final double v4 = r * Math.sin(robotAngle) + rightX;
+
+            double power = 1.0;
+            if(gamepad1.left_trigger > 0 || gamepad1.right_trigger > 0) {
+                power = 0.3; // slowdown robot on left or right trigger
+            }
+
+            frontLeftDrive.setPower(power * Math.signum(v1));
+            frontRightDrive.setPower(power * Math.signum(v2));
+            rearLeftDrive.setPower(power * Math.signum(v3));
+            rearRightDrive.setPower(power * Math.signum(v4));
         }
 
 
