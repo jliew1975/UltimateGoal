@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode.team12538.robot_app;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
+
 @Autonomous(name="Auto (Facing Crater - No Landing)", group="Linear Opmode")
 public class AutoFacingCraterNoLandingApp extends AutoFacingCraterApp {
     @Override
@@ -20,9 +22,6 @@ public class AutoFacingCraterNoLandingApp extends AutoFacingCraterApp {
             } else {
                 robot.moveForward(0.1, 15);
             }
-
-            robot.getCollector().disableIntake();
-            robot.getCollector().flipCollectorBox(0.6);
         }
     }
 
@@ -33,6 +32,6 @@ public class AutoFacingCraterNoLandingApp extends AutoFacingCraterApp {
 
     @Override
     protected void navigateForParking(MineralLocation mineralLocation) {
-        robot.getCollector().flipCollectorBox(1d); // for touching the crater to score points
+        robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
     }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -20,8 +21,11 @@ public abstract class RobotBase extends MecanumDriveBase {
     MineralMechanism collector = null;
     RobotLatch robotLatch = null;
 
-    Servo phoneTilt = null;
-    Servo parkingRod = null;
+    private Servo phoneTilt = null;
+    private Servo parkingRod = null;
+
+    public double telePhoneTiltPos = 0.500;
+    public double autoPhoneTiltPos = 0.647;
 
     @Override
     public void init() {
@@ -31,14 +35,14 @@ public abstract class RobotBase extends MecanumDriveBase {
 
         // phone tilting servo initialization
         phoneTilt = hardwareMap.get(Servo.class, "phone_tilt");
-        phoneTilt.setPosition(0.73);
+        phoneTilt.setPosition(autoPhoneTiltPos);
 
         // parking rod initialization
         parkingRod = hardwareMap.get(Servo.class, "parking_rod");
         parkingRod.setPosition(0d);
 
         // mineral collector mechanism initialization
-        collector = new MineralMechanism(0, 5000);
+        collector = new MineralMechanism();
         collector.init();
 
         // latching mechanism initialization
@@ -46,12 +50,34 @@ public abstract class RobotBase extends MecanumDriveBase {
         robotLatch.init();
     }
 
+    public void driveRobot(Gamepad gamepad) {
+        // Drive mode for mecanum wheel
+        double r = Math.hypot(gamepad.left_stick_x, gamepad.left_stick_y);
+        double robotAngle = Math.atan2(gamepad.left_stick_y, gamepad.left_stick_x) - Math.PI / 4;
+        double rightX = gamepad.right_stick_x;
+
+        final double v1 = r * Math.sin(robotAngle) - rightX;
+        final double v2 = r * Math.cos(robotAngle) + rightX;
+        final double v3 = r * Math.cos(robotAngle) - rightX;
+        final double v4 = r * Math.sin(robotAngle) + rightX;
+
+        double power = 1.0;
+        if(gamepad.left_trigger > 0 || gamepad.right_trigger > 0) {
+            power = 0.3; // slowdown robot on left or right trigger
+        }
+
+        frontLeftDrive.setPower(power * Math.signum(v1));
+        frontRightDrive.setPower(power * Math.signum(v2));
+        rearLeftDrive.setPower(power * Math.signum(v3));
+        rearRightDrive.setPower(power * Math.signum(v4));
+    }
+
     public void placeTeamMarker() {
-        collector.flipCollectorBox(0.75);
+        collector.flipCollectorBox(0d);
         sleep(500);
         collector.enableIntake(MineralMechanism.Direction.OutTake);
         sleep(500);
-        collector.flipCollectorBox(0.2);
+        collector.flipCollectorBox(1d);
         collector.disableIntake();
     }
 }

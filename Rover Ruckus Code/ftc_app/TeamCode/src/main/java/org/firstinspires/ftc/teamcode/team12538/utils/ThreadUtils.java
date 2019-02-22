@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class ThreadUtils {
-    private static ExecutorService executorService = null;
+    private static ExecutorService executorService;
 
     public static void init() {
         executorService = Executors.newSingleThreadExecutor();

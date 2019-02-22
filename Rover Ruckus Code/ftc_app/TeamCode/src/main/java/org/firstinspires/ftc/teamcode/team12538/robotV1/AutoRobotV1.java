@@ -69,20 +69,6 @@ public class AutoRobotV1 extends RobotBase {
         robotLatch.unlatch();
     }
 
-    public void expandMechanism() {
-        /*
-        synchronized (this) {
-            collector.flipCollectorBox(0d);
-            collector.positionArmExt(4000, 1.0);
-            collector.swingArmToPosition(200, 0.3);
-            collector.getOuttakeSlide().setPosition(1d);
-            collector.swingArmToPosition(0, 0.1);
-            collector.getSwingingArm().setPower(0);
-            collector.controlReleaseMineral(MineralMechanism.MineralSide.Both, 0d);
-        }
-        */
-    }
-
     public void moveForward(double power, double distance) {
         // limit power to 1
         power = limitPower(power);

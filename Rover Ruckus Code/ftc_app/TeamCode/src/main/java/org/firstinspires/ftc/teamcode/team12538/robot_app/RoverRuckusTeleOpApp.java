@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.team12538.robot_app;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.team12538.robotV1.TeleOpRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
-import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 @TeleOp(name="Robot Tele v1", group="Linear Opmode")
 public class RoverRuckusTeleOpApp extends LinearOpMode {
@@ -24,12 +22,11 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
         try {
             TeleOpRobotV1 robot = new TeleOpRobotV1();
             robot.init();
-            robot.getRobotLatch().autoHook();
 
             waitForStart();
 
-            // tilt the phone for mineral scanning
-            robot.getPhoneTilt().setPosition(1d);
+            // tilt the phone for teleOp mode
+            robot.getPhoneTilt().setPosition(robot.telePhoneTiltPos);
 
             while (opModeIsActive()) {
                 robot.player1controls(gamepad1);

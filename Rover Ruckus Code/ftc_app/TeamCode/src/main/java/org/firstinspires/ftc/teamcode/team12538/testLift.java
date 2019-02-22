@@ -88,7 +88,7 @@ public class testLift extends LinearOpMode {
 
 
 
-        hook = hardwareMap.get(CRServo.class, "hook");
+        hook = hardwareMap.get(CRServo.class, "latch");
         intake = hardwareMap.get(CRServo.class, "intake");
 
         frontLeftDrive = hardwareMap.get(DcMotor.class, "left_forward_drive");
@@ -98,6 +98,7 @@ public class testLift extends LinearOpMode {
 
         intakeFlip = hardwareMap.get(DcMotor.class, "intake_flip");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, intakeFlip);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, intakeFlip);
 
         linearSlides = hardwareMap.get(DcMotor.class, "linear_slides");
 

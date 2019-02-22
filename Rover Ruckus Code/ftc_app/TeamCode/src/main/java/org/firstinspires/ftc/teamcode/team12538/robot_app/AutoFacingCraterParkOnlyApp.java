@@ -6,6 +6,7 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
 import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExtDebug;
 
@@ -19,9 +20,6 @@ public class AutoFacingCraterParkOnlyApp extends AutoFacingCraterApp {
             } else {
                 robot.moveForward(0.1, 15);
             }
-
-            robot.getCollector().disableIntake();
-            robot.getCollector().flipCollectorBox(0.6);
         }
     }
 
@@ -32,6 +30,6 @@ public class AutoFacingCraterParkOnlyApp extends AutoFacingCraterApp {
 
     @Override
     protected void navigateForParking(MineralLocation mineralLocation) {
-        robot.getCollector().flipCollectorBox(1d); // for touching the crater to score points
+        robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
     }
 }

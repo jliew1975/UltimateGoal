@@ -3,7 +3,7 @@ package com.disnodeteam.dogecv.detectors.roverruckus;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+// import com.acmerobotics.dashboard.FtcDashboard;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.DogeCVDetector;
 import com.disnodeteam.dogecv.filters.DogeCVColorFilter;
@@ -58,12 +58,12 @@ public class GoldAlignDetector extends DogeCVDetector {
     public MaxAreaScorer    maxAreaScorer      = new MaxAreaScorer( 0.01);
     public PerfectAreaScorer perfectAreaScorer = new PerfectAreaScorer(5000,0.05);
 
-    private FtcDashboard dashboard = null;
+    // private FtcDashboard dashboard = null;
 
     public GoldAlignDetector() {
         super();
         detectorName = "Gold Align Detector";
-        dashboard = FtcDashboard.getInstance();
+        // dashboard = FtcDashboard.getInstance();
     }
 
     @Override
@@ -139,11 +139,11 @@ public class GoldAlignDetector extends DogeCVDetector {
     }
 
     private void publishViewToDashboard() {
-        Bitmap bmp = Bitmap.createBitmap(workingMat.cols(), workingMat.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(workingMat, bmp);
+        // Bitmap bmp = Bitmap.createBitmap(workingMat.cols(), workingMat.rows(), Bitmap.Config.ARGB_8888);
+        // Utils.matToBitmap(workingMat, bmp);
 
-        dashboard.setImageQuality(30);
-        dashboard.sendImage(bmp);
+        // dashboard.setImageQuality(30);
+        // dashboard.sendImage(bmp);
     }
 
     @Override

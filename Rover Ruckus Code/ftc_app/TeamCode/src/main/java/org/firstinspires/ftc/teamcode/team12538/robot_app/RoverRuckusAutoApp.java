@@ -8,6 +8,7 @@ import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
@@ -31,7 +32,6 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
     AutoRobotV1 robot = null;
     SamplingOrderDetectorExt detector = null;
 
-    public double phoneTiltPosition = 0.74;
     public double moveForwardPosition = 4.0;
     public boolean enableLanding = true;
 
@@ -67,12 +67,12 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
                     robot.unlatchFromLander();
                 }
 
-                // expand mineral machenism for mineral detection and collection
+                // expand mineral mechanism for mineral detection and collection
                 // robot.expandMechanism();
 
                 // move robot forward a little toward mineral
                 // for gold mineral detection
-                robot.moveForward(0.1, moveForwardPosition);
+                robot.moveBackward(0.1, moveForwardPosition);
 
                 // locate the gold mineral location
                 MineralLocation mineralLocation = locateGoldMineral();
@@ -134,19 +134,19 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
             }
         }
 
-        robot.moveForward(0.5, 30);
+        robot.moveBackward(0.5, 30);
     }
 
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {
         if(mineralLocation == MineralLocation.Left) {
             robot.moveForward(0.5, 10);
-            robot.rotate(-50, 0.5, 5.0);
+            robot.rotate(70, 0.5, 5.0);
             robot.moveForward(0.5, 10);
             robot.placeTeamMarker();
             robot.strafeLeft(0.5, 5.0);
         } else if(mineralLocation == MineralLocation.Right) {
             robot.moveForward(0.2, 17);
-            robot.rotate(70, 0.5, 5.0);
+            robot.rotate(-50, 0.5, 5.0);
             robot.moveForward(0.5, 10);
             robot.placeTeamMarker();
             robot.moveBackward(0.5, 10);
@@ -157,7 +157,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         } else {
             robot.moveForward(0.2, 10);
             robot.placeTeamMarker();
-            robot.rotate(45, 0.5, 5.0);
+            robot.rotate(-45, 0.5, 5.0);
             robot.moveForward(0.5, 20);
             robot.moveBackward(0.5, 5);
             robot.rotate(50, 0.5, 5.0);
@@ -168,7 +168,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
     protected void navigateForParking(MineralLocation mineralLocation) throws InterruptedException {
         if(mineralLocation != MineralLocation.Left) {
             robot.moveForward(0.5, 50);
-            robot.getCollector().flipCollectorBox(1d); // for breaking the crater plain to score parking points
+            robot.getCollector().flipCollectorBox(0d); // for breaking the crater plain to score parking points
         } else {
             robot.moveBackward(0.5, 50);
             robot.getParkingRod().setPosition(0.5); // for breaking the crater plain to score parking points
