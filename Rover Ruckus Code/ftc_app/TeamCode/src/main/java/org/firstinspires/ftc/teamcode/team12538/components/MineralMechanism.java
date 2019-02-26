@@ -55,8 +55,9 @@ public class MineralMechanism implements RobotMechanic {
     private volatile boolean depoBoxBusy = false;
     private volatile boolean depoLiftBusy = false;
 
-    public double intakeFlipUpPos = 1.00;
-    public double intakeFlipDownPos = 0.25;
+    public double intakeFlipHangPos = 1.0;
+    public double intakeFlipUpPos = 0.87;
+    public double intakeFlipDownPos = 0.00;
     public double intakeFlipPrepPos = 0.50;
 
     private double depoLowerPos = 0.40;
@@ -74,7 +75,12 @@ public class MineralMechanism implements RobotMechanic {
 
         // intakeFlip initialization logic
         intakeFlip = hardwareMap.get(Servo.class, "intake_flip");
-        intakeFlip.setPosition(intakeFlipUpPos);
+
+        if(OpModeUtils.getGlobalStore().isResetArmExtensionEncoderValue()) {
+            intakeFlip.setPosition(intakeFlipUpPos);
+        } else {
+            intakeFlip.setPosition(intakeFlipPrepPos);
+        }
 
         if(OpModeUtils.getGlobalStore().isResetArmExtensionEncoderValue()) {
             // MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, intakeFlip);
@@ -152,6 +158,10 @@ public class MineralMechanism implements RobotMechanic {
     }
 
     public void flipCollectorBox(double position) {
+        if(position == intakeFlipUpPos && intakeFlip.getPosition() == position) {
+            intakeFlip.setPosition(0.5);
+            sleep(500);
+        }
         intakeFlip.setPosition(position);
     }
 
@@ -290,7 +300,9 @@ public class MineralMechanism implements RobotMechanic {
                             RobotLog.d("starting autoMineralDeposit logic");
                             // disableIntake();
                             flipCollectorBox(intakeFlipPrepPos);
-                            positionArmExtForMineralTransfer();
+                            if(magneticLimitSensor.getState()) {
+                                positionArmExtForMineralTransfer();
+                            }
                             flipCollectorBox(intakeFlipUpPos);
                             sleep(500);
                             RobotLog.d("done with autoMineralDeposit logic");
@@ -314,6 +326,7 @@ public class MineralMechanism implements RobotMechanic {
                     @Override
                     public void run() {
                         try {
+                            intakeFlip.setPosition(intakeFlipDownPos);
                             MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
                             depoLift.setTargetPosition(targetPosition);
                             depoLift.setPower(1);
@@ -385,7 +398,7 @@ public class MineralMechanism implements RobotMechanic {
     public void jerkDepoBox() {
         depo.setPosition(0.8);
         sleep(100);
-        depo.setPosition(1d);
+        depo.setPosition(0.89);
     }
 
     public boolean canFlipDepoBox() {

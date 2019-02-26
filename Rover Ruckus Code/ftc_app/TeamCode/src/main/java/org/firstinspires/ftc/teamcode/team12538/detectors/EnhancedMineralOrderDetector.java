@@ -26,7 +26,7 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnhancedMineralOrderDetector extends DogeCVDetector {
+public class EnhancedMineralOrderDetector extends DogeCVDetector implements MineralDetector {
     public DetectorListener listener = null;
     public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA;
 

@@ -9,7 +9,6 @@ public class AutoFacingDepotNoLandingApp extends RoverRuckusAutoApp {
     @Override
     public void runOpMode() throws InterruptedException {
         super.enableLanding = false;
-        super.phoneTiltPosition = 0.70;
         super.runOpMode();
     }
 }

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
-import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetector;
 import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMUImpl;
@@ -12,8 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
-import org.firstinspires.ftc.teamcode.team12538.detectors.GoldAlignDetectorExt;
+import org.firstinspires.ftc.teamcode.team12538.detectors.MineralDetector;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
@@ -110,7 +108,7 @@ public class AutoRobotV1 extends RobotBase {
      * Rotate left or right the number of degrees. Does not support turning more than 180 degrees.
      * @param degrees Degrees to turn, + is left - is right
      */
-    public double rotate(double degrees, double power, double timeout, SamplingOrderDetectorExt detector) throws InterruptedException {
+    public double rotate(double degrees, double power, double timeout, MineralDetector detector) throws InterruptedException {
         // restart imu movement tracking.
         resetAngle();
 
@@ -122,12 +120,19 @@ public class AutoRobotV1 extends RobotBase {
         {
             // On right turn we have to get off zero first.
             while (OpModeUtils.opModeIsActive() && getAngle() == 0) {
+                telemetry.addData("angle", getAngle());
+                telemetry.addData("degrees", 0);
+                telemetry.update();
+
                 turnRight(power);
-                ThreadUtils.idle();
             }
 
             turnRight(power);
             while (OpModeUtils.opModeIsActive() && getAngle() > degrees) {
+                telemetry.addData("angle", getAngle());
+                telemetry.addData("degrees", degrees);
+                telemetry.update();
+
                 if(detector != null && detector.isFound()) {
                    if(detector.isAligned()) {
                        break;
@@ -141,6 +146,10 @@ public class AutoRobotV1 extends RobotBase {
         } else {  // left turn.
             turnLeft(power);
             while (OpModeUtils.opModeIsActive() && getAngle() < degrees) {
+                telemetry.addData("angle", getAngle());
+                telemetry.addData("degrees", degrees);
+                telemetry.update();
+
                 if(detector != null && detector.isFound()) {
                     if(detector.isAligned()) {
                         break;
@@ -261,14 +270,14 @@ public class AutoRobotV1 extends RobotBase {
 
         int[] targetPositions = new int[motors.size()];
 
-        double newDistance = (direction == StrafingDirection.Right) ? -1 * distance : distance;
+        double newDistance = (direction == StrafingDirection.Right) ? distance : -1 * distance;
 
         //ensure that the opmode is still active
         if(OpModeUtils.getOpMode().opModeIsActive()) {
             int index = 0;
             for(DcMotor motor : motors) {
                 // bleftDrive or frightDrive
-                if(index == 1 || index == 2) {
+                if(index == 1 || index == 3) {
                     targetPositions[index] = motor.getCurrentPosition() + (int) (-newDistance * Math.sqrt(2) * COUNTS_PER_INCH);
                 } else {
                     targetPositions[index] = motor.getCurrentPosition() + (int) (newDistance * Math.sqrt(2) * COUNTS_PER_INCH);

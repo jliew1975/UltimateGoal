@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotLatch;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDriveBase;
@@ -25,7 +26,7 @@ public abstract class RobotBase extends MecanumDriveBase {
     private Servo parkingRod = null;
 
     public double telePhoneTiltPos = 0.500;
-    public double autoPhoneTiltPos = 0.647;
+    public double autoPhoneTiltPos = 0.669;
 
     @Override
     public void init() {
@@ -39,7 +40,7 @@ public abstract class RobotBase extends MecanumDriveBase {
 
         // parking rod initialization
         parkingRod = hardwareMap.get(Servo.class, "parking_rod");
-        parkingRod.setPosition(0d);
+        parkingRod.setPosition(1d);
 
         // mineral collector mechanism initialization
         collector = new MineralMechanism();
@@ -56,8 +57,8 @@ public abstract class RobotBase extends MecanumDriveBase {
         double robotAngle = Math.atan2(gamepad.left_stick_y, gamepad.left_stick_x) - Math.PI / 4;
         double rightX = gamepad.right_stick_x;
 
-        final double v1 = r * Math.sin(robotAngle) - rightX;
-        final double v2 = r * Math.cos(robotAngle) + rightX;
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.cos(robotAngle) - rightX;
         final double v4 = r * Math.sin(robotAngle) + rightX;
 
@@ -73,11 +74,11 @@ public abstract class RobotBase extends MecanumDriveBase {
     }
 
     public void placeTeamMarker() {
-        collector.flipCollectorBox(0d);
+        collector.flipCollectorBox(collector.intakeFlipPrepPos);
         sleep(500);
         collector.enableIntake(MineralMechanism.Direction.OutTake);
-        sleep(500);
-        collector.flipCollectorBox(1d);
+        sleep(1000);
+        collector.flipCollectorBox(collector.intakeFlipUpPos);
         collector.disableIntake();
     }
 }

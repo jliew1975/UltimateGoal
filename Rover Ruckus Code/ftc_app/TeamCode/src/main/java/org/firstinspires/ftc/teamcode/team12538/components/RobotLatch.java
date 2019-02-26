@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -27,6 +26,9 @@ public class RobotLatch implements RobotMechanic {
 
     private ElapsedTime runtime = new ElapsedTime();
 
+    private int latchPosition = 6500;
+    private int unlatchPosition = 0;
+
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
@@ -40,9 +42,20 @@ public class RobotLatch implements RobotMechanic {
 
 
         scissorLiftMotor = hardwareMap.get(DcMotor.class, "jack");
+        scissorLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLiftMotor);
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorLiftMotor);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorLiftMotor);
+    }
+
+    public void powerLatch(double power) {
+        if (power > 0d && latchCloseSensor.getState()) {
+            latchServo.setPower(power);
+        } else if(power < 0d && latchOpenSensor.getState()) {
+            latchServo.setPower(power);
+        } else {
+            latchServo.setPower(0d);
+        }
     }
 
     public void latchClose() {
@@ -82,7 +95,8 @@ public class RobotLatch implements RobotMechanic {
             }
 
             if (constraint != -1) {
-                if (Math.abs(scissorLiftMotor.getCurrentPosition()) <= constraint) {
+                int currentPos = scissorLiftMotor.getCurrentPosition();
+                if (power > 0) {
                     power = 0;
                 }
             }
@@ -91,7 +105,7 @@ public class RobotLatch implements RobotMechanic {
         }
     }
 
-    public void powerLiftOnUpPosition(final double power, final int targetPosition) {
+    public void powerLiftRunToPosition(final double power, final int targetPosition) {
         synchronized (scissorLiftMotor) {
             try {
                 scissorLiftBusy = true;
@@ -99,39 +113,23 @@ public class RobotLatch implements RobotMechanic {
 
                 double adjustedPower = power;
 
-                scissorLiftMotor.setTargetPosition(targetPosition);
-                scissorLiftMotor.setPower(-1);
-
-                runtime.reset();
-                while (OpModeUtils.opModeIsActive() && scissorLiftMotor.isBusy() && runtime.seconds() < 5d) {
-                    // fail-safe logic
-                    if(Math.abs(scissorLiftMotor.getCurrentPosition()) >= 8000) {
-                        break;
-                    }
-                }
-
-                scissorLiftMotor.setPower(0d);
-                MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorLiftMotor);
-            } finally {
-                scissorLiftBusy = false;
-            }
-        }
-    }
-
-    public void powerLiftOnDownPosition(final double power, final int targetPosition) {
-        synchronized (scissorLiftMotor) {
-            try {
-                scissorLiftBusy = true;
-                MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLiftMotor);
-
-                double adjustedPower = power;
+                int startPos = scissorLiftMotor.getCurrentPosition();
 
                 scissorLiftMotor.setTargetPosition(targetPosition);
                 scissorLiftMotor.setPower(adjustedPower);
 
                 runtime.reset();
                 while (OpModeUtils.opModeIsActive() && scissorLiftMotor.isBusy() && runtime.seconds() < 5d) {
-                    // intentionally left blank for no-op
+                    int curPos = scissorLiftMotor.getCurrentPosition();
+                    if(targetPosition > 0 && curPos > (targetPosition - 500)) {
+                        scissorLiftMotor.setPower(0.3);
+                    } else if(targetPosition == 0 && curPos < (targetPosition + 500)) {
+                        scissorLiftMotor.setPower(0.3);
+                    }
+
+                    Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
+                    telemetry.addData("lift", scissorLiftMotor.getCurrentPosition());
+                    telemetry.update();
                 }
 
                 scissorLiftMotor.setPower(0d);
@@ -144,31 +142,24 @@ public class RobotLatch implements RobotMechanic {
 
     public void latch() {
         // raise scissor lift for latching
-        // powerLiftOnUpPosition(1d, 7050);
-        powerLiftOnUpPosition(1d, 2000);
-        ThreadUtils.sleep(500);
+        powerLiftRunToPosition(1d, latchPosition);
 
         // position latch on the close position
         latchClose();
-        ThreadUtils.sleep(500);
 
         // lower scissor lift
-        powerLiftOnDownPosition(1d, 0);
+        powerLiftRunToPosition(1d, unlatchPosition);
     }
 
     public void unlatch() {
-        latchClose();
-
         // raise scissor lift for landing
-        powerLiftOnUpPosition(1d, 7050);
-        ThreadUtils.sleep(500);
+        powerLiftRunToPosition(1d, latchPosition);
 
         // unlatch robot from lander
         latchOpen();
-        ThreadUtils.sleep(500);
 
         // lower scissor lift
-        powerLiftOnDownPosition(1d, 0);
+        powerLiftRunToPosition(1d, unlatchPosition);
     }
 
     public void printTelemetry() {

@@ -30,6 +30,6 @@ public class AutoFacingCraterParkOnlyApp extends AutoFacingCraterApp {
 
     @Override
     protected void navigateForParking(MineralLocation mineralLocation) {
-        robot.getCollector().flipCollectorBox(0d); // for touching the crater to score points
+        robot.getParkingRod().setPosition(0d); // for touching the crater to score points
     }
 }

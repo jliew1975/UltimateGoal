@@ -42,8 +42,8 @@ public abstract class MecanumDriveBase {
         rearLeftDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rearRightDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
@@ -99,16 +99,16 @@ public abstract class MecanumDriveBase {
     }
 
     public void turnRight(double power) {
-        frontRightDrive.setPower(power);
+        frontRightDrive.setPower(-power);
         rearRightDrive.setPower(power);
-        frontLeftDrive.setPower(-power);
+        frontLeftDrive.setPower(power);
         rearLeftDrive.setPower(-power);
     }
 
     public void turnLeft(double power) {
-        frontRightDrive.setPower(-power);
+        frontRightDrive.setPower(power);
         rearRightDrive.setPower(-power);
-        frontLeftDrive.setPower(power);
+        frontLeftDrive.setPower(-power);
         rearLeftDrive.setPower(power);
     }
 

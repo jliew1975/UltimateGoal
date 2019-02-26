@@ -4,11 +4,11 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.listeners.DetectorListener;
 import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrder;
-import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
+import org.firstinspires.ftc.teamcode.team12538.detectors.EnhancedMineralOrderDetector;
+import org.firstinspires.ftc.teamcode.team12538.detectors.MineralDetector;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
@@ -30,7 +30,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
     }
 
     AutoRobotV1 robot = null;
-    SamplingOrderDetectorExt detector = null;
+    MineralDetector detector = null;
 
     public double moveForwardPosition = 4.0;
     public boolean enableLanding = true;
@@ -64,13 +64,13 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
             while(opModeIsActive()) {
                 // deploy robot from lander
                 if(enableLanding) {
-                    robot.unlatchFromLander();
+                    // robot.unlatchFromLander();
                 }
 
                 // expand mineral mechanism for mineral detection and collection
                 // robot.expandMechanism();
 
-                // move robot forward a little toward mineral
+                // move robot backward a little toward mineral
                 // for gold mineral detection
                 robot.moveBackward(0.1, moveForwardPosition);
 
@@ -125,11 +125,11 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
                     break;
 
                 case Left:
-                    robot.rotate(30, 0.1, 5.0, detector);
+                    robot.rotate(-30, 0.1, 5.0, detector);
                     break;
 
                 case Right:
-                    robot.rotate(-30, 0.1, 5.0, detector);
+                    robot.rotate(30, 0.1, 5.0, detector);
                     break;
             }
         }
@@ -171,7 +171,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
             robot.getCollector().flipCollectorBox(0d); // for breaking the crater plain to score parking points
         } else {
             robot.moveBackward(0.5, 50);
-            robot.getParkingRod().setPosition(0.5); // for breaking the crater plain to score parking points
+            robot.getParkingRod().setPosition(0d); // for breaking the crater plain to score parking points
         }
 
         sleep(500);
@@ -218,12 +218,12 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         return location;
     }
 
-    protected SamplingOrderDetectorExt createDetector() {
-        SamplingOrderDetectorExt detector = new SamplingOrderDetectorExt();
+    protected EnhancedMineralOrderDetector createDetector() {
+        EnhancedMineralOrderDetector detector = new EnhancedMineralOrderDetector();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
 
         detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = 150; // How far from center frame to offset this alignment zone.
+        detector.alignPosOffset = 50; // How far from center frame to offset this alignment zone.
         detector.downscale = 0.4; // How much to downscale the input frames
         // detector.areaScoringMethod = DogeCV.AreaScoringMethod.PERFECT_AREA;
         // detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
@@ -231,6 +231,9 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         detector.maxAreaScorer.weight = 0.001; // if using MAX_AREA scoring
         detector.ratioScorer.weight = 5;
         detector.ratioScorer.perfectRatio = 1.0;
+
+        detector.yMinOffset = -60;
+        detector.yMaxOffset = +30;
 
         detector.useDefaults();
         detector.listener = this;
