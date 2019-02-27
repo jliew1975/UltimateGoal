@@ -90,27 +90,17 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode implements DetectorLi
                 }
 
                 if(gamepad2.dpad_left) {
-                    robot.rotate(-45, 0.5, 10);
+                    robot.getCollector().getIntakeGate().setPosition(robot.getCollector().getIntakeGate().getPosition() - 0.001);
                 } else if(gamepad2.dpad_right) {
-                    robot.rotate(45, 0.5, 10);
+                    robot.getCollector().getIntakeGate().setPosition(robot.getCollector().getIntakeGate().getPosition() + 0.001);
                 } else if(gamepad2.dpad_up) {
-                    robot.moveForward(0.1, 10);
+                    robot.getCollector().flipCollectorBox(robot.getCollector().intakeFlipUpPos);
                 } else if(gamepad2.dpad_down) {
-                    robot.moveBackward(0.1, 10);
+                    robot.getCollector().flipCollectorBox(robot.getCollector().intakeFlipPrepPos);
                 }
 
-                if(gamepad2.x) {
-                    robot.strafeLeft(0.5, 5.0);
-                } else if(gamepad2.b) {
-                    robot.strafeRight(0.5, 5.0);
-                } else if(gamepad2.y) {
-                    robot.getParkingRod().setPosition(0d);
-                } else if(gamepad2.a) {
-                    robot.placeTeamMarker();
-                }
-
-                // telemetry.addData("lift", robot.getRobotLatch().getScissorLiftMotor().getCurrentPosition());
-                // telemetry.update();
+                telemetry.addData("intakeGate", robot.getCollector().getIntakeGate().getPosition());
+                telemetry.update();
             }
         } finally {
             if(detector != null) {

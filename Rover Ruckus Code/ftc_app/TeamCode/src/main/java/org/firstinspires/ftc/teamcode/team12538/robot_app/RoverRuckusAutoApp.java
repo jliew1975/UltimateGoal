@@ -64,7 +64,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
             while(opModeIsActive()) {
                 // deploy robot from lander
                 if(enableLanding) {
-                    // robot.unlatchFromLander();
+                    robot.unlatchFromLander();
                 }
 
                 // expand mineral mechanism for mineral detection and collection
@@ -109,6 +109,8 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
     }
 
     protected void collectMineralOffTapedArea(MineralLocation mineralLocation) throws InterruptedException {
+        int rotateDegree = 0;
+
         // robot.prepareMineralIntake();
         if(!mineralLocation.isSkipAlign()) {
             switch (mineralLocation) {
@@ -117,8 +119,10 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
                     if (!detector.isAligned()) {
                         if(xPos > 300) {
                             robot.rotate(-20, 0.1, 0.5, detector);
+                            rotateDegree = -20;
                         } else {
                             robot.rotate(20, 0.1, 0.5, detector);
+                            rotateDegree = 20;
                         }
                     }
 
@@ -135,6 +139,10 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         }
 
         robot.moveBackward(0.5, 30);
+
+        if(rotateDegree != 0) {
+            robot.rotate(rotateDegree, 0.1, 0.5);
+        }
     }
 
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {

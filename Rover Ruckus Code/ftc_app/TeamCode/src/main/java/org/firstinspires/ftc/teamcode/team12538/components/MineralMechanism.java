@@ -30,6 +30,7 @@ public class MineralMechanism implements RobotMechanic {
     // private Servo leftFlip = null;
     // private Servo rightFlip = null;
     private Servo intakeFlip = null;
+    private Servo intakeGate = null;
 
     private DcMotor armExtension = null;
 
@@ -62,6 +63,9 @@ public class MineralMechanism implements RobotMechanic {
 
     private double depoLowerPos = 0.40;
 
+    private double intakeGateOpen = 0d;
+    private double intakeGateClose = 0.6;
+
     @Override
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
@@ -69,18 +73,13 @@ public class MineralMechanism implements RobotMechanic {
         // intake continuous servo initialization
         intake = hardwareMap.get(CRServo.class, "intake");
 
-        // intake box flipper servo initialization
-        // leftFlip = hardwareMap.servo.get("l_flip");
-        // rightFlip = hardwareMap.servo.get("r_flip");
+        intakeGate = hardwareMap.get(Servo.class, "intake_gate");
+        intakeGate.setPosition(0.6);
 
         // intakeFlip initialization logic
         intakeFlip = hardwareMap.get(Servo.class, "intake_flip");
+        intakeFlip.setPosition(intakeFlipUpPos);
 
-        if(OpModeUtils.getGlobalStore().isResetArmExtensionEncoderValue()) {
-            intakeFlip.setPosition(intakeFlipUpPos);
-        } else {
-            intakeFlip.setPosition(intakeFlipPrepPos);
-        }
 
         if(OpModeUtils.getGlobalStore().isResetArmExtensionEncoderValue()) {
             // MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, intakeFlip);
@@ -160,9 +159,20 @@ public class MineralMechanism implements RobotMechanic {
     public void flipCollectorBox(double position) {
         if(position == intakeFlipUpPos && intakeFlip.getPosition() == position) {
             intakeFlip.setPosition(0.5);
-            sleep(500);
+            sleep(300);
         }
+
+        if(position == intakeFlipUpPos) {
+            intakeGate.setPosition(intakeGateOpen);
+            sleep(100);
+        }
+
         intakeFlip.setPosition(position);
+
+        if(position != intakeFlipUpPos) {
+            sleep(100);
+            intakeGate.setPosition(intakeGateClose);
+        }
     }
 
     public void controlArmExt(double power) {
@@ -273,12 +283,15 @@ public class MineralMechanism implements RobotMechanic {
                 }
 
                 while (OpModeUtils.opModeIsActive() && magneticLimitSensor.getState()) {
+                    /*
                     currentPosition = armExtension.getCurrentPosition();
                     if(currentPosition < lowerSlowdownThreshold) {
                         effectivePower = Math.signum(effectivePower) * 0.2;
                     }
+                    */
 
                     armExtension.setPower(effectivePower);
+
                 }
 
                 armExtension.setPower(0);
@@ -326,7 +339,7 @@ public class MineralMechanism implements RobotMechanic {
                     @Override
                     public void run() {
                         try {
-                            intakeFlip.setPosition(intakeFlipDownPos);
+                            flipCollectorBox(intakeFlipDownPos);
                             MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
                             depoLift.setTargetPosition(targetPosition);
                             depoLift.setPower(1);

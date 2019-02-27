@@ -39,6 +39,7 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
 
                 case Right:
                     robot.rotate(-30, 0.1, 5.0, detector);
+                    robot.rotate(-20, 0.1, 0.5);
                     break;
             }
         }
@@ -63,14 +64,14 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
             robot.stop();
             robot.moveForward(0.5, 25);
             robot.rotate(35, 0.3, 5.0);
-            robot.strafeRight(0.5, 5.0);
+            robot.strafeRight(0.5, 20);
             robot.moveForward(0.5, 35);
         } else if(mineralLocation == MineralLocation.Right) {
-            robot.rotate(-45, 0.3, 5.0);
-            robot.moveForward(0.5, 55);
-            robot.rotate(30, 0.3, 5.0);
-            robot.strafeRight(0.5, 5.0);
-            robot.moveForward(0.5, 30);
+            robot.rotate(-37, 0.3, 5.0);
+            robot.moveForward(0.5, 40);
+            robot.rotate(35, 0.3, 5.0);
+            robot.strafeRight(0.5, 20);
+            robot.moveForward(0.5, 40);
         } else {
             robot.rotate(-80, 0.3, 5.0);
             robot.moveForward(0.5, 45);
