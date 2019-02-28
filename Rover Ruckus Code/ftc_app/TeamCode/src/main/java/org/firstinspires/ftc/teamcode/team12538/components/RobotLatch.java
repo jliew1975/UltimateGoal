@@ -32,7 +32,6 @@ public class RobotLatch implements RobotMechanic {
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
-        // TODO: need to figure out servo direction
         latchServo = hardwareMap.get(CRServo.class, "latch");
         latchServo.setDirection(DcMotorSimple.Direction.REVERSE);
         latchServo.setPower(0d);

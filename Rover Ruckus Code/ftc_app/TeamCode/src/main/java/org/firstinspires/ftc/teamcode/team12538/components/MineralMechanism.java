@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -66,6 +67,8 @@ public class MineralMechanism implements RobotMechanic {
     private double intakeGateOpen = 0d;
     private double intakeGateClose = 0.6;
 
+    private ElapsedTime runtime = new ElapsedTime();
+
     @Override
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
@@ -74,7 +77,7 @@ public class MineralMechanism implements RobotMechanic {
         intake = hardwareMap.get(CRServo.class, "intake");
 
         intakeGate = hardwareMap.get(Servo.class, "intake_gate");
-        intakeGate.setPosition(0.6);
+        intakeGate.setPosition(intakeGateClose);
 
         // intakeFlip initialization logic
         intakeFlip = hardwareMap.get(Servo.class, "intake_flip");
@@ -213,31 +216,6 @@ public class MineralMechanism implements RobotMechanic {
         }
     }
 
-    public void adjustArmExtPosition(final int positionDelta, final boolean isNewZeroPosInd) {
-        synchronized (lock) {
-            if (!busy) {
-                busy = true;
-                ThreadUtils.getExecutorService().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            int targetPos = armExtension.getCurrentPosition() + positionDelta;
-                            positionArmExt(targetPos);
-
-                            if (isNewZeroPosInd) {
-                                // reset the encoder and make that position the new zero position
-                                MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, armExtension);
-                                MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, armExtension);
-                            }
-                        } finally {
-                            busy = false;
-                        }
-                    }
-                });
-            }
-        }
-    }
-
     public void positionArmExt(int targetPosition) {
         positionArmExt(targetPosition, 1.0);
     }
@@ -258,7 +236,9 @@ public class MineralMechanism implements RobotMechanic {
                 armExtension.setTargetPosition(targetPosition);
                 armExtension.setPower(effectivePower);
 
-                while (OpModeUtils.opModeIsActive() && armExtension.isBusy()) {
+                runtime.reset();
+
+                while (OpModeUtils.opModeIsActive() && armExtension.isBusy() && runtime.seconds() <= 4) {
 
                 }
 
@@ -283,13 +263,6 @@ public class MineralMechanism implements RobotMechanic {
                 }
 
                 while (OpModeUtils.opModeIsActive() && magneticLimitSensor.getState()) {
-                    /*
-                    currentPosition = armExtension.getCurrentPosition();
-                    if(currentPosition < lowerSlowdownThreshold) {
-                        effectivePower = Math.signum(effectivePower) * 0.2;
-                    }
-                    */
-
                     armExtension.setPower(effectivePower);
 
                 }
