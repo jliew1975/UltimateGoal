@@ -60,8 +60,12 @@ public class testLift extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor scissorJack = null;
+    private DcMotor verticalLift = null;
+
     private CRServo hook = null;
     private CRServo intake = null;
+
+    private Servo deposit = null;
 
     private DcMotor frontLeftDrive = null;
     private DcMotor frontRightDrive = null;
@@ -90,6 +94,7 @@ public class testLift extends LinearOpMode {
 
         hook = hardwareMap.get(CRServo.class, "latch");
         intake = hardwareMap.get(CRServo.class, "intake");
+        deposit = hardwareMap.get(Servo.class, "deposit");
 
         frontLeftDrive = hardwareMap.get(DcMotor.class, "left_forward_drive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "right_forward_drive");
@@ -99,6 +104,10 @@ public class testLift extends LinearOpMode {
         intakeFlip = hardwareMap.get(DcMotor.class, "intake_flip");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, intakeFlip);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, intakeFlip);
+
+        verticalLift = hardwareMap.get(DcMotor.class, "vertical_slides");
+        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, verticalLift);
+
 
         linearSlides = hardwareMap.get(DcMotor.class, "linear_slides");
 
@@ -124,6 +133,15 @@ public class testLift extends LinearOpMode {
            else{
                scissorJack.setPower(0);
            }
+
+           //depositing code
+            if(gamepad1.a){
+               deposit.setPosition(0.68);
+            }
+            else if(gamepad1.x){
+               deposit.setPosition(0.22);
+            }
+
 
            //intake flip code
             if(gamepad2.dpad_up){
@@ -168,6 +186,9 @@ public class testLift extends LinearOpMode {
             else{
                 hook.setPower(0);
             }
+
+            //vertical lift code
+            verticalLift.setPower(gamepad2.left_stick_y);
 
             //wheel code
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
