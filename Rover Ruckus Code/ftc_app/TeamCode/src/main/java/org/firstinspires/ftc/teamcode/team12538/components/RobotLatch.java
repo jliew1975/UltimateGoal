@@ -26,7 +26,7 @@ public class RobotLatch implements RobotMechanic {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    private int latchPosition = 6700;
+    private int latchPosition = 6900;
     private int unlatchPosition = 0;
 
     public void init() {

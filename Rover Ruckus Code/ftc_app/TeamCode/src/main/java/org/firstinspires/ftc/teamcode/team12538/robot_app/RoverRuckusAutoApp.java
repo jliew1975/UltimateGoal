@@ -55,6 +55,10 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
 
             waitForStart();
 
+            if(isStopRequested()) {
+                return;
+            }
+
             // stamp start time for calculation of remaining seconds in autonomous
             OpModeUtils.stampStartTime();
 
@@ -148,9 +152,10 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
             robot.moveBackward(0.5, 10);
             robot.rotate(-45, 0.5, 5.0);
             robot.moveBackward(0.5, 15);
-            robot.rotate(140, 0.5, 5.0);
+            robot.rotate(-160, 0.5, 5.0);
             robot.placeTeamMarker();
-            robot.strafeLeft(0.5, 5.0);
+            robot.moveBackward(0.5, 36.0);
+            robot.strafeLeft(0.5, 20.0);
         } else if(mineralLocation == MineralLocation.Right) {
             robot.moveBackward(0.2, 15);
             robot.rotate(-85, 0.5, 5.0);
@@ -166,7 +171,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
             robot.moveBackward(0.5, 10);
             robot.rotate(-160, 0.5, 5.0);
             robot.placeTeamMarker();
-            robot.rotate(-45, 0.5, 5.0);
+            robot.rotate(-50, 0.5, 5.0);
             robot.moveBackward(0.5, 25);
             robot.rotate(25, 0.5, 5.0);
             robot.strafeLeft(0.5, 20.0);
@@ -175,8 +180,12 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
 
     protected void navigateForParking(MineralLocation mineralLocation) throws InterruptedException {
         robot.moveBackward(0.5, 30);
-        robot.rotate(20, 0.1, 0.5);
-        robot.moveBackward(0.5, 30);
+
+        if(mineralLocation != MineralLocation.Left) {
+            robot.rotate(20, 0.1, 0.5);
+            robot.moveBackward(0.5, 30);
+        }
+
         robot.getParkingRod().setPosition(0d); // for breaking the crater plain to score parking points
         sleep(500);
     }

@@ -99,6 +99,10 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode implements DetectorLi
                     robot.getCollector().flipCollectorBox(robot.getCollector().intakeFlipPrepPos);
                 }
 
+                if(gamepad2.x) {
+                    robot.placeTeamMarker();
+                }
+
                 telemetry.addData("intakeGate", robot.getCollector().getIntakeGate().getPosition());
                 telemetry.update();
             }

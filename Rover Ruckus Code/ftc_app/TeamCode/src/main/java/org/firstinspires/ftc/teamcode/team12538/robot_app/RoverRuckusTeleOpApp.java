@@ -25,7 +25,12 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
 
             waitForStart();
 
+            if(isStopRequested()) {
+                return;
+            }
+
             // tilt the phone for teleOp mode
+            robot.getParkingRod().setPosition(1d);
             robot.getPhoneTilt().setPosition(robot.telePhoneTiltPos);
 
             while (opModeIsActive()) {

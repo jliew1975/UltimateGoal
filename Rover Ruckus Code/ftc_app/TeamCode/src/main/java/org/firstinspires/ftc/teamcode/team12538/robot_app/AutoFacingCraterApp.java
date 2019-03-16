@@ -67,7 +67,7 @@ public class AutoFacingCraterApp extends RoverRuckusAutoApp {
             robot.strafeRight(0.5, 20);
             robot.moveForward(0.5, 35);
         } else if(mineralLocation == MineralLocation.Right) {
-            robot.rotate(-37, 0.3, 5.0);
+            robot.rotate(-38, 0.3, 5.0);
             robot.moveForward(0.5, 40);
             robot.rotate(35, 0.3, 5.0);
             robot.strafeRight(0.5, 20);

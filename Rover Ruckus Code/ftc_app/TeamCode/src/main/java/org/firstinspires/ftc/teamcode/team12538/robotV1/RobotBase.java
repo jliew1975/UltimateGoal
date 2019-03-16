@@ -40,7 +40,9 @@ public abstract class RobotBase extends MecanumDriveBase {
 
         // parking rod initialization
         parkingRod = hardwareMap.get(Servo.class, "parking_rod");
-        parkingRod.setPosition(1d);
+        if(!OpModeUtils.getGlobalStore().isDisableInitPos()) {
+            parkingRod.setPosition(1d);
+        }
 
         // mineral collector mechanism initialization
         collector = new MineralMechanism();

@@ -240,7 +240,7 @@ public class AutoRobotV1 extends RobotBase {
                 motor.setPower(Math.abs(speed));
             }
 
-            //keep looping until one of the motors finished its movement
+            // keep looping until at least one of the motors finished its movement
             while(OpModeUtils.opModeIsActive() &&
                     //(runtime.seconds() < timeout) &&
                     (motors.get(0).isBusy() && motors.get(1).isBusy() && motors.get(2).isBusy() && motors.get(3).isBusy()))
