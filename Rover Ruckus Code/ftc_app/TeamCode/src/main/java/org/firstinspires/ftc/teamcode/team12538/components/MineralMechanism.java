@@ -118,9 +118,9 @@ public class MineralMechanism implements RobotMechanic {
         intakeIsNotBusy = false;
 
         if (direction == Direction.InTake) {
-            intake.setPower(intakeSpeed);
-        } else {
             intake.setPower(-intakeSpeed);
+        } else {
+            intake.setPower(+intakeSpeed);
         }
     }
 
@@ -393,6 +393,13 @@ public class MineralMechanism implements RobotMechanic {
 
     public void printTelemetry() {
         Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
+<<<<<<< Updated upstream
         telemetry.addData("depoLift", depoLift.getCurrentPosition());
+=======
+        telemetry.addData("intakeFlip", intakeFlip.getPosition());
+        telemetry.addData("armExtension", armExtension.getCurrentPosition());
+        telemetry.addData("armExtensionPower", armExtension.getPower());
+        telemetry.addData("limitSwitch", magneticLimitSensor.getState());
+>>>>>>> Stashed changes
     }
 }
