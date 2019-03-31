@@ -41,15 +41,15 @@ public class TeleOpRobotV1 extends RobotBase {
 
     public void player2Controls(Gamepad gamepad) {
         // intake box controls
-        if(gamepad.y) {
+        if (gamepad.y) {
             // toggle collector flip/unflip
             collector.flipCollectorBox(collector.intakeFlipUpPos);
-        } else if(gamepad.a) {
+        } else if (gamepad.a) {
             collector.flipCollectorBox(collector.intakeFlipDownPos);
-        } else if(gamepad.x) {
+        } else if (gamepad.x) {
             // lift collector to prepare position
             collector.flipCollectorBox(collector.intakeFlipPrepPos);
-        } else if(gamepad.b) {
+        } else if (gamepad.b) {
             // auto deposit minerals to outtake box
             collector.autoMineralDeposit();
         } else {
@@ -58,22 +58,26 @@ public class TeleOpRobotV1 extends RobotBase {
         }
 
         // Intake controls
-        if(gamepad.right_bumper) {
+        if (gamepad.right_bumper) {
             collector.enableIntake(MineralMechanism.Direction.InTake);
-        } else if(gamepad.left_bumper) {
+        } else if (gamepad.left_bumper) {
             collector.enableIntake(MineralMechanism.Direction.OutTake);
         } else {
             collector.disableIntake();
         }
 
         // deposit box controls
-        if(gamepad.dpad_up) {
+        if (gamepad.dpad_up) {
             // collector.liftDepo(3350);
             collector.getDepoLift().setPower(1.0);
-        } else if(gamepad.dpad_down) {
+        } else if (gamepad.dpad_down) {
             // collector.lowerDepo();
             collector.getDepoLift().setPower(-1.0);
-        } else if(gamepad.right_trigger > 0 && collector.canFlipDepoBox()) {
+        } else {
+            collector.getDepoLift().setPower(0d);
+        }
+
+        if(gamepad.right_trigger > 0 && collector.canFlipDepoBox()) {
             collector.rotateDepositBox(0.89);
         }
     }
