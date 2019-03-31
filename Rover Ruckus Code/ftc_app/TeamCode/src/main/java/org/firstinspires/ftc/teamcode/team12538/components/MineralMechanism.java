@@ -393,9 +393,6 @@ public class MineralMechanism implements RobotMechanic {
 
     public void printTelemetry() {
         Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
-        telemetry.addData("intakeFlip", intakeFlip.getPosition());
-        telemetry.addData("armExtension", armExtension.getCurrentPosition());
-        telemetry.addData("armExtensionPower", armExtension.getPower());
-        telemetry.addData("limitSwitch", magneticLimitSensor.getState());
+        telemetry.addData("depoLift", depoLift.getCurrentPosition());
     }
 }
