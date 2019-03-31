@@ -61,9 +61,10 @@ public class testLift extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor scissorJack = null;
     private DcMotor verticalLift = null;
+    private DcMotor intake = null;
 
     private CRServo hook = null;
-    private CRServo intake = null;
+
 
     private Servo deposit = null;
 
@@ -90,11 +91,12 @@ public class testLift extends LinearOpMode {
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorJack);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorJack);
 
-
-
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        deposit = hardwareMap.get(Servo.class, "depo");
+/*
         hook = hardwareMap.get(CRServo.class, "latch");
-        intake = hardwareMap.get(CRServo.class, "intake");
-        deposit = hardwareMap.get(Servo.class, "deposit");
+
+
 
         frontLeftDrive = hardwareMap.get(DcMotor.class, "left_forward_drive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "right_forward_drive");
@@ -104,17 +106,20 @@ public class testLift extends LinearOpMode {
         intakeFlip = hardwareMap.get(DcMotor.class, "intake_flip");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, intakeFlip);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, intakeFlip);
-
+*/
         verticalLift = hardwareMap.get(DcMotor.class, "vertical_slides");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, verticalLift);
-
-
-        linearSlides = hardwareMap.get(DcMotor.class, "linear_slides");
-
+        deposit.setPosition(0.9);
+/*
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+*/
+        linearSlides = hardwareMap.get(DcMotor.class, "linear_slides");
+
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -133,7 +138,7 @@ public class testLift extends LinearOpMode {
            else{
                scissorJack.setPower(0);
            }
-
+/*
            //depositing code
             if(gamepad1.a){
                deposit.setPosition(0.68);
@@ -153,12 +158,12 @@ public class testLift extends LinearOpMode {
             else{
                 intakeFlip.setPower(0);
             }
-
+*/
            //intake code
-           if(gamepad1.right_bumper){
+           if(gamepad2.right_bumper){
                intake.setPower(1);
            }
-           else if(gamepad1.left_bumper){
+           else if(gamepad2.left_bumper){
                intake.setPower(-1);
            }
            else{
@@ -175,7 +180,7 @@ public class testLift extends LinearOpMode {
             else{
                 linearSlides.setPower(0);
             }
-
+/*
            //hook code
            if(gamepad1.dpad_right){
                 hook.setPower(1);
@@ -186,10 +191,11 @@ public class testLift extends LinearOpMode {
             else{
                 hook.setPower(0);
             }
-
+*/
             //vertical lift code
             verticalLift.setPower(gamepad2.left_stick_y);
 
+            /*
             //wheel code
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
@@ -209,8 +215,8 @@ public class testLift extends LinearOpMode {
             frontRightDrive.setPower(power * Math.signum(v2));
             rearLeftDrive.setPower(power * Math.signum(v3));
             rearRightDrive.setPower(power * Math.signum(v4));
+           */
         }
-
 
     }
 }
