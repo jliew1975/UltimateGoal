@@ -31,15 +31,18 @@ package org.firstinspires.ftc.teamcode.team12538.test;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.team12538.detectors.EnhancedMineralOrderDetector;
 
+import com.disnodeteam.dogecv.detectors.listeners.DetectorListener;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
 @TeleOp(name="Sampling Order Example", group="DogeCV")
-public class SamplingOrderExample extends OpMode {
+public class SamplingOrderExample extends OpMode implements DetectorListener {
     // Detector object
     private EnhancedMineralOrderDetector detector;
 
@@ -48,8 +51,10 @@ public class SamplingOrderExample extends OpMode {
         telemetry.addData("Status", "DogeCV 2018.0 - Sampling Order");
 
         // Setup detector
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         detector = new EnhancedMineralOrderDetector(); // Create the detector
-        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize detector with app context and camera
+        detector.VUFORIA_KEY = "AWbfTmn/////AAABmY0xuIe3C0RHvL3XuzRxyEmOT2OekXBSbqN2jot1si3OGBObwWadfitJR/D6Vk8VEBiW0HG2Q8UAEd0//OliF9aWCRmyDJ1mMqKCJZxpZemfT5ELFuWnJIZWUkKyjQfDNe2RIaAh0ermSxF4Bq77IDFirgggdYJoRIyi2Ys7Gl9lD/tSonV8OnldIN/Ove4/MtEBJTKHqjUEjC5U2khV+26AqkeqbxhFTNiIMl0LcmSSfugGhmWFGFtuPtp/+flPBRGoBO+tSl9P2sV4mSUBE/WrpHqB0Jd/tAmeNvbtgQXtZEGYc/9NszwRLVNl9k13vrBcgsiNxs2UY5xAvA4Wb6LN7Yu+tChwc+qBiVKAQe09\n";
+        detector.init(hardwareMap.appContext,CameraViewDisplay.getInstance(), DogeCV.CameraMode.WEBCAM, false, webcamName);
         detector.useDefaults(); // Set detector to use default settings
 
         detector.downscale = 0.4; // How much to downscale the input frames
@@ -66,6 +71,7 @@ public class SamplingOrderExample extends OpMode {
 
         detector.ratioScorer.weight = 15;
         detector.ratioScorer.perfectRatio = 1.0;
+        detector.listener = this;
 
         detector.enable(); // Start detector
     }
@@ -106,4 +112,9 @@ public class SamplingOrderExample extends OpMode {
         detector.disable();
     }
 
+    @Override
+    public void onEvent() {
+        telemetry.addData("Sampling Result", detector.getLastOrder());
+        telemetry.update();
+    }
 }

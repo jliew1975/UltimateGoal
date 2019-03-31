@@ -28,15 +28,6 @@ public class TeleOpRobotV1 extends RobotBase {
         }
         */
 
-        // latch controls
-        if(gamepad.x) {
-            robotLatch.powerLatch(-1d);
-        } else if(gamepad.b) {
-            robotLatch.powerLatch(1d);
-        } else {
-            robotLatch.powerLatch(0d);
-        }
-
         // scissor lift controls
         if (gamepad.dpad_up) {
             collector.getIntakeFlip().setPosition(collector.intakeFlipHangPos);
@@ -77,9 +68,11 @@ public class TeleOpRobotV1 extends RobotBase {
 
         // deposit box controls
         if(gamepad.dpad_up) {
-            collector.liftDepo(3350);
+            // collector.liftDepo(3350);
+            collector.getDepoLift().setPower(1.0);
         } else if(gamepad.dpad_down) {
-            collector.lowerDepo();
+            // collector.lowerDepo();
+            collector.getDepoLift().setPower(-1.0);
         } else if(gamepad.right_trigger > 0 && collector.canFlipDepoBox()) {
             collector.rotateDepositBox(0.89);
         }

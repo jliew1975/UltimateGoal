@@ -64,7 +64,7 @@ public class AutoRobotV1 extends RobotBase {
     }
 
     public void unlatchFromLander() {
-        robotLatch.unlatch();
+
     }
 
     public void moveForward(double power, double distance) {

@@ -16,13 +16,8 @@ import lombok.Data;
 
 @Data
 public class RobotLatch implements RobotMechanic {
-    private CRServo latchServo;
-    private DigitalChannel latchOpenSensor = null;
-    private DigitalChannel latchCloseSensor = null;
-
-
-    private DcMotor scissorLiftMotor;
-    private volatile boolean scissorLiftBusy = false;
+    private DcMotor liftMotor;
+    private volatile boolean liftBusy = false;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -32,55 +27,11 @@ public class RobotLatch implements RobotMechanic {
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
-        latchServo = hardwareMap.get(CRServo.class, "latch");
-        latchServo.setDirection(DcMotorSimple.Direction.REVERSE);
-        latchServo.setPower(0d);
-
-        latchOpenSensor = hardwareMap.get(DigitalChannel.class, "latch_open_sensor");
-        latchCloseSensor = hardwareMap.get(DigitalChannel.class, "latch_close_sensor");
-
-
-        scissorLiftMotor = hardwareMap.get(DcMotor.class, "jack");
-        scissorLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorLiftMotor);
-        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorLiftMotor);
-        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorLiftMotor);
-    }
-
-    public void powerLatch(double power) {
-        if (power > 0d && latchCloseSensor.getState()) {
-            latchServo.setPower(power);
-        } else if(power < 0d && latchOpenSensor.getState()) {
-            latchServo.setPower(power);
-        } else {
-            latchServo.setPower(0d);
-        }
-    }
-
-    public void latchClose() {
-        if(latchCloseSensor.getState()) {
-            latchServo.setPower(1d);
-
-            runtime.reset();
-            while (OpModeUtils.opModeIsActive() && latchCloseSensor.getState()) {
-                // wait until limit sensor tells the latch to stop
-            }
-
-            latchServo.setPower(0d);
-        }
-    }
-
-    public void latchOpen() {
-        if(latchOpenSensor.getState()) {
-            latchServo.setPower(-1d);
-
-            runtime.reset();
-            while (OpModeUtils.opModeIsActive() && latchOpenSensor.getState()) {
-                // wait until limit sensor tells the latch to stop
-            }
-
-            latchServo.setPower(0d);
-        }
+        liftMotor = hardwareMap.get(DcMotor.class, "jack");
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, liftMotor);
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, liftMotor);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, liftMotor);
     }
 
     public void powerLift(double power) {
@@ -88,83 +39,59 @@ public class RobotLatch implements RobotMechanic {
     }
 
     public void powerLift(double power, int constraint) {
-        synchronized (scissorLiftMotor) {
-            if(scissorLiftBusy) {
+        synchronized (liftMotor) {
+            if(liftBusy) {
                 return;
             }
 
             if (constraint != -1) {
-                int currentPos = scissorLiftMotor.getCurrentPosition();
+                int currentPos = liftMotor.getCurrentPosition();
                 if (power > 0) {
                     power = 0;
                 }
             }
 
-            scissorLiftMotor.setPower(power);
+            liftMotor.setPower(power);
         }
     }
 
     public void powerLiftRunToPosition(final double power, final int targetPosition) {
-        synchronized (scissorLiftMotor) {
+        synchronized (liftMotor) {
             try {
-                scissorLiftBusy = true;
-                MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, scissorLiftMotor);
+                liftBusy = true;
+                MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, liftMotor);
 
                 double adjustedPower = power;
 
-                int startPos = scissorLiftMotor.getCurrentPosition();
+                int startPos = liftMotor.getCurrentPosition();
 
-                scissorLiftMotor.setTargetPosition(targetPosition);
-                scissorLiftMotor.setPower(adjustedPower);
+                liftMotor.setTargetPosition(targetPosition);
+                liftMotor.setPower(adjustedPower);
 
                 runtime.reset();
-                while (OpModeUtils.opModeIsActive() && scissorLiftMotor.isBusy() && runtime.seconds() < 5d) {
-                    int curPos = scissorLiftMotor.getCurrentPosition();
+                while (OpModeUtils.opModeIsActive() && liftMotor.isBusy() && runtime.seconds() < 5d) {
+                    int curPos = liftMotor.getCurrentPosition();
                     if(targetPosition > 0 && curPos > (targetPosition - 500)) {
-                        scissorLiftMotor.setPower(0.3);
+                        liftMotor.setPower(0.3);
                     } else if(targetPosition == 0 && curPos < (targetPosition + 500)) {
-                        scissorLiftMotor.setPower(0.3);
+                        liftMotor.setPower(0.3);
                     }
 
                     Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
-                    telemetry.addData("lift", scissorLiftMotor.getCurrentPosition());
+                    telemetry.addData("lift", liftMotor.getCurrentPosition());
                     telemetry.update();
                 }
 
-                scissorLiftMotor.setPower(0d);
-                MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorLiftMotor);
+                liftMotor.setPower(0d);
+                MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, liftMotor);
             } finally {
-                scissorLiftBusy = false;
+                liftBusy = false;
             }
         }
     }
 
-    public void latch() {
-        // raise scissor lift for latching
-        powerLiftRunToPosition(1d, latchPosition);
-
-        // position latch on the close position
-        latchClose();
-
-        // lower scissor lift
-        powerLiftRunToPosition(1d, unlatchPosition);
-    }
-
-    public void unlatch() {
-        // raise scissor lift for landing
-        powerLiftRunToPosition(1d, latchPosition);
-
-        // unlatch robot from lander
-        latchOpen();
-
-        // lower scissor lift
-        powerLiftRunToPosition(1d, unlatchPosition);
-    }
-
     public void printTelemetry() {
         Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
-        telemetry.addData("lift", scissorLiftMotor.getCurrentPosition());
-        telemetry.addData("openLimitSwitch", latchOpenSensor.getState() ? "No" : "Yes");
-        telemetry.addData("closeLimitSwitch", latchCloseSensor.getState() ? "No" : "Yes");
+        telemetry.addData("lift", liftMotor.getCurrentPosition());
     }
 }

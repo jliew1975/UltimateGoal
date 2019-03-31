@@ -1,16 +1,8 @@
 package com.disnodeteam.dogecv;
 
-import android.util.Log;
-
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Contains global values and types
+ */
 public class DogeCV {
     public enum DetectionSpeed {
         VERY_FAST,
@@ -22,8 +14,21 @@ public class DogeCV {
 
     public enum AreaScoringMethod {
         MAX_AREA,
-        PERFECT_AREA
+        PERFECT_AREA,
+        COLOR_DEVIATION
     }
 
+    public enum CameraMode {
+        BACK,
+        FRONT,
+        WEBCAM
+    }
 
+    public enum VuMark {
+        NONE,
+        BLUE_ROVER,
+        RED_FOOTPRINT,
+        FRONT_CRATERS,
+        BACK_SPACE
+    }
 }

@@ -25,8 +25,8 @@ public class MineralMechanism implements RobotMechanic {
 
     private Object lock = new Object();
 
-    private CRServo intake = null;
-    private double intakeSpeed = 0.7;
+    private DcMotor intake = null;
+    private double intakeSpeed = 1.0;
 
     // private Servo leftFlip = null;
     // private Servo rightFlip = null;
@@ -58,14 +58,14 @@ public class MineralMechanism implements RobotMechanic {
     private volatile boolean depoLiftBusy = false;
 
     public double intakeFlipHangPos = 1.0;
-    public double intakeFlipUpPos = 0.87;
-    public double intakeFlipDownPos = 0.00;
+    public double intakeFlipUpPos = 1.0;
+    public double intakeFlipDownPos = 0.2;
     public double intakeFlipPrepPos = 0.50;
 
-    private double depoLowerPos = 0.40;
+    private double depoLowerPos = 0.15;
 
     private double intakeGateOpen = 0d;
-    private double intakeGateClose = 0.6;
+    private double intakeGateClose = 0.5;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -74,10 +74,10 @@ public class MineralMechanism implements RobotMechanic {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
         // intake continuous servo initialization
-        intake = hardwareMap.get(CRServo.class, "intake");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
         intakeGate = hardwareMap.get(Servo.class, "intake_gate");
-        intakeGate.setPosition(intakeGateClose);
+        // intakeGate.setPosition(intakeGateClose);
 
         // intakeFlip initialization logic
         intakeFlip = hardwareMap.get(Servo.class, "intake_flip");
