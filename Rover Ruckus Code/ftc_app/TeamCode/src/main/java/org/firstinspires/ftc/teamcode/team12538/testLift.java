@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.team12538;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -62,6 +63,7 @@ public class testLift extends LinearOpMode {
     private DcMotor scissorJack = null;
     private DcMotor verticalLift = null;
     private DcMotor intake = null;
+    private AnalogInput deadwheel = null;
 
     private CRServo hook = null;
 
@@ -86,13 +88,16 @@ public class testLift extends LinearOpMode {
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        scissorJack = hardwareMap.get(DcMotor.class, "jack");
+
+        /*scissorJack = hardwareMap.get(DcMotor.class, "jack");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, scissorJack);
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, scissorJack);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, scissorJack);
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         deposit = hardwareMap.get(Servo.class, "depo");
+        */
+        deadwheel = hardwareMap.get(AnalogInput.class, "dead_wheel");
 /*
         hook = hardwareMap.get(CRServo.class, "latch");
 
@@ -107,27 +112,33 @@ public class testLift extends LinearOpMode {
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, intakeFlip);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, intakeFlip);
 */
-        verticalLift = hardwareMap.get(DcMotor.class, "vertical_slides");
+
+      /*  verticalLift = hardwareMap.get(DcMotor.class, "vertical_slides");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, verticalLift);
-        deposit.setPosition(0.9);
+        deposit.setPosition(0.9);*/
 /*
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
-*/
-        linearSlides = hardwareMap.get(DcMotor.class, "linear_slides");
 
+        linearSlides = hardwareMap.get(DcMotor.class, "linear_slides");
+*/
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        deadwheel.resetDeviceConfigurationForOpMode();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            telemetry.addData("dead wheel encoder", deadwheel.getVoltage());
+            telemetry.update();
+
+            /*
            //scissor lift code
            if(gamepad1.dpad_up){
                scissorJack.setPower(-1);
@@ -159,6 +170,7 @@ public class testLift extends LinearOpMode {
                 intakeFlip.setPower(0);
             }
 */
+            /*
            //intake code
            if(gamepad2.right_bumper){
                intake.setPower(1);
@@ -179,7 +191,8 @@ public class testLift extends LinearOpMode {
             }
             else{
                 linearSlides.setPower(0);
-            }
+            }*/
+
 /*
            //hook code
            if(gamepad1.dpad_right){
@@ -193,7 +206,7 @@ public class testLift extends LinearOpMode {
             }
 */
             //vertical lift code
-            verticalLift.setPower(gamepad2.left_stick_y);
+            //verticalLift.setPower(gamepad2.left_stick_y);
 
             /*
             //wheel code
