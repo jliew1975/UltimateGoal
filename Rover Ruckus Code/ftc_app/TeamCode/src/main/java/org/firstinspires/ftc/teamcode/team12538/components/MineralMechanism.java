@@ -339,7 +339,7 @@ public class MineralMechanism implements RobotMechanic {
                     public void run() {
                         try {
                             depo.setPosition(depoLowerPos);
-
+                            sleep(500);
                             MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
                             depoLift.setTargetPosition(0);
                             depoLift.setPower(1);
@@ -384,7 +384,7 @@ public class MineralMechanism implements RobotMechanic {
     public void jerkDepoBox() {
         depo.setPosition(0.8);
         sleep(100);
-        depo.setPosition(0.89);
+        depo.setPosition(0.75);
     }
 
     public boolean canFlipDepoBox() {
