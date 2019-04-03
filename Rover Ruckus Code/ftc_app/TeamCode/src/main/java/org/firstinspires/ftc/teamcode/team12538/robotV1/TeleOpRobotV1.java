@@ -40,6 +40,7 @@ public class TeleOpRobotV1 extends RobotBase {
     }
 
     public void player2Controls(Gamepad gamepad) {
+
         // intake box controls
         if (gamepad.y) {
             // toggle collector flip/unflip
