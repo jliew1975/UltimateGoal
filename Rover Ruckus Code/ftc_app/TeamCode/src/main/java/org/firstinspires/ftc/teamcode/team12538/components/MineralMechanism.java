@@ -101,7 +101,7 @@ public class MineralMechanism implements RobotMechanic {
 
         // deposit lift motor initialization
         depoLift = hardwareMap.get(DcMotor.class, "vertical_slides");
-        depoLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        // depoLift.setDirection(DcMotorSimple.Direction.REVERSE);
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, depoLift);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, depoLift);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, depoLift);
@@ -342,7 +342,7 @@ public class MineralMechanism implements RobotMechanic {
 
                             MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
                             depoLift.setTargetPosition(0);
-                            depoLift.setPower(-1);
+                            depoLift.setPower(1);
 
                             while (OpModeUtils.opModeIsActive() && depoLift.isBusy()) {
                                 // intentionally left blank
@@ -388,7 +388,7 @@ public class MineralMechanism implements RobotMechanic {
     }
 
     public boolean canFlipDepoBox() {
-        return depoLift.getCurrentPosition() > 1500;
+        return depoLift.getCurrentPosition() > 500;
     }
 
     public void printTelemetry() {
