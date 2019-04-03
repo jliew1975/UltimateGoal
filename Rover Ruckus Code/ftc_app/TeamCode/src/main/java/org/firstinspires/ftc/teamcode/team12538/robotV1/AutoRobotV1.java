@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.team12538.controller.PIDController;
 import org.firstinspires.ftc.teamcode.team12538.detectors.MineralDetector;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
@@ -31,6 +32,8 @@ public class AutoRobotV1 extends RobotBase {
     private double globalAngle;
     private Orientation lastAngles = new Orientation();
 
+    private PIDController pidRotate;
+
     private Telemetry telemetry = null;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -39,6 +42,8 @@ public class AutoRobotV1 extends RobotBase {
         super.init();
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motors);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motors);
+
+        pidRotate = new PIDController(.05, 0, 0);
 
         telemetry = OpModeUtils.getGlobalStore().getTelemetry();
     }
@@ -114,6 +119,13 @@ public class AutoRobotV1 extends RobotBase {
 
         runtime.reset();
 
+        pidRotate.reset();
+        pidRotate.setSetpoint(degrees);
+        pidRotate.setInputRange(0, 90);
+        pidRotate.setOutputRange(.20, power);
+        pidRotate.setTolerance(2);
+        pidRotate.enable();
+
         // getAngle() returns + when rotating counter clockwise (left) and - when rotating
         // clockwise (right).
         if (degrees < 0)
@@ -128,7 +140,10 @@ public class AutoRobotV1 extends RobotBase {
             }
 
             turnRight(power);
-            while (OpModeUtils.opModeIsActive() && getAngle() > degrees) {
+            // while (OpModeUtils.opModeIsActive() && getAngle() > degrees) {
+            do {
+                turnRight(pidRotate.performPID(getAngle()));
+
                 telemetry.addData("angle", getAngle());
                 telemetry.addData("degrees", degrees);
                 telemetry.update();
@@ -142,10 +157,13 @@ public class AutoRobotV1 extends RobotBase {
                 if(runtime.seconds() > timeout) {
                     break;
                 }
-            }
+            } while(OpModeUtils.opModeIsActive() && !pidRotate.onTarget());
         } else {  // left turn.
-            turnLeft(power);
-            while (OpModeUtils.opModeIsActive() && getAngle() < degrees) {
+            // turnLeft(power);
+            // while (OpModeUtils.opModeIsActive() && getAngle() < degrees) {
+            do {
+                turnLeft(pidRotate.performPID(getAngle()));
+
                 telemetry.addData("angle", getAngle());
                 telemetry.addData("degrees", degrees);
                 telemetry.update();
@@ -159,7 +177,7 @@ public class AutoRobotV1 extends RobotBase {
                 if(runtime.seconds() > timeout) {
                     break;
                 }
-            }
+            } while(OpModeUtils.opModeIsActive() && !pidRotate.onTarget());
         }
 
         stop();
