@@ -11,4 +11,9 @@ public class AutoFacingDepotNoLandingApp extends RoverRuckusAutoApp {
         super.enableLanding = false;
         super.runOpMode();
     }
+
+    @Override
+    protected void depositMineral(MineralLocation mineralLocation) {
+
+    }
 }

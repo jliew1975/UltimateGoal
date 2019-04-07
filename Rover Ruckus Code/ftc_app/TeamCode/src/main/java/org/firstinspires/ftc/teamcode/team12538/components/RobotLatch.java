@@ -28,7 +28,6 @@ public class RobotLatch implements RobotMechanic {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
         liftMotor = hardwareMap.get(DcMotor.class, "jack");
-        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, liftMotor);
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, liftMotor);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, liftMotor);

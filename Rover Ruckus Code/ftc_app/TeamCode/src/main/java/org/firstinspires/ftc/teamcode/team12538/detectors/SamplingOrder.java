@@ -1,4 +1,4 @@
-package com.disnodeteam.dogecv.detectors.roverruckus;
+package org.firstinspires.ftc.teamcode.team12538.detectors;
 
 public enum SamplingOrder {
     UNKNOWN,

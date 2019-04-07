@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
-import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -68,10 +68,6 @@ public class AutoRobotV1 extends RobotBase {
         telemetry.update();
     }
 
-    public void unlatchFromLander() {
-
-    }
-
     public void moveForward(double power, double distance) {
         // limit power to 1
         power = limitPower(power);
@@ -88,7 +84,7 @@ public class AutoRobotV1 extends RobotBase {
         strafeLeft(power, distance, null);
     }
 
-    public void strafeLeft(double power, double distance, SamplingOrderDetectorExt detector) {
+    public void strafeLeft(double power, double distance, MineralDetector detector) {
         // limit power to 1
         power = limitPower(power);
         encoderStrafe(StrafingDirection.Left, power, distance, 5, detector);
@@ -98,7 +94,7 @@ public class AutoRobotV1 extends RobotBase {
         strafeRight(power, distance, null);
     }
 
-    public void strafeRight(double power, double distance, SamplingOrderDetectorExt detector) {
+    public void strafeRight(double power, double distance, MineralDetector detector) {
         // limit power to 1
         power = limitPower(power);
         encoderStrafe(StrafingDirection.Right, power, distance, 5, detector);
@@ -140,30 +136,30 @@ public class AutoRobotV1 extends RobotBase {
             }
 
             turnRight(power);
-            // while (OpModeUtils.opModeIsActive() && getAngle() > degrees) {
-            do {
-                turnRight(pidRotate.performPID(getAngle()));
 
+            do {
                 telemetry.addData("angle", getAngle());
                 telemetry.addData("degrees", degrees);
                 telemetry.update();
 
                 if(detector != null && detector.isFound()) {
                    if(detector.isAligned()) {
+                       stop();
                        break;
                    }
                 }
 
-                if(runtime.seconds() > timeout) {
-                    break;
+                if(timeout != -1) {
+                    if (runtime.seconds() > timeout) {
+                        stop();
+                        break;
+                    }
                 }
-            } while(OpModeUtils.opModeIsActive() && !pidRotate.onTarget());
+            } while(OpModeUtils.opModeIsActive() && getAngle() > degrees);
         } else {  // left turn.
-            // turnLeft(power);
-            // while (OpModeUtils.opModeIsActive() && getAngle() < degrees) {
-            do {
-                turnLeft(pidRotate.performPID(getAngle()));
+            turnLeft(power);
 
+            do {
                 telemetry.addData("angle", getAngle());
                 telemetry.addData("degrees", degrees);
                 telemetry.update();
@@ -174,10 +170,12 @@ public class AutoRobotV1 extends RobotBase {
                     }
                 }
 
-                if(runtime.seconds() > timeout) {
-                    break;
+                if(timeout != -1) {
+                    if (runtime.seconds() > timeout) {
+                        break;
+                    }
                 }
-            } while(OpModeUtils.opModeIsActive() && !pidRotate.onTarget());
+            } while(OpModeUtils.opModeIsActive() && getAngle() < degrees);
         }
 
         stop();
@@ -281,7 +279,7 @@ public class AutoRobotV1 extends RobotBase {
         }
     }
 
-    private void encoderStrafe(StrafingDirection direction, double speed, double distance, double timeout, SamplingOrderDetectorExt detector) {
+    private void encoderStrafe(StrafingDirection direction, double speed, double distance, double timeout, MineralDetector detector) {
         // reset encoders
         // MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motors);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motors);

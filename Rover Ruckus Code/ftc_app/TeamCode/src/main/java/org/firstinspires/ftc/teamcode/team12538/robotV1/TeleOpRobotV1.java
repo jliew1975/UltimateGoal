@@ -69,7 +69,7 @@ public class TeleOpRobotV1 extends RobotBase {
 
         // deposit box controls
         if (gamepad.dpad_up) {
-            collector.liftDepo(900);
+            collector.liftDepo(750);
             // collector.getDepoLift().setPower(1.0);
         } else if (gamepad.dpad_down) {
             collector.lowerDepo();
@@ -80,7 +80,7 @@ public class TeleOpRobotV1 extends RobotBase {
 
         // depo flip
         if(gamepad.right_trigger > 0 && collector.canFlipDepoBox()) {
-            collector.rotateDepositBox(0.89);
+            collector.rotateDepositBox(0.67);
         }
     }
 }

@@ -97,13 +97,10 @@ public abstract class Dogeforia extends VuforiaLocalizerImpl {
             bitmap = convertFrameToBitmap(frame);
             inputMat = new Mat(bitmap.getWidth(), bitmap.getHeight(), CvType.CV_8UC1);
             Utils.bitmapToMat(bitmap,inputMat);
-
             flippedMat = new Mat();
             rotatedMat = new Mat();
-
-            Core.flip(inputMat.t(), flippedMat, -1); // Adjust this line to change the image rotation
+            Core.flip(inputMat.t(), flippedMat, 1); //Adjust this line to change the image rotation
             Core.rotate(flippedMat.t(), rotatedMat, Core.ROTATE_180);
-
             outMat = analyzeFrame(rotatedMat, null);
 
             if(!outMat.empty() ){

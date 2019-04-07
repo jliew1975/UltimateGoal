@@ -8,51 +8,11 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 @Autonomous(name="Auto (Facing Crater)", group="Linear Opmode")
 public class AutoFacingCraterApp extends RoverRuckusAutoApp {
     @Override
-    public void runOpMode() throws InterruptedException {
-        super.moveForwardPosition = 10.0;
-        super.runOpMode();
-    }
-
-    @Override
-    protected void collectMineralOffTapedArea(MineralLocation mineralLocation) throws InterruptedException {
-        int rotateDegree = 0;
-
-        if(!mineralLocation.isSkipAlign()) {
-            switch (mineralLocation) {
-                case Center:
-                    double xPos = detector.getXPosition();
-                    if (!detector.isAligned()) {
-                        if(xPos > 300) {
-                            robot.rotate(-20, 0.1, 0.5, detector);
-                            rotateDegree = 20;
-                        } else {
-                            robot.rotate(20, 0.1, 0.5, detector);
-                            rotateDegree = -20;
-                        }
-                    }
-
-                    break;
-
-                case Left:
-                    robot.rotate(30, 0.1, 5.0, detector);
-                    break;
-
-                case Right:
-                    robot.rotate(-30, 0.1, 5.0, detector);
-                    robot.rotate(-20, 0.1, 0.5);
-                    break;
-            }
-        }
-
-        if(mineralLocation == MineralLocation.Center) {
-            robot.moveBackward(0.5, 15);
-        } else {
-            robot.moveBackward(0.5, 25);
-        }
-
-        if(rotateDegree != 0) {
-            robot.rotate(rotateDegree, 0.1, 0.5);
-        }
+    protected void depositMineral(MineralLocation mineralLocation) {
+        robot.moveBackward(0.5, 15);
+        robot.getCollector().liftDepo(750, true);
+        robot.getCollector().rotateDepositBox(0.67, true);
+        robot.getCollector().lowerDepo(true);
     }
 
     @Override

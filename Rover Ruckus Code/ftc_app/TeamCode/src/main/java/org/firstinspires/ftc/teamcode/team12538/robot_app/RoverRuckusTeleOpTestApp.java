@@ -1,30 +1,11 @@
 package org.firstinspires.ftc.teamcode.team12538.robot_app;
 
-import com.disnodeteam.dogecv.CameraViewDisplay;
-import com.disnodeteam.dogecv.DogeCV;
-import com.disnodeteam.dogecv.detectors.listeners.DetectorListener;
-import com.disnodeteam.dogecv.detectors.roverruckus.SamplingOrderDetectorExt;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
-import org.firstinspires.ftc.teamcode.team12538.components.RobotLatch;
-import org.firstinspires.ftc.teamcode.team12538.detectors.EnhancedMineralOrderDetector;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
-import org.firstinspires.ftc.teamcode.team12538.robotV1.TeleOpRobotV1;
-import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
-import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
 public class RoverRuckusTeleOpTestApp extends LinearOpMode {
@@ -34,13 +15,14 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtils.init(this);
-        OpModeUtils.getGlobalStore().setCloseDepoArm(false);
-        OpModeUtils.getGlobalStore().setDisableInitPos(true);
-        OpModeUtils.getGlobalStore().setResetArmExtensionEncoderValue(false);
+        OpModeUtils.getGlobalStore().setCloseDepoArm(true);
+        OpModeUtils.getGlobalStore().setDisableInitPos(false);
+        OpModeUtils.getGlobalStore().setResetArmExtensionEncoderValue(true);
 
         try {
-            TeleOpRobotV1 robot = new TeleOpRobotV1();
+            AutoRobotV1 robot = new AutoRobotV1();
             robot.init();
+            robot.init_imu();
 
             waitForStart();
 
@@ -49,17 +31,32 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode {
             }
 
             // tilt the phone for teleOp mode
+            /*
             robot.getParkingRod().setPosition(1d);
-            robot.getPhoneTilt().setPosition(robot.telePhoneTiltPos);
+            robot.getRobotLatch().powerLiftRunToPosition(1.0, 3900);
+            sleep(1000);
+            robot.getRobotLatch().powerLiftRunToPosition(1.0, 0);
+            */
+            MineralMechanism collector = robot.getCollector();
+            while(opModeIsActive()) {
+                if (gamepad1.x) {
+                    collector.autoCollectMineral(1000, false);
+                } else if (gamepad1.b) {
+                    collector.autoMineralDeposit();
+                } else if (gamepad1.a) {
+                    collector.disableIntake();
+                }
 
-            while (opModeIsActive()) {
-                robot.player1controls(gamepad1);
-                robot.player2Controls(gamepad2);
+                if (gamepad1.dpad_up) {
+                    robot.getCollector().liftDepo(750);
+                } else if(gamepad1.dpad_down){
+                    robot.getCollector().lowerDepo();
+                }
 
-                // robot.getCollector().printTelemetry();
-                robot.getRobotLatch().printTelemetry();
+                telemetry.addData("Intake Pos", robot.getCollector().getIntake().getCurrentPosition());
                 telemetry.update();
             }
+
         } finally {
             OpModeUtils.stop();
         }

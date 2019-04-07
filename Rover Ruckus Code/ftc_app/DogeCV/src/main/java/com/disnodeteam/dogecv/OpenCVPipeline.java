@@ -354,8 +354,8 @@ public abstract class OpenCVPipeline implements CameraBridgeViewBase.CvCameraVie
         switch (((Activity) context).getWindowManager().getDefaultDisplay().getRotation()) {
             case Surface.ROTATION_0:
                 // These methods don't work. Please tell Levi if you ever find yourself needing to use them!
-                Core.rotate(inputFrame.rgba(), rgba, Core.ROTATE_90_CLOCKWISE);
-                Core.rotate(inputFrame.gray(), gray, Core.ROTATE_90_CLOCKWISE);
+                Core.rotate(inputFrame.rgba(), rgba, Core.ROTATE_90_COUNTERCLOCKWISE);
+                Core.rotate(inputFrame.gray(), gray, Core.ROTATE_90_COUNTERCLOCKWISE);
                 break;
             case Surface.ROTATION_90:
                 rgba = inputFrame.rgba();
@@ -363,8 +363,8 @@ public abstract class OpenCVPipeline implements CameraBridgeViewBase.CvCameraVie
                 break;
             case Surface.ROTATION_270:
                 // These methods don't work. Please tell Levi if you ever find yourself needing to use them!
-                Core.rotate(inputFrame.rgba(), rgba, Core.ROTATE_180);
-                Core.rotate(inputFrame.gray(), gray, Core.ROTATE_180);
+                Core.rotate(inputFrame.rgba(), rgba, Core.ROTATE_90_COUNTERCLOCKWISE);
+                Core.rotate(inputFrame.gray(), gray, Core.ROTATE_90_COUNTERCLOCKWISE);
                 break;
         }
         if(isDogeCVEnabled) return processFrame(rgba, gray);
