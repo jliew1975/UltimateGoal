@@ -115,12 +115,89 @@ public class AutoRobotV1 extends RobotBase {
 
         runtime.reset();
 
-        pidRotate.reset();
-        pidRotate.setSetpoint(degrees);
-        pidRotate.setInputRange(0, 90);
-        pidRotate.setOutputRange(.20, power);
-        pidRotate.setTolerance(2);
-        pidRotate.enable();
+        if(detector == null || (detector != null && !detector.isAligned())) {
+            // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+            // clockwise (right).
+            if (degrees < 0) {
+                // On right turn we have to get off zero first.
+                while (OpModeUtils.opModeIsActive() && getAngle() == 0) {
+                    telemetry.addData("angle", getAngle());
+                    telemetry.addData("degrees", 0);
+                    telemetry.update();
+
+                    turnRight(power);
+                }
+
+                turnRight(power);
+
+                do {
+                    telemetry.addData("angle", getAngle());
+                    telemetry.addData("degrees", degrees);
+                    if(detector != null) {
+                        telemetry.addData("IsAlign", detector.isAligned());
+                    }
+                    telemetry.update();
+
+                    if (detector != null) {
+                        if (detector.isAligned()) {
+                            stop();
+                            break;
+                        }
+                    }
+
+                    if (timeout != -1) {
+                        if (runtime.seconds() > timeout) {
+                            stop();
+                            break;
+                        }
+                    }
+                } while (OpModeUtils.opModeIsActive() && getAngle() > degrees);
+            } else {  // left turn.
+                turnLeft(power);
+
+                do {
+                    telemetry.addData("angle", getAngle());
+                    telemetry.addData("degrees", degrees);
+                    if(detector != null) {
+                        telemetry.addData("IsAlign", detector.isAligned());
+                    }
+                    telemetry.update();
+
+                    if (detector != null) {
+                        if (detector.isAligned()) {
+                            break;
+                        }
+                    }
+
+                    if (timeout != -1) {
+                        if (runtime.seconds() > timeout) {
+                            break;
+                        }
+                    }
+                } while (OpModeUtils.opModeIsActive() && getAngle() < degrees);
+            }
+        }
+
+        stop();
+        TimeUnit.MILLISECONDS.sleep(200);
+
+        double rotateAngle = getAngle();
+
+        // reset angle tracking on new heading.
+        resetAngle();
+
+        return rotateAngle;
+    }
+
+    /**
+     * Rotate left or right the number of degrees. Does not support turning more than 180 degrees.
+     * @param degrees Degrees to turn, + is left - is right
+     */
+    public double cornering(double degrees, double power, double timeout) throws InterruptedException {
+        // restart imu movement tracking.
+        resetAngle();
+
+        runtime.reset();
 
         // getAngle() returns + when rotating counter clockwise (left) and - when rotating
         // clockwise (right).
@@ -132,22 +209,15 @@ public class AutoRobotV1 extends RobotBase {
                 telemetry.addData("degrees", 0);
                 telemetry.update();
 
-                turnRight(power);
+                corneringRight(power);
             }
 
-            turnRight(power);
+            corneringRight(power);
 
             do {
                 telemetry.addData("angle", getAngle());
                 telemetry.addData("degrees", degrees);
                 telemetry.update();
-
-                if(detector != null && detector.isFound()) {
-                   if(detector.isAligned()) {
-                       stop();
-                       break;
-                   }
-                }
 
                 if(timeout != -1) {
                     if (runtime.seconds() > timeout) {
@@ -157,18 +227,12 @@ public class AutoRobotV1 extends RobotBase {
                 }
             } while(OpModeUtils.opModeIsActive() && getAngle() > degrees);
         } else {  // left turn.
-            turnLeft(power);
+            corneringLeft(power);
 
             do {
                 telemetry.addData("angle", getAngle());
                 telemetry.addData("degrees", degrees);
                 telemetry.update();
-
-                if(detector != null && detector.isFound()) {
-                    if(detector.isAligned()) {
-                        break;
-                    }
-                }
 
                 if(timeout != -1) {
                     if (runtime.seconds() > timeout) {
@@ -263,6 +327,7 @@ public class AutoRobotV1 extends RobotBase {
             {
 
                 //report target and current positions to driver station
+                /*
                 telemetry.addData("Path1", "Running to %7d : %7d : %7d : %7d",
                         targetPositions[0], targetPositions[1], targetPositions[2], targetPositions[3]);
 
@@ -272,6 +337,7 @@ public class AutoRobotV1 extends RobotBase {
                         motors.get(2).getCurrentPosition(),
                         motors.get(3).getCurrentPosition());
                 telemetry.update();
+                */
             }
 
             stop();
@@ -321,6 +387,7 @@ public class AutoRobotV1 extends RobotBase {
                     }
                 }
 
+                /*
                 //report current and target positions to driver station
                 telemetry.addData("Path1", "Running to %7d :%7d",
                         targetPositions[0], targetPositions[1], targetPositions[2], targetPositions[3]);
@@ -331,6 +398,7 @@ public class AutoRobotV1 extends RobotBase {
                         motors.get(2).getCurrentPosition(),
                         motors.get(3).getCurrentPosition());
                 telemetry.update();
+                */
             }
 
             stop();

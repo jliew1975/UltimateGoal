@@ -105,12 +105,24 @@ public abstract class MecanumDriveBase {
         rearLeftDrive.setPower(-power);
     }
 
+    public void corneringLeft(double power) {
+        frontRightDrive.setPower(power);
+        rearRightDrive.setPower(power);
+    }
+
+    public void corneringRight(double power) {
+        frontLeftDrive.setPower(power);
+        rearLeftDrive.setPower(power);
+    }
+
     public void turnLeft(double power) {
         frontRightDrive.setPower(power);
         rearRightDrive.setPower(-power);
         frontLeftDrive.setPower(-power);
         rearLeftDrive.setPower(power);
     }
+
+
 
     protected double limitPower(double power) {
         return Math.min(Math.abs(power), 1);

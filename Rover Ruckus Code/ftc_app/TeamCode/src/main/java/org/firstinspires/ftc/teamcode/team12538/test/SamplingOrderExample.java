@@ -58,11 +58,11 @@ public class SamplingOrderExample extends OpMode implements DetectorListener {
         detector.useDefaults(); // Set detector to use default settings
 
         detector.downscale = 0.4; // How much to downscale the input frames
-        detector.alignSize = 70; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = -80; // How far from center frame to offset this alignment zone.
+        detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
 
-        detector.yMinOffset = -60;
-        detector.yMaxOffset = +100;
+        detector.yMinOffset = -150;
+        detector.yMaxOffset = 110;
 
         // Optional tuning
         detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA

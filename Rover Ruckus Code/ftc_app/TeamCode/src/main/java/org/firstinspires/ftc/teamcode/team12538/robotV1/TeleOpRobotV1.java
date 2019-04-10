@@ -29,11 +29,19 @@ public class TeleOpRobotV1 extends RobotBase {
         */
 
         // scissor lift controls
-        if (gamepad.dpad_up) {
+        if (gamepad.left_bumper) {
+            ThreadUtils.getExecutorService().submit(new Runnable() {
+                @Override
+                public void run() {
+                    collector.getIntakeFlip().setPosition(collector.intakeFlipHangPos);
+                    robotLatch.powerLiftRunToPosition(1.0, 3730);
+                }
+            });
+        } else if (gamepad.right_bumper || gamepad.dpad_down) {
+            robotLatch.powerLift(-1.0);
+        } else if(gamepad.dpad_up) {
             collector.getIntakeFlip().setPosition(collector.intakeFlipHangPos);
             robotLatch.powerLift(1.0);
-        } else if (gamepad.dpad_down) {
-            robotLatch.powerLift(-1.0);
         } else {
             robotLatch.powerLift(0d);
         }

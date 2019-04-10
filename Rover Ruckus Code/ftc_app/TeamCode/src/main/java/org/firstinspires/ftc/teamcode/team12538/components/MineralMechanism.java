@@ -2,9 +2,14 @@ package org.firstinspires.ftc.teamcode.team12538.components;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -36,7 +41,7 @@ public class MineralMechanism implements RobotMechanic {
     private DcMotor armExtension = null;
 
     private Servo depo = null;
-    private DcMotor depoLift = null;
+    private DcMotorEx depoLift = null;
 
     private DigitalChannel magneticLimitSensor = null;
 
@@ -68,6 +73,10 @@ public class MineralMechanism implements RobotMechanic {
 
     private int currentIntakeZeroPos = 0;
 
+    public static final double NEW_P = 2.5;
+    public static final double NEW_I = 0.1;
+    public static final double NEW_D = 0.2;
+
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -78,14 +87,10 @@ public class MineralMechanism implements RobotMechanic {
         intake = hardwareMap.get(DcMotor.class, "intake");
 
         intakeGate = hardwareMap.get(Servo.class, "intake_gate");
-        intakeGate.setPosition(intakeGateClose);
+        intakeGate.setPosition(intakeGateOpen);
 
         // intakeFlip initialization logic
         intakeFlip = hardwareMap.get(Servo.class, "intake_flip");
-        if(intakeGate.getPosition() == intakeGateOpen) {
-            // prevent gate from closing when intake is on a up position
-            intakeFlip.setPosition(intakeFlipPrepPos);
-        }
         intakeFlip.setPosition(intakeFlipUpPos);
 
 
@@ -97,8 +102,23 @@ public class MineralMechanism implements RobotMechanic {
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, armExtension);
 
         // deposit lift motor initialization
-        depoLift = hardwareMap.get(DcMotor.class, "vertical_slides");
-        // depoLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        depoLift = (DcMotorEx) hardwareMap.get(DcMotor.class, "vertical_slides");
+
+        // get a reference to the motor controller and cast it as an extended functionality controller.
+        // we assume it's a REV Robotics Expansion Hub (which supports the extended controller functions).
+        /*
+        DcMotorControllerEx motorControllerEx = (DcMotorControllerEx) depoLift.getController();
+
+        // get the port number of our configured motor.
+        int motorIndex = depoLift.getPortNumber();
+
+        PIDFCoefficients pidOrig = motorControllerEx.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION);
+
+        // change coefficients.
+        PIDFCoefficients pidNew = new PIDFCoefficients(pidOrig.p, pidOrig.i, NEW_D, pidOrig.f, MotorControlAlgorithm.PIDF);
+        motorControllerEx.setPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION, pidNew);
+        */
+
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, depoLift);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, depoLift);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, depoLift);
@@ -224,8 +244,11 @@ public class MineralMechanism implements RobotMechanic {
 
                 runtime.reset();
 
-                while (OpModeUtils.opModeIsActive() && armExtension.isBusy() && runtime.seconds() <= 4) {
-
+                int curPos = armExtension.getCurrentPosition();
+                while (OpModeUtils.opModeIsActive() && armExtension.isBusy() && runtime.seconds() <= 2) {
+                    if(runtime.seconds() > 1 && curPos == armExtension.getCurrentPosition()) {
+                        break;
+                    }
                 }
 
                 armExtension.setPower(0);
@@ -260,33 +283,38 @@ public class MineralMechanism implements RobotMechanic {
     }
 
     public void autoMineralDeposit() {
-        synchronized (lock) {
-            if (!busy) {
-                busy = true;
+        autoMineralDeposit(false);
+    }
 
-                ThreadUtils.getExecutorService().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            RobotLog.d("starting autoMineralDeposit logic");
-                            // disableIntake();
-                            flipCollectorBox(intakeFlipPrepPos);
-                            if(magneticLimitSensor.getState()) {
-                                positionArmExtForMineralTransfer();
+    public void autoMineralDeposit(boolean isAUto) {
+        autoMineralDeposit(false, true);
+    }
+
+    public void autoMineralDeposit(final boolean isAuto, final boolean isTransfer) {
+        if(isAuto) {
+            autoMineralTransfer(isTransfer);
+        } else {
+            synchronized (lock) {
+                if (!busy) {
+                    busy = true;
+
+                    ThreadUtils.getExecutorService().submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                mineralTransfer();
+                            } catch (Exception e) {
+                                RobotLog.dd("MineralMechanism", e, e.getMessage());
+                            } finally {
+                                busy = false;
                             }
-                            flipCollectorBox(intakeFlipUpPos);
-                            sleep(500);
-                            RobotLog.d("done with autoMineralDeposit logic");
-                        } catch(Exception e) {
-                            RobotLog.dd("MineralMechanism", e, e.getMessage());
-                        } finally {
-                            busy = false;
                         }
-                    }
-                });
+                    });
+                }
             }
         }
     }
+
 
     public void liftDepo(int targetPosition) {
         liftDepo(targetPosition, false);
@@ -349,6 +377,7 @@ public class MineralMechanism implements RobotMechanic {
     public void rotateDepositBox(final double finalPosition, boolean isAuto) {
         if(isAuto) {
             rotateDepoBox(finalPosition);
+            sleep(1000);
         } else {
             synchronized (depo) {
                 if(!depoBoxBusy) {
@@ -373,23 +402,41 @@ public class MineralMechanism implements RobotMechanic {
         return depoLift.getCurrentPosition() > 500;
     }
 
-    public void autoCollectMineral(int targetPosition, boolean isPrepFirst) {
-        if(isPrepFirst) {
-            flipCollectorBox(intakeFlipPrepPos);
-            positionArmExt(1100);
-        }
-
-        flipCollectorBox(intakeFlipDownPos);
-        // enableIntake(MineralMechanism.Direction.InTake);
-        positionArmExt(targetPosition);
-        autoMineralDeposit();
-    }
-
     public void printTelemetry() {
         Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
         telemetry.addData("depoLift", depoLift.getCurrentPosition());
         telemetry.addData("armExtPosition", armExtension.getCurrentPosition());
         telemetry.addData("magneticLimitSensor", magneticLimitSensor.getState());
+    }
+
+    private void autoMineralTransfer() {
+        autoMineralTransfer(true);
+    }
+
+    private void mineralTransfer() {
+        RobotLog.d("starting autoMineralDeposit logic");
+        flipCollectorBox(intakeFlipPrepPos);
+        if(magneticLimitSensor.getState()) {
+            positionArmExtForMineralTransfer();
+        }
+
+        flipCollectorBox(intakeFlipUpPos);
+        sleep(500);
+        RobotLog.d("done with autoMineralDeposit logic");
+    }
+
+    private void autoMineralTransfer(boolean isTransfer) {
+        RobotLog.d("starting autoMineralDeposit logic");
+        flipCollectorBox(intakeFlipPrepPos);
+        if(magneticLimitSensor.getState()) {
+            positionArmExtForMineralTransfer();
+        }
+
+        if(isTransfer) {
+            flipCollectorBox(intakeFlipUpPos);
+        }
+        sleep(500);
+        RobotLog.d("done with autoMineralDeposit logic");
     }
 
     private void setLiftDepoPosition(int targetPosition) {
@@ -407,7 +454,7 @@ public class MineralMechanism implements RobotMechanic {
             depoLift.setPower(0);
             depo.setPosition(depoLowerPos);
         } else {
-            flipCollectorBox(intakeFlipDownPos);
+            flipCollectorBox(intakeFlipPrepPos);
             MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
             depoLift.setTargetPosition(targetPosition);
             depoLift.setPower(1);

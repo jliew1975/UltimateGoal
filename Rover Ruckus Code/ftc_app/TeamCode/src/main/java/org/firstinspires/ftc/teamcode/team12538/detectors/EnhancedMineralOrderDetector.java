@@ -113,13 +113,11 @@ public class EnhancedMineralOrderDetector extends DogeCVDetector implements Mine
             // Get bounding rect of contour
             Rect rect = Imgproc.boundingRect(points);
 
-            /*
             if(!disableSampling) {
                 if (rect.y < yMin || rect.y > yMax) {
                     continue;
                 }
             }
-            */
 
             double diffrenceScore = calculateScore(points);
 
@@ -140,6 +138,7 @@ public class EnhancedMineralOrderDetector extends DogeCVDetector implements Mine
             }
         }
 
+        /*
         List<Rect>   choosenWhiteRect  = new ArrayList<>();
         List<Double> chosenWhiteScore  = new ArrayList<>();;
 
@@ -156,13 +155,11 @@ public class EnhancedMineralOrderDetector extends DogeCVDetector implements Mine
             // Get bounding rect of contour
             Rect rect = Imgproc.boundingRect(points);
 
-            /*
             if(!disableSampling) {
                 if (rect.y < yMin || rect.y > yMax) {
                     continue;
                 }
             }
-            */
 
             double diffrenceScore = calculateScore(points);
 
@@ -193,6 +190,7 @@ public class EnhancedMineralOrderDetector extends DogeCVDetector implements Mine
                 }
             }
         }
+        */
 
         double alignX = (getAdjustedSize().width / 2) + alignPosOffset;
         double alignXMin = alignX - (alignSize / 2);
@@ -226,21 +224,22 @@ public class EnhancedMineralOrderDetector extends DogeCVDetector implements Mine
 
                 Imgproc.line(workingMat, new Point(xPos, getAdjustedSize().height), new Point(xPos, getAdjustedSize().height - 30), new Scalar(255, 255, 0), 2);
 
+                /*
                 if (choosenWhiteRect.size() < 2) {
                     found = true;
                 }
+                */
             }
         }
 
+        /*
         if(choosenWhiteRect != null) {
             for(int i=0;i<choosenWhiteRect.size();i++){
                 Rect rect = choosenWhiteRect.get(i);
 
-                /*
                 if(rect.y < yMin || rect.y > yMax) {
                     continue;
                 }
-                */
 
                 double score = chosenWhiteScore.get(i);
                 Imgproc.rectangle(workingMat,
@@ -291,7 +290,9 @@ public class EnhancedMineralOrderDetector extends DogeCVDetector implements Mine
                     found = false;
                 }
             }
+
         }
+        */
 
         Imgproc.line(workingMat,new Point(alignXMin, getAdjustedSize().height), new Point(alignXMin, getAdjustedSize().height - 40),new Scalar(0,255,0), 2);
         Imgproc.line(workingMat,new Point(alignXMax, getAdjustedSize().height), new Point(alignXMax,getAdjustedSize().height - 40),new Scalar(0,255,0), 2);

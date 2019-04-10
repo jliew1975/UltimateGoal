@@ -20,16 +20,16 @@ public class AutoFacingDepotApp extends RoverRuckusAutoApp {
         if(!mineralLocation.isSkipAlign()) {
             switch (mineralLocation) {
                 case Center:
-                    robot.getCollector().autoCollectMineral(1000, false);
+                    autoCollectMineral(1500, false, true);
                     break;
 
                 case Left:
                     robot.moveForward(0.1, 5.0);
-                    robot.getCollector().autoCollectMineral(1800, false);
+                    autoCollectMineral(1500, false, true);
                     break;
 
                 case Right:
-                    robot.getCollector().autoCollectMineral(1800, false);
+                    autoCollectMineral(1500, false, true);
                     break;
             }
         }

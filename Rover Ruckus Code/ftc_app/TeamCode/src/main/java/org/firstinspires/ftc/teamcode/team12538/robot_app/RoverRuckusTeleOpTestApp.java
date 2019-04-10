@@ -40,17 +40,9 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode {
             MineralMechanism collector = robot.getCollector();
             while(opModeIsActive()) {
                 if (gamepad1.x) {
-                    collector.autoCollectMineral(1000, false);
+                    robot.strafeRight(0.5, 10.0);
                 } else if (gamepad1.b) {
-                    collector.autoMineralDeposit();
-                } else if (gamepad1.a) {
-                    collector.disableIntake();
-                }
-
-                if (gamepad1.dpad_up) {
-                    robot.getCollector().liftDepo(750);
-                } else if(gamepad1.dpad_down){
-                    robot.getCollector().lowerDepo();
+                    robot.strafeLeft(0.5, 10.0);
                 }
 
                 telemetry.addData("Intake Pos", robot.getCollector().getIntake().getCurrentPosition());
