@@ -137,7 +137,7 @@ public class testLift extends LinearOpMode {
 
             telemetry.addData("Dead Wheel Encoder Value", deadwheel.getVoltage());
             telemetry.addData("Encoder Max Voltage", deadwheel.getMaxVoltage());
-            telemetry.addData("DeadWheel Rotations", loopBack.getRotation(deadwheel.getVoltage()));
+            telemetry.addData("DeadWheel Rotations", (loopBack.getRotation(deadwheel.getVoltage()))/2);
             telemetry.update();
             /*
            //scissor lift code
