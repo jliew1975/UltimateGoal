@@ -129,15 +129,16 @@ public class testLift extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        deadwheel.resetDeviceConfigurationForOpMode();
+        //deadwheel.resetDeviceConfigurationForOpMode();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            telemetry.addData("dead wheel encoder", deadwheel.getVoltage());
+            telemetry.addData("Dead Wheel Encoder Value", deadwheel.getVoltage());
+            telemetry.addData("Encoder Max Voltage", deadwheel.getMaxVoltage());
+            telemetry.addData("DeadWheel Rotations", loopBack.getRotation(deadwheel.getVoltage()));
             telemetry.update();
-
             /*
            //scissor lift code
            if(gamepad1.dpad_up){
