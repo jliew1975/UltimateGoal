@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
-import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.team12538.Testing.EncoderDriver;
 import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotLatch;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDriveBase;
@@ -28,15 +29,19 @@ public abstract class RobotBase extends MecanumDriveBase {
     public double telePhoneTiltPos = 0.500;
     public double autoPhoneTiltPos = 0.669;
 
+    private AnalogInput deadwheel = null;
+
     @Override
     public void init() {
         super.init();
 
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
 
+        deadwheel = hardwareMap.get(AnalogInput.class, "dead_wheel");
+
         // phone tilting servo initialization
-        phoneTilt = hardwareMap.get(Servo.class, "phone_tilt");
-        phoneTilt.setPosition(autoPhoneTiltPos);
+        // phoneTilt = hardwareMap.get(Servo.class, "phone_tilt");
+        // phoneTilt.setPosition(autoPhoneTiltPos);
 
         // parking rod initialization
         parkingRod = hardwareMap.get(Servo.class, "parking_rod");
@@ -82,5 +87,12 @@ public abstract class RobotBase extends MecanumDriveBase {
         sleep(1000);
         collector.flipCollectorBox(collector.intakeFlipUpPos);
         collector.disableIntake();
+    }
+
+    public void printDeadWheelTelemetry() {
+        Telemetry telemetry = OpModeUtils.getGlobalStore().getTelemetry();
+        telemetry.addData("Dead Wheel Encoder Value", deadwheel.getVoltage());
+        telemetry.addData("Encoder Max Voltage", deadwheel.getMaxVoltage());
+        telemetry.addData("DeadWheel Rotations", (EncoderDriver.getRotation(deadwheel.getVoltage()))*2);
     }
 }

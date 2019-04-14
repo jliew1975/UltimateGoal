@@ -189,68 +189,12 @@ public class AutoRobotV1 extends RobotBase {
         return rotateAngle;
     }
 
-    /**
-     * Rotate left or right the number of degrees. Does not support turning more than 180 degrees.
-     * @param degrees Degrees to turn, + is left - is right
-     */
-    public double cornering(double degrees, double power, double timeout) throws InterruptedException {
-        // restart imu movement tracking.
-        resetAngle();
+    public void corneringRight(double power, double distance) throws InterruptedException {
+        encoderCorneringRight(power, distance);
+    }
 
-        runtime.reset();
-
-        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
-        // clockwise (right).
-        if (degrees < 0)
-        {
-            // On right turn we have to get off zero first.
-            while (OpModeUtils.opModeIsActive() && getAngle() == 0) {
-                telemetry.addData("angle", getAngle());
-                telemetry.addData("degrees", 0);
-                telemetry.update();
-
-                corneringRight(power);
-            }
-
-            corneringRight(power);
-
-            do {
-                telemetry.addData("angle", getAngle());
-                telemetry.addData("degrees", degrees);
-                telemetry.update();
-
-                if(timeout != -1) {
-                    if (runtime.seconds() > timeout) {
-                        stop();
-                        break;
-                    }
-                }
-            } while(OpModeUtils.opModeIsActive() && getAngle() > degrees);
-        } else {  // left turn.
-            corneringLeft(power);
-
-            do {
-                telemetry.addData("angle", getAngle());
-                telemetry.addData("degrees", degrees);
-                telemetry.update();
-
-                if(timeout != -1) {
-                    if (runtime.seconds() > timeout) {
-                        break;
-                    }
-                }
-            } while(OpModeUtils.opModeIsActive() && getAngle() < degrees);
-        }
-
-        stop();
-        TimeUnit.MILLISECONDS.sleep(200);
-
-        double rotateAngle = getAngle();
-
-        // reset angle tracking on new heading.
-        resetAngle();
-
-        return rotateAngle;
+    public void corneringLeft(double power, double distance) throws InterruptedException {
+        encoderCorneringLeft(power, distance);
     }
 
     /**
@@ -402,6 +346,106 @@ public class AutoRobotV1 extends RobotBase {
             }
 
             stop();
+        }
+    }
+
+    private void encoderCorneringRight(double speed, double distanceInInches)
+    {
+        // reset encoders
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, leftMotors);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, leftMotors);
+
+        int[] targetPositions = new int[leftMotors.size()];
+
+        //ensure that the opmode is still active
+        if(OpModeUtils.getOpMode().opModeIsActive()) {
+            //determine target positions
+            int index = 0;
+            for(DcMotor motor : leftMotors) {
+                targetPositions[index] = motor.getCurrentPosition() + (int) (distanceInInches * COUNTS_PER_INCH);
+                motor.setTargetPosition(targetPositions[index]);
+                index++;
+            }
+
+            MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, leftMotors);
+            runtime.reset();
+
+            for(DcMotor motor : leftMotors) {
+                motor.setPower(Math.abs(speed));
+            }
+
+            // keep looping until at least one of the motors finished its movement
+            while(OpModeUtils.opModeIsActive() &&
+                    //(runtime.seconds() < timeout) &&
+                    (leftMotors.get(0).isBusy() && leftMotors.get(1).isBusy()))
+            {
+
+                //report target and current positions to driver station
+                /*
+                telemetry.addData("Path1", "Running to %7d : %7d : %7d : %7d",
+                        targetPositions[0], targetPositions[1], targetPositions[2], targetPositions[3]);
+
+                telemetry.addData("Path2", "Running at %7d : %7d : %7d : %7d",
+                        motors.get(0).getCurrentPosition(),
+                        motors.get(1).getCurrentPosition(),
+                        motors.get(2).getCurrentPosition(),
+                        motors.get(3).getCurrentPosition());
+                telemetry.update();
+                */
+            }
+
+            stop();
+            MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, leftMotors);
+        }
+    }
+
+    private void encoderCorneringLeft(double speed, double distanceInInches)
+    {
+        // reset encoders
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, rightMotors);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, rightMotors);
+
+        int[] targetPositions = new int[leftMotors.size()];
+
+        //ensure that the opmode is still active
+        if(OpModeUtils.getOpMode().opModeIsActive()) {
+            //determine target positions
+            int index = 0;
+            for(DcMotor motor : rightMotors) {
+                targetPositions[index] = motor.getCurrentPosition() + (int) (distanceInInches * COUNTS_PER_INCH);
+                motor.setTargetPosition(targetPositions[index]);
+                index++;
+            }
+
+            MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, rightMotors);
+            runtime.reset();
+
+            for(DcMotor motor : rightMotors) {
+                motor.setPower(Math.abs(speed));
+            }
+
+            // keep looping until at least one of the motors finished its movement
+            while(OpModeUtils.opModeIsActive() &&
+                    //(runtime.seconds() < timeout) &&
+                    (rightMotors.get(0).isBusy() && rightMotors.get(1).isBusy()))
+            {
+
+                //report target and current positions to driver station
+                /*
+                telemetry.addData("Path1", "Running to %7d : %7d : %7d : %7d",
+                        targetPositions[0], targetPositions[1], targetPositions[2], targetPositions[3]);
+
+                telemetry.addData("Path2", "Running at %7d : %7d : %7d : %7d",
+                        motors.get(0).getCurrentPosition(),
+                        motors.get(1).getCurrentPosition(),
+                        motors.get(2).getCurrentPosition(),
+                        motors.get(3).getCurrentPosition());
+                telemetry.update();
+                */
+            }
+
+            stop();
+            MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, rightMotors);
         }
     }
 

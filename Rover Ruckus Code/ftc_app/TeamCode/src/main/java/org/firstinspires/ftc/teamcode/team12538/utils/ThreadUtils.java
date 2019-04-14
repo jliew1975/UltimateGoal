@@ -8,7 +8,7 @@ public class ThreadUtils {
     private static ExecutorService executorService;
 
     public static void init() {
-        executorService = Executors.newSingleThreadExecutor();
+        executorService = Executors.newFixedThreadPool(2);
     }
 
     public static void sleep(long time) {

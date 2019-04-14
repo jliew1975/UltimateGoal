@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538.Testing;
 
-public class loopBack{
+public class EncoderDriver {
     private static double rot = 0.0;
     private static double previous = 0.0;
     private static double loopBackcone = 90;//In my own experience a 90 degree loopback window works nicely, although you can tune to your preferences

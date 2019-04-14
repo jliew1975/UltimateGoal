@@ -31,14 +31,15 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
 
             // tilt the phone for teleOp mode
             robot.getParkingRod().setPosition(1d);
-            robot.getPhoneTilt().setPosition(robot.telePhoneTiltPos);
+            // robot.getPhoneTilt().setPosition(robot.telePhoneTiltPos);
 
             while (opModeIsActive()) {
                 robot.player1controls(gamepad1);
                 robot.player2Controls(gamepad2);
 
-                robot.getCollector().printTelemetry();
-                robot.getRobotLatch().printTelemetry();
+                // robot.getCollector().printTelemetry();
+                // robot.getRobotLatch().printTelemetry();
+                robot.printDeadWheelTelemetry();
                 telemetry.update();
             }
         } finally {

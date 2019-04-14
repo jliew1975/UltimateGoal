@@ -33,6 +33,8 @@ public abstract class MecanumDriveBase {
     protected DcMotor rearRightDrive = null;
 
     protected List<DcMotor> motors = new ArrayList<>();
+    protected List<DcMotor> leftMotors = new ArrayList<>();
+    protected List<DcMotor> rightMotors = new ArrayList<>();
 
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getGlobalStore().getHardwareMap();
@@ -48,6 +50,8 @@ public abstract class MecanumDriveBase {
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
         motors.addAll(Arrays.asList(frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive));
+        leftMotors.addAll(Arrays.asList(frontRightDrive, rearLeftDrive));
+        rightMotors.addAll(Arrays.asList(frontLeftDrive, rearRightDrive));
 
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motors);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, motors);

@@ -30,15 +30,11 @@
 package org.firstinspires.ftc.teamcode.team12538.Testing;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 
 
 /**
@@ -137,7 +133,7 @@ public class testLift extends LinearOpMode {
 
             telemetry.addData("Dead Wheel Encoder Value", deadwheel.getVoltage());
             telemetry.addData("Encoder Max Voltage", deadwheel.getMaxVoltage());
-            telemetry.addData("DeadWheel Rotations", (loopBack.getRotation(deadwheel.getVoltage()))*2);
+            telemetry.addData("DeadWheel Rotations", (EncoderDriver.getRotation(deadwheel.getVoltage()))*2);
             telemetry.update();
             /*
            //scissor lift code
