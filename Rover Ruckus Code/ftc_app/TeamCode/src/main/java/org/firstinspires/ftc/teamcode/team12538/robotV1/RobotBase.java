@@ -6,11 +6,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.team12538.Testing.EncoderDriver;
+import org.firstinspires.ftc.teamcode.team12538.testing.EncoderDriver;
 import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotLatch;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,11 +24,10 @@ public abstract class RobotBase extends MecanumDriveBase {
     MineralMechanism collector = null;
     RobotLatch robotLatch = null;
 
-    private Servo phoneTilt = null;
     private Servo parkingRod = null;
+    private Servo teamMarkerServo = null;
 
-    public double telePhoneTiltPos = 0.500;
-    public double autoPhoneTiltPos = 0.669;
+    private Servo cameraTilt = null;
 
     private AnalogInput deadwheel = null;
 
@@ -39,9 +39,11 @@ public abstract class RobotBase extends MecanumDriveBase {
 
         deadwheel = hardwareMap.get(AnalogInput.class, "dead_wheel");
 
-        // phone tilting servo initialization
-        // phoneTilt = hardwareMap.get(Servo.class, "phone_tilt");
-        // phoneTilt.setPosition(autoPhoneTiltPos);
+        teamMarkerServo = hardwareMap.get(Servo.class, "team_marker");
+        teamMarkerServo.setPosition(0.7);
+
+        cameraTilt = hardwareMap.get(Servo.class, "camera_tilt");
+        cameraTilt.setPosition(0.92);
 
         // parking rod initialization
         parkingRod = hardwareMap.get(Servo.class, "parking_rod");
@@ -81,12 +83,14 @@ public abstract class RobotBase extends MecanumDriveBase {
     }
 
     public void placeTeamMarker() {
-        collector.flipCollectorBox(collector.intakeFlipPrepPos);
+        teamMarkerServo.setPosition(0d);
         sleep(500);
-        collector.enableIntake(MineralMechanism.Direction.OutTake);
-        sleep(1000);
-        collector.flipCollectorBox(collector.intakeFlipUpPos);
-        collector.disableIntake();
+        ThreadUtils.getExecutorService().submit(new Runnable() {
+            @Override
+            public void run() {
+                collector.autoMineralDeposit();
+            }
+        });
     }
 
     public void printDeadWheelTelemetry() {

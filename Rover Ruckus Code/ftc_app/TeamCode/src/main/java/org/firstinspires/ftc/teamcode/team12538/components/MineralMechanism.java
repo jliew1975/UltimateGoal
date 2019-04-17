@@ -64,7 +64,7 @@ public class MineralMechanism implements RobotMechanic {
     public double intakeFlipDownPos = 0.2;
     public double intakeFlipPrepPos = 0.7;
 
-    private double depoLowerPos = 0.15;
+    private double depoLowerPos = 0.05;
 
     private double intakeGateOpen = 0d;
     private double intakeGateClose = 0.5;
@@ -261,7 +261,7 @@ public class MineralMechanism implements RobotMechanic {
                         armExtension.setPower(-1.0);
                     }
 
-                    if(currPos == -1 || armExtensionRuntime.seconds() > 1) {
+                    if(currPos == -1 || armExtensionRuntime.seconds() > 0.5) {
                         if(currPos != -1 && currPos == armExtension.getCurrentPosition()) {
                             break;
                         }
@@ -485,7 +485,7 @@ public class MineralMechanism implements RobotMechanic {
             while (OpModeUtils.opModeIsActive() && depoLift.isBusy() && runtime.seconds() < 2) {
                 // wait for motor to stop
                 if(depoLift.getCurrentPosition() > 300) {
-                    depo.setPosition(0.5);
+                    depo.setPosition(0.3);
                 }
             }
         }

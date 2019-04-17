@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.team12538.Testing;
+package org.firstinspires.ftc.teamcode.team12538.testing;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="testBot", group="Linear Opmode")
 
-public class testLift extends LinearOpMode {
+public class TestLift extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();

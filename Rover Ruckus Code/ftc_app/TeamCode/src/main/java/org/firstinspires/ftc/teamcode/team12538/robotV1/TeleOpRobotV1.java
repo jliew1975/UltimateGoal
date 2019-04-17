@@ -88,7 +88,7 @@ public class TeleOpRobotV1 extends RobotBase {
 
         // depo flip
         if(gamepad.right_trigger > 0 && collector.canFlipDepoBox()) {
-            collector.rotateDepositBox(0.67);
+            collector.rotateDepositBox(0.46);
         }
     }
 }
