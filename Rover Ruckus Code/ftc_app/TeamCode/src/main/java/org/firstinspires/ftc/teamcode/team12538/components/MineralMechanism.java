@@ -330,6 +330,7 @@ public class MineralMechanism implements RobotMechanic {
                         public void run() {
                             try {
                                 setLiftDepoPosition(targetPosition);
+                                rotateDepositBox(0.46);
                             } finally {
                                 depoLiftBusy = false;
                             }

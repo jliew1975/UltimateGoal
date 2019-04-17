@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
+@Disabled
 public class RoverRuckusTeleOpTestApp extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
