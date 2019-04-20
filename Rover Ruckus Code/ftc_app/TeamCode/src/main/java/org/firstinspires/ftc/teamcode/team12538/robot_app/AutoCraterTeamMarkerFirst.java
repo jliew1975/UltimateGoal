@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 @Autonomous(name="Auto (Crater) - TM First", group="Linear Opmode")
 public class AutoCraterTeamMarkerFirst extends RoverRuckusAutoApp {
+    public AutoCraterTeamMarkerFirst() {
+        this.isMultiMineral = true;
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -44,7 +47,7 @@ public class AutoCraterTeamMarkerFirst extends RoverRuckusAutoApp {
 
             // deploy robot from lander
             if(enableLanding) {
-                robot.getRobotLatch().powerLiftRunToPosition(1.0, 3730);
+                robot.getRobotLatch().powerLiftRunToPosition(1.0, 7622);
                 robot.moveForward(0.3, 3.0);
                 ThreadUtils.getExecutorService().submit(new Runnable() {
                     @Override
@@ -61,28 +64,24 @@ public class AutoCraterTeamMarkerFirst extends RoverRuckusAutoApp {
 
             double currAngle = robot.rotate(-90, 0.5,  5.0);
             robot.corneringRight(0.5, 15); // align with landers
-            sleep(800);
+            sleep(200);
 
             telemetry.addData("Sampling Result", detector.getLastOrder());
             telemetry.update();
 
-            detector.disableSampling();
-
-            robot.getCameraTilt().setPosition(0.94);
-            navigateToDepot();
-
             SamplingOrder order = detector.getLastOrder();
-            navigateBackToLander(order);
+            MineralLocation mineralLocation = convert(order);
+
+            robot.getCameraTilt().setPosition(0.965);
+
+            navigateToDepot();
+            navigateBackToLander(mineralLocation);
+            locateGoldMineral();
+            collectMineralOffTapedArea(mineralLocation, -300);
+            collectMineralfromCrater(order);
+            depositMineral(order);
 
             /*
-
-            robot.rotate(-20, 0.5, 5.0);
-            MineralLocation mineralLocation = locateGoldMineral();
-
-            collectMineralOffTapedArea(mineralLocation);
-            collectMineralfromCrater(mineralLocation);
-            depositMineral(mineralLocation);
-
             navigateForParking(mineralLocation);
             */
             robot.stop();
@@ -111,27 +110,35 @@ public class AutoCraterTeamMarkerFirst extends RoverRuckusAutoApp {
         robot.placeTeamMarker();
     }
 
-    protected void navigateBackToLander(SamplingOrder order) throws InterruptedException {
+    protected void navigateBackToLander(MineralLocation location) throws InterruptedException {
         robot.moveBackward(0.5, 23.0);
         robot.corneringLeft(0.5, 26);
         robot.moveBackward(0.5, 40);
 
-        if(order == SamplingOrder.RIGHT) {
-            robot.rotate(-120, 0.5, 5.0);
-            robot.moveBackward(0.3, 3.0);
-            locateGoldMineral();
-            collectMineralOffTapedArea(MineralLocation.Right);
-            robot.getCollector().disableIntake();
+        switch(location) {
+            case Right:
+                robot.rotate(-110, 0.5, 5.0);
+                robot.moveBackward(0.3, 3.0);
+                break;
+
+            case Center:
+                robot.rotate(-70, 0.5, 5.0);
+                robot.moveBackward(0.3, 3.0);
+                break;
+
+            default:
+                robot.rotate(-30, 0.5, 5.0);
+                robot.moveBackward(0.3, 3.0);
         }
     }
 
     protected MineralLocation locateGoldMineral() throws InterruptedException {
         MineralLocation location = MineralLocation.Unknown;
 
-        double rotAngle = robot.rotate(50, 0.1, -1, detector);
+        double rotAngle = robot.rotate(20, 0.05, -1, detector);
 
         if(!detector.isAligned()) {
-            robot.rotate(-50, 0.05, -1, detector);
+            robot.rotate(-20, 0.05, -1, detector);
         }
 
         return location;
@@ -139,21 +146,51 @@ public class AutoCraterTeamMarkerFirst extends RoverRuckusAutoApp {
 
     @Override
     protected void depositMineral(MineralLocation mineralLocation) throws InterruptedException {
-        double targetAngle = 10d;
-        double backwardDistance = 13;
 
-        switch(mineralLocation) {
-            case Left:
+    }
+
+    protected void collectMineralfromCrater(SamplingOrder order) throws InterruptedException {
+        if(order == SamplingOrder.LEFT) {
+            robot.rotate(-25, 0.5, 5.0);
+        } else if(order == SamplingOrder.RIGHT) {
+            robot.rotate(15, 0.5, 5.0);
+        }
+
+        robot.moveForward(0.3, 5.0);
+        if(isMultiMineral) {
+            switch (order) {
+                case CENTER:
+                    autoCollectMineral(800, true, true);
+                    break;
+
+                case LEFT:
+                    autoCollectMineral(1000, true, true);
+                    break;
+
+                case RIGHT:
+                    autoCollectMineral(800, true, true);
+                    break;
+            }
+        }
+
+        robot.getCollector().disableIntake();
+    }
+
+    protected void depositMineral(SamplingOrder order) throws InterruptedException {
+        double targetAngle = 10d;
+        double backwardDistance = 0;
+
+        switch(order) {
+            case LEFT:
                 targetAngle = -12;
                 break;
 
-            case Right:
+            case RIGHT:
                 targetAngle = -12;
                 break;
 
             default:
                 targetAngle = -12;
-                backwardDistance = 13;
                 break;
         }
 
@@ -161,7 +198,7 @@ public class AutoCraterTeamMarkerFirst extends RoverRuckusAutoApp {
         robot.moveBackward(0.5, backwardDistance);
         robot.corneringRight(0.5, 15.0);
         robot.getCollector().liftDepo(750, true);
-        robot.getCollector().rotateDepositBox(0.67, true);
+        robot.getCollector().flipDepoBox(true);
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
@@ -199,5 +236,16 @@ public class AutoCraterTeamMarkerFirst extends RoverRuckusAutoApp {
         detector.useDefaults();
         detector.listener = this;
         return detector;
+    }
+
+    private MineralLocation convert(SamplingOrder order) {
+        switch (order) {
+            case LEFT:
+                return MineralLocation.Left;
+            case RIGHT:
+                return MineralLocation.Right;
+            default:
+                return MineralLocation.Center;
+        }
     }
 }

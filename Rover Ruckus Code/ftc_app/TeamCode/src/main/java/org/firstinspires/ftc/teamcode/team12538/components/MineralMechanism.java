@@ -60,11 +60,13 @@ public class MineralMechanism implements RobotMechanic {
     private volatile boolean depoLiftBusy = false;
 
     public double intakeFlipHangPos = 1.0;
+    public double autoIntakeFlipUpPos = 1.0;
     public double intakeFlipUpPos = 1.0;
     public double intakeFlipDownPos = 0.2;
-    public double intakeFlipPrepPos = 0.7;
+    public double intakeFlipPrepPos = 0.68;
 
-    private double depoLowerPos = 0.05;
+    public double depoLowerPos = 0.05;
+    public double depoFlipPos = 0.46;
 
     private double intakeGateOpen = 0d;
     private double intakeGateClose = 0.5;
@@ -76,6 +78,7 @@ public class MineralMechanism implements RobotMechanic {
     public static final double NEW_D = 0.2;
 
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime armTimeout = new ElapsedTime();
     private ElapsedTime armExtensionRuntime = new ElapsedTime();
     private ElapsedTime depoLiftRuntime = new ElapsedTime();
 
@@ -128,39 +131,13 @@ public class MineralMechanism implements RobotMechanic {
         intake.setPower(0);
     }
 
-    public void flipCollectorBox() {
-        synchronized (intakeFlip) {
-            if (!intakeFlipIsBusy) {
-                intakeFlipIsBusy = true;
-                ThreadUtils.getExecutorService().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            double intakePos = 0d;
-                            if (intakeFlip.getPosition() == intakeFlipUpPos) {
-                                intakePos = intakeFlipDownPos;
-                            } else {
-                                intakePos = intakeFlipUpPos;
-                            }
-
-                            intakeFlip.setPosition(intakePos);
-                            sleep(500);
-                        } finally {
-                            intakeFlipIsBusy = false;
-                        }
-                    }
-                });
-            }
-        }
-    }
-
     public void flipCollectorBox(double position) {
         if(position == intakeFlipUpPos && intakeFlip.getPosition() == position) {
             intakeFlip.setPosition(0.5);
             // sleep(300);
         }
 
-        if(position == intakeFlipUpPos) {
+        if(position == autoIntakeFlipUpPos) {
             intakeGate.setPosition(intakeGateOpen);
             sleep(400);
         }
@@ -190,16 +167,6 @@ public class MineralMechanism implements RobotMechanic {
 
             if(power < 0d && magneticLimitSensor.getState() == false) {
                 disableArmExtMovement = true;
-            } else if(power > 0d && armExtension.getCurrentPosition() > upperLimit) {
-                // disableArmExtMovement = true;
-            }
-
-            if(slowDownArmMovement) {
-                effectivePower = Math.signum(effectivePower) * 0.2;
-            }
-
-            if(disableArmExtMovement) {
-                effectivePower = 0d;
             }
 
             armExtension.setPower(effectivePower);
@@ -207,10 +174,10 @@ public class MineralMechanism implements RobotMechanic {
     }
 
     public void positionArmExt(int targetPosition) {
-        positionArmExt(targetPosition, 1.0);
+        positionArmExt(targetPosition, 1.0, 5.0);
     }
 
-    public void positionArmExt(int targetPosition, double power) {
+    public void positionArmExt(int targetPosition, double power, double timeout) {
         if(armExtension != null) {
             disableArmControl = true;
 
@@ -222,6 +189,7 @@ public class MineralMechanism implements RobotMechanic {
                 armExtension.setTargetPosition(calculatedTargetPos);
                 armExtension.setPower(effectivePower);
 
+                armTimeout.reset();
                 armExtensionRuntime.reset();
 
                 int curPos = -1;
@@ -233,6 +201,10 @@ public class MineralMechanism implements RobotMechanic {
 
                         curPos = armExtension.getCurrentPosition();
                         armExtensionRuntime.reset();
+                    }
+
+                    if(armTimeout.seconds() > timeout) {
+                        break;
                     }
                 }
 
@@ -253,8 +225,10 @@ public class MineralMechanism implements RobotMechanic {
 
                 int currPos = -1;
                 while (OpModeUtils.opModeIsActive() && magneticLimitSensor.getState()) {
-                    // if encoder works will try to slow down at 100 encoder ticks
-                    // from current marked mineral transfer position.
+                    if(armExtension.getCurrentPosition() < (currentIntakeZeroPos + 300)) {
+                        intakeGate.setPosition(intakeGateOpen);
+                    }
+
                     if(armExtension.getCurrentPosition() < (currentIntakeZeroPos + 100)) {
                         armExtension.setPower(-0.3);
                     } else {
@@ -330,7 +304,7 @@ public class MineralMechanism implements RobotMechanic {
                         public void run() {
                             try {
                                 setLiftDepoPosition(targetPosition);
-                                rotateDepositBox(0.46);
+                                rotateDepositBox(depoFlipPos);
                             } finally {
                                 depoLiftBusy = false;
                             }
@@ -366,6 +340,14 @@ public class MineralMechanism implements RobotMechanic {
                 }
             }
         }
+    }
+
+    public void flipDepoBox() {
+        rotateDepositBox(depoFlipPos, false);
+    }
+
+    public void flipDepoBox(boolean isAuto) {
+        rotateDepositBox(depoFlipPos, isAuto);
     }
 
     public void rotateDepositBox(final double finalPosition) {
@@ -411,6 +393,16 @@ public class MineralMechanism implements RobotMechanic {
         autoMineralTransfer(true);
     }
 
+    private void autoMineralTransfer(boolean isTransfer) {
+        flipCollectorBox(intakeFlipPrepPos);
+
+        positionArmExtForMineralTransfer();
+
+        if(isTransfer) {
+            flipCollectorBox(autoIntakeFlipUpPos);
+        }
+    }
+
     private void mineralTransfer() {
         RobotLog.d("starting autoMineralDeposit logic");
 
@@ -420,23 +412,8 @@ public class MineralMechanism implements RobotMechanic {
             positionArmExtForMineralTransfer();
         }
 
-        flipCollectorBox(intakeFlipUpPos);
-        sleep(100);
-        RobotLog.d("done with autoMineralDeposit logic");
-    }
-
-    private void autoMineralTransfer(boolean isTransfer) {
-        RobotLog.d("starting autoMineralDeposit logic");
-        flipCollectorBox(intakeFlipPrepPos);
-        if(magneticLimitSensor.getState()) {
-            positionArmExtForMineralTransfer();
-        }
-
-        if(isTransfer) {
-            flipCollectorBox(intakeFlipUpPos);
-        }
-        sleep(500);
-        RobotLog.d("done with autoMineralDeposit logic");
+        // flipCollectorBox(intakeFlipUpPos);
+        // sleep(100);
     }
 
     private void setLiftDepoPosition(int targetPosition) {
@@ -446,7 +423,7 @@ public class MineralMechanism implements RobotMechanic {
     private void setLiftDepoPosition(int targetPosition, boolean isFixStallScenario) {
         if(targetPosition == 0) {
             depo.setPosition(0);
-            sleep(500);
+            sleep(300);
             MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
             depoLift.setTargetPosition(targetPosition);
             depoLift.setPower(0.3);
@@ -469,12 +446,6 @@ public class MineralMechanism implements RobotMechanic {
             }
 
             depoLift.setPower(0);
-
-            if(isStall && isFixStallScenario) {
-                // readjust depo box position
-                setLiftDepoPosition(200);
-                setLiftDepoPosition(0, false);
-            }
             depo.setPosition(depoLowerPos);
         } else {
             flipCollectorBox(intakeFlipPrepPos);

@@ -38,8 +38,8 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
                 robot.player2Controls(gamepad2);
 
                 // robot.getCollector().printTelemetry();
-                // robot.getRobotLatch().printTelemetry();
-                robot.printDeadWheelTelemetry();
+                robot.getRobotLatch().printTelemetry();
+                // robot.printDeadWheelTelemetry();
                 telemetry.update();
             }
         } finally {

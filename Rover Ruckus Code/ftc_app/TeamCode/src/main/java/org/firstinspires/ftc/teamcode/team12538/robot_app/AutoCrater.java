@@ -15,16 +15,15 @@ public class AutoCrater extends RoverRuckusAutoApp {
 
         switch(mineralLocation) {
             case Left:
-                targetAngle = -12;
+                targetAngle = -11;
                 break;
 
             case Right:
-                targetAngle = -12;
+                targetAngle = -11;
                 break;
 
             default:
-                targetAngle = -12;
-                backwardDistance = 13;
+                targetAngle = -11;
                 break;
         }
 
@@ -33,7 +32,7 @@ public class AutoCrater extends RoverRuckusAutoApp {
         robot.corneringRight(0.5, 15.0);
         robot.stop();
         robot.getCollector().liftDepo(750, true);
-        robot.getCollector().rotateDepositBox(0.67, true);
+        robot.getCollector().flipDepoBox(true);
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
@@ -45,16 +44,16 @@ public class AutoCrater extends RoverRuckusAutoApp {
     @Override
     protected void navigateToDepot(final MineralLocation mineralLocation) throws InterruptedException {
         if (mineralLocation == MineralLocation.Left) {
-            robot.corneringLeft(0.5, -40);
-            robot.moveForward(0.5, 17);
+            robot.corneringLeft(0.5, -41);
+            robot.moveForward(0.5, 18);
             robot.corneringLeft(0.5, -26);
 
         } else if(mineralLocation == MineralLocation.Right) {
-            robot.corneringLeft(0.5, -40);
+            robot.corneringLeft(0.5, -41);
             robot.moveForward(0.5, 17);
             robot.corneringLeft(0.5, -26);
         } else {
-            robot.corneringLeft(0.5, -40);
+            robot.corneringLeft(0.5, -41);
             robot.moveForward(0.5, 17);
             robot.corneringLeft(0.5, -26);
             mineralLocation.setDistance(20d);
@@ -75,8 +74,8 @@ public class AutoCrater extends RoverRuckusAutoApp {
     @Override
     protected void navigateForParking(MineralLocation mineralLocation) throws InterruptedException {
         robot.moveBackward(0.5, 30);
+        robot.strafeRight(0.5, 5);
         robot.moveBackward(0.5, 35);
-        robot.stop();
         robot.getParkingRod().setPosition(0d); // for breaking the crater plain to score parking points
         sleep(100);
     }

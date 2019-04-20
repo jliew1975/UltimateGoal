@@ -20,7 +20,7 @@ public class AutoCraterParkOnly extends AutoCrater {
 
     @Override
     protected void navigateForParking(MineralLocation mineralLocation) {
-        robot.moveForward(0.5, 10);
+        robot.moveForward(0.5, 13);
         robot.getCollector().positionArmExt(1000);
     }
 }

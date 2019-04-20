@@ -113,10 +113,9 @@ public class EnhancedMineralOrderDetector extends DogeCVDetector implements Mine
             // Get bounding rect of contour
             Rect rect = Imgproc.boundingRect(points);
 
-            if(!disableSampling) {
-                if (rect.y < yMin || rect.y > yMax) {
-                    continue;
-                }
+
+            if (rect.y < yMin || rect.y > yMax) {
+                continue;
             }
 
             double diffrenceScore = calculateScore(points);
@@ -141,51 +140,51 @@ public class EnhancedMineralOrderDetector extends DogeCVDetector implements Mine
         List<Rect>   choosenWhiteRect  = new ArrayList<>();
         List<Double> chosenWhiteScore  = new ArrayList<>();;
 
-        for(MatOfPoint c : contoursWhite){
-            MatOfPoint2f contour2f = new MatOfPoint2f(c.toArray());
+        if(!disableSampling) {
+            for (MatOfPoint c : contoursWhite) {
+                MatOfPoint2f contour2f = new MatOfPoint2f(c.toArray());
 
-            //Processing on mMOP2f1 which is in type MatOfPoint2f
-            double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
-            Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
+                //Processing on mMOP2f1 which is in type MatOfPoint2f
+                double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
+                Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
 
-            //Convert back to MatOfPoint
-            MatOfPoint points = new MatOfPoint(approxCurve.toArray());
+                //Convert back to MatOfPoint
+                MatOfPoint points = new MatOfPoint(approxCurve.toArray());
 
-            // Get bounding rect of contour
-            Rect rect = Imgproc.boundingRect(points);
+                // Get bounding rect of contour
+                Rect rect = Imgproc.boundingRect(points);
 
-            if(!disableSampling) {
                 if (rect.y < yMin || rect.y > yMax) {
                     continue;
                 }
-            }
 
-            double diffrenceScore = calculateScore(points);
+                double diffrenceScore = calculateScore(points);
 
-            double area = Imgproc.contourArea(c);
-            double x = rect.x;
-            double y = rect.y;
-            double w = rect.width;
-            double h = rect.height;
-            Point centerPoint = new Point(x + ( w/2), y + (h/2));
-            if( area > 1000){
-                Imgproc.circle(workingMat,centerPoint,3,new Scalar(0,255,255),3);
-                Imgproc.putText(workingMat,"Area: " + area,centerPoint,0,0.5,new Scalar(0,255,255));
-                Imgproc.putText(workingMat,"Diff: " + diffrenceScore,new Point(centerPoint.x, centerPoint.y + 20),0,0.5,new Scalar(0,255,255));
-            }
-
-            boolean good = true;
-            if(diffrenceScore < maxDifference && area > 1000){
-                for(Rect checkRect : choosenWhiteRect){
-                    boolean inX = ( rect.x > (checkRect.x - (checkRect.width / 2))) && rect.x < (checkRect.x + (checkRect.width / 2));
-                    boolean inY = ( rect.y > (checkRect.y - (checkRect.height / 2))) && rect.y < (checkRect.y + (checkRect.height / 2));
-                    if(inX && inY){
-                        good = false;
-                    }
+                double area = Imgproc.contourArea(c);
+                double x = rect.x;
+                double y = rect.y;
+                double w = rect.width;
+                double h = rect.height;
+                Point centerPoint = new Point(x + (w / 2), y + (h / 2));
+                if (area > 1000) {
+                    Imgproc.circle(workingMat, centerPoint, 3, new Scalar(0, 255, 255), 3);
+                    Imgproc.putText(workingMat, "Area: " + area, centerPoint, 0, 0.5, new Scalar(0, 255, 255));
+                    Imgproc.putText(workingMat, "Diff: " + diffrenceScore, new Point(centerPoint.x, centerPoint.y + 20), 0, 0.5, new Scalar(0, 255, 255));
                 }
-                if(good){
-                    choosenWhiteRect.add(rect);
-                    chosenWhiteScore.add(diffrenceScore);
+
+                boolean good = true;
+                if (diffrenceScore < maxDifference && area > 1000) {
+                    for (Rect checkRect : choosenWhiteRect) {
+                        boolean inX = (rect.x > (checkRect.x - (checkRect.width / 2))) && rect.x < (checkRect.x + (checkRect.width / 2));
+                        boolean inY = (rect.y > (checkRect.y - (checkRect.height / 2))) && rect.y < (checkRect.y + (checkRect.height / 2));
+                        if (inX && inY) {
+                            good = false;
+                        }
+                    }
+                    if (good) {
+                        choosenWhiteRect.add(rect);
+                        chosenWhiteScore.add(diffrenceScore);
+                    }
                 }
             }
         }

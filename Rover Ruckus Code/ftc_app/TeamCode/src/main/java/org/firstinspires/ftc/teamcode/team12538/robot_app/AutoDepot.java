@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 @Autonomous(name="Auto (Depot)", group="Linear Opmode")
-public class AutoDepotApp extends RoverRuckusAutoApp {
+public class AutoDepot extends RoverRuckusAutoApp {
     @Override
     protected void collectMineralfromCrater(MineralLocation mineralLocation) throws InterruptedException {
         if(mineralLocation == MineralLocation.Left) {
@@ -22,13 +22,14 @@ public class AutoDepotApp extends RoverRuckusAutoApp {
 
     @Override
     protected void depositMineral(MineralLocation mineralLocation) throws InterruptedException {
-        double backwardDistance = 7;
+        double backwardDistance = 6;
 
         robot.moveBackward(0.5, backwardDistance);
+        robot.strafeRight(0.5, 5.0);
         robot.stop();
 
         robot.getCollector().liftDepo(750, true);
-        robot.getCollector().rotateDepositBox(0.67, true);
+        robot.getCollector().flipDepoBox(true);
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {

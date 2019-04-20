@@ -59,6 +59,12 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode {
                     depo.setPosition(depo.getPosition() + 0.0001);
                 }
 
+                if(gamepad1.x) {
+                    robot.moveForward(0.3, 10);
+                    robot.corneringLeft(0.3, -20, false);
+                    robot.moveForward(0.3, 10, true);
+                }
+
                 telemetry.addData("Camera Tilt", robot.getCameraTilt().getPosition());
                 telemetry.addData("Depo", depo.getPosition());
                 telemetry.update();

@@ -69,15 +69,23 @@ public class AutoRobotV1 extends RobotBase {
     }
 
     public void moveForward(double power, double distance) {
+        moveForward(power, distance, true);
+    }
+
+    public void moveForward(double power, double distance, boolean isStop) {
         // limit power to 1
         power = limitPower(power);
-        encoderDrive(power, -distance, 5);
+        encoderDrive(power, -distance, 5, isStop);
     }
 
     public void moveBackward(double power, double distance) {
+        moveBackward(power, distance, true);
+    }
+
+    public void moveBackward(double power, double distance, boolean isStop) {
         // limit power to 1
         power = limitPower(power);
-        encoderDrive(power, distance, 5);
+        encoderDrive(power, distance, 5, isStop);
     }
 
     public void strafeLeft(double power, double distance) {
@@ -138,18 +146,14 @@ public class AutoRobotV1 extends RobotBase {
                     }
                     telemetry.update();
 
-                    if (detector != null) {
-                        if (detector.isAligned()) {
-                            stop();
-                            break;
-                        }
+                    if (detector != null && detector.isAligned()) {
+                        stop();
+                        break;
                     }
 
-                    if (timeout != -1) {
-                        if (runtime.seconds() > timeout) {
-                            stop();
-                            break;
-                        }
+                    if (timeout != -1 && runtime.seconds() > timeout) {
+                        stop();
+                        break;
                     }
                 } while (OpModeUtils.opModeIsActive() && getAngle() > degrees);
             } else {  // left turn.
@@ -163,16 +167,14 @@ public class AutoRobotV1 extends RobotBase {
                     }
                     telemetry.update();
 
-                    if (detector != null) {
-                        if (detector.isAligned()) {
-                            break;
-                        }
+                    if (detector != null && detector.isAligned()) {
+                        stop();
+                        break;
                     }
 
-                    if (timeout != -1) {
-                        if (runtime.seconds() > timeout) {
-                            break;
-                        }
+                    if (timeout != -1 && runtime.seconds() > timeout) {
+                        stop();
+                        break;
                     }
                 } while (OpModeUtils.opModeIsActive() && getAngle() < degrees);
             }
@@ -190,11 +192,19 @@ public class AutoRobotV1 extends RobotBase {
     }
 
     public void corneringRight(double power, double distance) throws InterruptedException {
-        encoderCorneringRight(power, distance);
+        corneringRight(power, distance, true);
+    }
+
+    public void corneringRight(double power, double distance, boolean isStop) throws InterruptedException {
+        encoderCorneringRight(power, distance, isStop);
     }
 
     public void corneringLeft(double power, double distance) throws InterruptedException {
-        encoderCorneringLeft(power, distance);
+        corneringLeft(power, distance, true);
+    }
+
+    public void corneringLeft(double power, double distance, boolean isStop) throws InterruptedException {
+        encoderCorneringLeft(power, distance, isStop);
     }
 
     /**
@@ -239,7 +249,11 @@ public class AutoRobotV1 extends RobotBase {
         telemetry.addData("rearRightDrive", rearRightDrive.getCurrentPosition());
     }
 
-    private void encoderDrive(double speed, double distanceInInches, double timeout)
+    private void encoderDrive(double speed, double distanceInInches, double timeout) {
+        encoderDrive(speed, distanceInInches, timeout, true);
+    }
+
+    private void encoderDrive(double speed, double distanceInInches, double timeout, boolean isStop)
     {
         // reset encoders
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motors);
@@ -284,7 +298,10 @@ public class AutoRobotV1 extends RobotBase {
                 */
             }
 
-            stop();
+            if(isStop) {
+                stop();
+            }
+
             MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motors);
         }
     }
@@ -349,7 +366,11 @@ public class AutoRobotV1 extends RobotBase {
         }
     }
 
-    private void encoderCorneringRight(double speed, double distanceInInches)
+    private void encoderCorneringRight(double speed, double distanceInInches) {
+        encoderCorneringRight(speed, distanceInInches, true);
+    }
+
+    private void encoderCorneringRight(double speed, double distanceInInches, boolean isStop)
     {
         // reset encoders
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, leftMotors);
@@ -369,6 +390,10 @@ public class AutoRobotV1 extends RobotBase {
 
             MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, leftMotors);
             runtime.reset();
+
+            for(DcMotor motor : rightMotors) {
+                motor.setPower(0d);
+            }
 
             for(DcMotor motor : leftMotors) {
                 motor.setPower(Math.abs(speed));
@@ -394,12 +419,19 @@ public class AutoRobotV1 extends RobotBase {
                 */
             }
 
-            stop();
+            if(isStop) {
+                stop();
+            }
+
             MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, leftMotors);
         }
     }
 
-    private void encoderCorneringLeft(double speed, double distanceInInches)
+    private void encoderCorneringLeft(double speed, double distanceInInches) {
+        encoderCorneringLeft(speed, distanceInInches, true);
+    }
+
+    private void encoderCorneringLeft(double speed, double distanceInInches, boolean isStop)
     {
         // reset encoders
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, rightMotors);
@@ -444,7 +476,10 @@ public class AutoRobotV1 extends RobotBase {
                 */
             }
 
-            stop();
+            if(isStop) {
+                stop();
+            }
+
             MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, rightMotors);
         }
     }
