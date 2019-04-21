@@ -65,8 +65,8 @@ public class MineralMechanism implements RobotMechanic {
     public double intakeFlipDownPos = 0.2;
     public double intakeFlipPrepPos = 0.68;
 
-    public double depoLowerPos = 0.05;
-    public double depoFlipPos = 0.46;
+    public double depoLowerPos = 0.30;
+    public double depoFlipPos = 0.94;
 
     private double intakeGateOpen = 0d;
     private double intakeGateClose = 0.5;
@@ -422,7 +422,7 @@ public class MineralMechanism implements RobotMechanic {
 
     private void setLiftDepoPosition(int targetPosition, boolean isFixStallScenario) {
         if(targetPosition == 0) {
-            depo.setPosition(0);
+            depo.setPosition(0.25);
             sleep(300);
             MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, depoLift);
             depoLift.setTargetPosition(targetPosition);
@@ -457,9 +457,11 @@ public class MineralMechanism implements RobotMechanic {
             while (OpModeUtils.opModeIsActive() && depoLift.isBusy() && runtime.seconds() < 2) {
                 // wait for motor to stop
                 if(depoLift.getCurrentPosition() > 300) {
-                    depo.setPosition(0.3);
+                    depo.setPosition(depoFlipPos);
                 }
             }
+
+            depo.setPosition(depoFlipPos);
         }
     }
 

@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.team12538.robotV1.AutoRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
-@Disabled
 public class RoverRuckusTeleOpTestApp extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -36,8 +35,8 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode {
 
             robot.getCameraTilt().setPosition(0.94);
 
-            detector = createDetector();
-            detector.enable();
+            // detector = createDetector();
+            // detector.enable();
 
             waitForStart();
 

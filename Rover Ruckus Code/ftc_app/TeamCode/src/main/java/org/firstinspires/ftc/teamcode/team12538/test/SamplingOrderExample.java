@@ -36,11 +36,13 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.team12538.detectors.DetectorListener;
 import org.firstinspires.ftc.teamcode.team12538.detectors.EnhancedMineralOrderDetector;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
 @TeleOp(name="Sampling Order Example", group="DogeCV")
+@Disabled
 public class SamplingOrderExample extends OpMode implements DetectorListener {
     // Detector object
     private EnhancedMineralOrderDetector detector;

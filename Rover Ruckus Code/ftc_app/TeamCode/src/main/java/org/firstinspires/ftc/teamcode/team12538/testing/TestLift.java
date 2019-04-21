@@ -28,6 +28,7 @@
  */
 
 package org.firstinspires.ftc.teamcode.team12538.testing;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -51,7 +52,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="testBot", group="Linear Opmode")
-
+@Disabled
 public class TestLift extends LinearOpMode {
 
     // Declare OpMode members.
