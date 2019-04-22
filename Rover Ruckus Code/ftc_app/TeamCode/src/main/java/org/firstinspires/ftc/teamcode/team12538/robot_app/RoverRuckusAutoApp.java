@@ -22,7 +22,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
     public enum MineralLocation {
         Left, Center, Right, Unknown;
 
-        private double distance = 25d;
+        private double distance = 20d;
 
         public double getDistance() {
             return distance;
@@ -68,15 +68,16 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
 
             // deploy robot from lander
             if(enableLanding) {
-                robot.getRobotLatch().powerLiftRunToPosition(1.0, 7622);
+                robot.getRobotLatch().powerLiftRunToPosition(1.0, 7500);
                 robot.moveForward(0.3, 3.0);
-                robot.stop();
+                /*
                 ThreadUtils.getExecutorService().submit(new Runnable() {
                         @Override
                         public void run() {
                             robot.getRobotLatch().powerLiftRunToPosition(1.0, 0);
                         }
                 });
+                */
             }
 
             double startAngle = robot.getAngle();
@@ -218,11 +219,11 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
-                robot.moveForward(0.5, 15);
+                robot.moveForward(0.5, 5);
             }
         });
 
-        robot.getCollector().positionArmExt(500);
+        robot.getCollector().positionArmExt(1000);
         robot.placeTeamMarker();
     }
 
@@ -241,7 +242,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         detector.init(hardwareMap.appContext,CameraViewDisplay.getInstance(), DogeCV.CameraMode.WEBCAM, true, webcamName);
 
         detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = -80; // How far from center frame to offset this alignment zone.
+        detector.alignPosOffset = -140; // How far from center frame to offset this alignment zone.
         detector.downscale = 0.4; // How much to downscale the input frames
         // detector.areaScoringMethod = DogeCV.AreaScoringMethod.PERFECT_AREA;
         // detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
@@ -250,7 +251,7 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         detector.ratioScorer.weight = 5;
         detector.ratioScorer.perfectRatio = 1.0;
 
-        detector.yMinOffset = -160;
+        detector.yMinOffset = -180;
         detector.yMaxOffset = 110;
 
         detector.useDefaults();

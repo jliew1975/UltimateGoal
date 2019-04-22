@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.team12538.robot_app;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.team12538.detectors.EnhancedMineralOrderDetector;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 @Autonomous(name="Auto (Crater) - TM First", group="Linear Opmode")
+@Disabled
 public class AutoCraterTeamMarkerFirst extends RoverRuckusAutoApp {
     public AutoCraterTeamMarkerFirst() {
         this.isMultiMineral = true;

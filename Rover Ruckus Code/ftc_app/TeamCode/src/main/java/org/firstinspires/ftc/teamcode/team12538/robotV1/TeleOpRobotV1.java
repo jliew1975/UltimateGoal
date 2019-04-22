@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538.robotV1;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.team12538.components.MineralMechanism;
@@ -28,19 +29,10 @@ public class TeleOpRobotV1 extends RobotBase {
         }
         */
 
-        // scissor lift controls
-        if (gamepad.left_bumper) {
-            ThreadUtils.getExecutorService().submit(new Runnable() {
-                @Override
-                public void run() {
-                    collector.getIntakeFlip().setPosition(collector.intakeFlipHangPos);
-                    robotLatch.powerLiftRunToPosition(1.0, 3730);
-                }
-            });
-        } else if (gamepad.right_bumper || gamepad.dpad_down) {
+        if (gamepad.right_bumper || gamepad.dpad_down) {
             robotLatch.powerLift(-1.0);
-        } else if(gamepad.dpad_up) {
-            collector.getIntakeFlip().setPosition(collector.intakeFlipHangPos);
+        } else if(gamepad.left_bumper || gamepad.dpad_up) {
+            collector.getIntakeFlip().setPosition(collector.intakeFlipPrepPos);
             robotLatch.powerLift(1.0);
         } else {
             robotLatch.powerLift(0d);
@@ -83,10 +75,10 @@ public class TeleOpRobotV1 extends RobotBase {
         }
 
         // depo flip
-        /*
-        if(gamepad.right_trigger > 0 && collector.canFlipDepoBox()) {
-            collector.flipDepoBox();
+        if(gamepad.right_trigger > 0.1) {
+            collector.liftDepo(700, false, true);
+        } else if(collector.canFlipDepoBox() && gamepad.left_trigger > 0.1) {
+            collector.rotateDepositBox(collector.depoFlipPos);
         }
-        */
     }
 }

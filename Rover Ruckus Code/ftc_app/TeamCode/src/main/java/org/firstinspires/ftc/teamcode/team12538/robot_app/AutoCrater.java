@@ -19,7 +19,7 @@ public class AutoCrater extends RoverRuckusAutoApp {
                 break;
 
             case Right:
-                targetAngle = -11;
+                targetAngle = -1;
                 break;
 
             default:
@@ -31,7 +31,7 @@ public class AutoCrater extends RoverRuckusAutoApp {
         robot.moveBackward(0.5, backwardDistance);
         robot.corneringRight(0.5, 15.0);
         robot.stop();
-        robot.getCollector().liftDepo(750, true);
+        robot.getCollector().liftDepo(750, true,false);
         robot.getCollector().flipDepoBox(true);
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
@@ -50,24 +50,22 @@ public class AutoCrater extends RoverRuckusAutoApp {
 
         } else if(mineralLocation == MineralLocation.Right) {
             robot.corneringLeft(0.5, -41);
-            robot.moveForward(0.5, 17);
+            robot.moveForward(0.5, 19);
             robot.corneringLeft(0.5, -26);
         } else {
             robot.corneringLeft(0.5, -41);
-            robot.moveForward(0.5, 17);
+            robot.moveForward(0.5, 18);
             robot.corneringLeft(0.5, -26);
-            mineralLocation.setDistance(20d);
         }
 
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
                 robot.moveForward(0.5, mineralLocation.getDistance());
-                robot.stop();
             }
         });
 
-        robot.getCollector().positionArmExt(500);
+        robot.getCollector().positionArmExt(1000);
         robot.placeTeamMarker();
     }
 
@@ -76,7 +74,7 @@ public class AutoCrater extends RoverRuckusAutoApp {
         robot.moveBackward(0.5, 30);
         robot.strafeRight(0.5, 5);
         robot.moveBackward(0.5, 35);
-        robot.getParkingRod().setPosition(0d); // for breaking the crater plain to score parking points
+        // robot.getParkingRod().setPosition(0d); // for breaking the crater plain to score parking points
         sleep(100);
     }
 }

@@ -33,10 +33,10 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode {
             robot.init();
             robot.init_imu();
 
-            robot.getCameraTilt().setPosition(0.94);
+            robot.getCameraTilt().setPosition(0.59);
 
-            // detector = createDetector();
-            // detector.enable();
+            detector = createDetector();
+            detector.enable();
 
             waitForStart();
 
@@ -59,9 +59,9 @@ public class RoverRuckusTeleOpTestApp extends LinearOpMode {
                 }
 
                 if(gamepad1.x) {
-                    robot.moveForward(0.3, 10);
-                    robot.corneringLeft(0.3, -20, false);
-                    robot.moveForward(0.3, 10, true);
+                    robot.getTeamMarkerServo().setPosition(0d);
+                } else if(gamepad1.a) {
+                    robot.getTeamMarkerServo().setPosition(0.7);
                 }
 
                 telemetry.addData("Camera Tilt", robot.getCameraTilt().getPosition());

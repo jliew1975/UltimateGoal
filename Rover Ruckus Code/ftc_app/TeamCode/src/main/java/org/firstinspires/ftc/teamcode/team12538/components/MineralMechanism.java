@@ -63,10 +63,11 @@ public class MineralMechanism implements RobotMechanic {
     public double autoIntakeFlipUpPos = 1.0;
     public double intakeFlipUpPos = 1.0;
     public double intakeFlipDownPos = 0.2;
-    public double intakeFlipPrepPos = 0.68;
+    public double intakeFlipPrepPos = 0.69;
 
     public double depoLowerPos = 0.30;
-    public double depoFlipPos = 0.94;
+    public double depoFlipPos = 0.75;
+    public double depoDepotSideFlipPos = 0.94;
 
     private double intakeGateOpen = 0d;
     private double intakeGateClose = 0.5;
@@ -286,12 +287,15 @@ public class MineralMechanism implements RobotMechanic {
         }
     }
 
-
     public void liftDepo(int targetPosition) {
         liftDepo(targetPosition, false);
     }
 
-    public void liftDepo(final int targetPosition, boolean isAuto) {
+    public void liftDepo(int targetPosition, boolean isDepot) {
+        liftDepo(targetPosition, false, isDepot);
+    }
+
+    public void liftDepo(final int targetPosition, final boolean isAuto, final boolean isDepot) {
         if(isAuto) {
             setLiftDepoPosition(targetPosition);
         } else {
@@ -303,8 +307,12 @@ public class MineralMechanism implements RobotMechanic {
                         @Override
                         public void run() {
                             try {
-                                setLiftDepoPosition(targetPosition);
-                                rotateDepositBox(depoFlipPos);
+                                if(isDepot) {
+                                    setLiftDepoPosition(targetPosition, true);
+                                } else {
+                                    setLiftDepoPosition(targetPosition);
+                                    rotateDepositBox(depoFlipPos);
+                                }
                             } finally {
                                 depoLiftBusy = false;
                             }
@@ -417,10 +425,10 @@ public class MineralMechanism implements RobotMechanic {
     }
 
     private void setLiftDepoPosition(int targetPosition) {
-        setLiftDepoPosition(targetPosition, true);
+        setLiftDepoPosition(targetPosition, false);
     }
 
-    private void setLiftDepoPosition(int targetPosition, boolean isFixStallScenario) {
+    private void setLiftDepoPosition(int targetPosition, boolean isDepotSide) {
         if(targetPosition == 0) {
             depo.setPosition(0.25);
             sleep(300);
@@ -457,11 +465,13 @@ public class MineralMechanism implements RobotMechanic {
             while (OpModeUtils.opModeIsActive() && depoLift.isBusy() && runtime.seconds() < 2) {
                 // wait for motor to stop
                 if(depoLift.getCurrentPosition() > 300) {
-                    depo.setPosition(depoFlipPos);
+                    if(isDepotSide) {
+                        depo.setPosition(0.5);
+                    } else {
+                        rotateDepositBox(depoFlipPos);
+                    }
                 }
             }
-
-            depo.setPosition(depoFlipPos);
         }
     }
 

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.team12538.robotV1.TeleOpRobotV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
-@TeleOp(name="Robot Tele v1", group="Linear Opmode")
+@TeleOp(name="Robot Tele", group="Linear Opmode")
 public class RoverRuckusTeleOpApp extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -31,15 +31,16 @@ public class RoverRuckusTeleOpApp extends LinearOpMode {
 
             // tilt the phone for teleOp mode
             robot.getParkingRod().setPosition(1d);
-            // robot.getPhoneTilt().setPosition(robot.telePhoneTiltPos);
+            robot.getCameraTilt().setPosition(0d);
 
             while (opModeIsActive()) {
                 robot.player1controls(gamepad1);
                 robot.player2Controls(gamepad2);
 
                 // robot.getCollector().printTelemetry();
-                robot.getRobotLatch().printTelemetry();
+                // robot.getRobotLatch().printTelemetry();
                 // robot.printDeadWheelTelemetry();
+                telemetry.addData("rightTrigger", gamepad2.right_trigger);
                 telemetry.update();
             }
         } finally {

@@ -25,10 +25,10 @@ public class AutoDepot extends RoverRuckusAutoApp {
         double backwardDistance = 6;
 
         robot.moveBackward(0.5, backwardDistance);
-        robot.strafeRight(0.5, 5.0);
+        robot.strafeRight(0.5, 3.0);
         robot.stop();
 
-        robot.getCollector().liftDepo(750, true);
+        robot.getCollector().liftDepo(750, true,true);
         robot.getCollector().flipDepoBox(true);
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override

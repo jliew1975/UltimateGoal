@@ -29,6 +29,11 @@ public class RobotLatch implements RobotMechanic {
 
         liftMotor = hardwareMap.get(DcMotor.class, "jack");
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, liftMotor);
+
+        if(liftMotor.getCurrentPosition() != 0) {
+            powerLiftRunToPosition(1.0, 0);
+        }
+
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, liftMotor);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, liftMotor);
     }
@@ -68,8 +73,17 @@ public class RobotLatch implements RobotMechanic {
                 liftMotor.setPower(adjustedPower);
 
                 runtime.reset();
-                while (OpModeUtils.opModeIsActive() && liftMotor.isBusy() && runtime.seconds() < 5d) {
-                    int curPos = liftMotor.getCurrentPosition();
+                int curPos = -1;
+                while (OpModeUtils.opModeIsActive() && liftMotor.isBusy()) {
+                    if(curPos == -1 && runtime.seconds() > 1) {
+                        if(curPos != -1 && curPos == liftMotor.getCurrentPosition()) {
+                            break;
+                        }
+                    }
+
+                    curPos = liftMotor.getCurrentPosition();
+                    runtime.reset();
+
                     if(targetPosition > 0 && curPos > (targetPosition - 500)) {
                         liftMotor.setPower(0.3);
                     } else if(targetPosition == 0 && curPos < (targetPosition + 500)) {

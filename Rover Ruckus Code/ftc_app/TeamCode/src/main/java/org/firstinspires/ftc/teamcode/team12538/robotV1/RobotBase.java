@@ -43,7 +43,7 @@ public abstract class RobotBase extends MecanumDriveBase {
         teamMarkerServo.setPosition(0.7);
 
         cameraTilt = hardwareMap.get(Servo.class, "camera_tilt");
-        cameraTilt.setPosition(0.92);
+        cameraTilt.setPosition(0.433);
 
         // parking rod initialization
         parkingRod = hardwareMap.get(Servo.class, "parking_rod");
@@ -71,20 +71,34 @@ public abstract class RobotBase extends MecanumDriveBase {
         final double v3 = r * Math.cos(robotAngle) - rightX;
         final double v4 = r * Math.sin(robotAngle) + rightX;
 
-        double power = 1.0;
+        double powerV1 = 1.0;
+        double powerV2 = 1.0;
+        double powerV3 = 1.0;
+        double powerV4 = 1.0;
         if(gamepad.left_trigger > 0 || gamepad.right_trigger > 0) {
-            power = 0.3; // slowdown robot on left or right trigger
+            powerV1 = 0.3; // slowdown robot on left or right trigger
+            powerV2 = 0.3; // slowdown robot on left or right trigger
+            powerV3 = 0.3; // slowdown robot on left or right trigger
+            powerV4 = 0.3; // slowdown robot on left or right trigger
         }
 
-        frontLeftDrive.setPower(power * Math.signum(v1));
-        frontRightDrive.setPower(power * Math.signum(v2));
-        rearLeftDrive.setPower(power * Math.signum(v3));
-        rearRightDrive.setPower(power * Math.signum(v4));
+        if(gamepad.x) {
+            powerV2 = 0d;
+            powerV3 = 0d;
+        } else if(gamepad.b) {
+            powerV1 = 0d; // slowdown robot on left or right trigger
+            powerV4 = 0d; // slowdown robot on left or right trigger
+        }
+
+        frontLeftDrive.setPower(powerV1 * Math.signum(v1));
+        frontRightDrive.setPower(powerV2 * Math.signum(v2));
+        rearLeftDrive.setPower(powerV3 * Math.signum(v3));
+        rearRightDrive.setPower(powerV4 * Math.signum(v4));
     }
 
     public void placeTeamMarker() {
         teamMarkerServo.setPosition(0d);
-        sleep(500);
+        sleep(1000);
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
