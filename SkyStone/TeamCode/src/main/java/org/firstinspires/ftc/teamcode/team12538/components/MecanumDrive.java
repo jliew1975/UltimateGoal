@@ -2,36 +2,52 @@ package org.firstinspires.ftc.teamcode.team12538.components;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
+import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MecanumDrive implements TeleOpDrive, AutoDrive {
-    private DcMotorWrapper leftFront = null;
-    private DcMotorWrapper rightFront = null;
-    private DcMotorWrapper leftRear = null;
-    private DcMotorWrapper rightRear = null;
+    protected DcMotorWrapper leftFront = null;
+    protected DcMotorWrapper rightFront = null;
+    protected DcMotorWrapper leftRear = null;
+    protected DcMotorWrapper rightRear = null;
 
-    Map<String, DcMotor> dcMotorMap = new ConcurrentHashMap<>();
+    protected List<DcMotorWrapper> driveMotorList = new ArrayList<>();
+    protected Map<String, DcMotorWrapper> driveMotorMap = new ConcurrentHashMap<>();
 
     @Override
     public void init() {
+        // Do all the initial stuff
         HardwareMap hardwareMap = OpModeUtils.getHardwareMap();
         leftFront = new DcMotorWrapper("leftFront", hardwareMap);
         rightFront = new DcMotorWrapper("rightFront", hardwareMap);
         leftRear = new DcMotorWrapper("leftRear", hardwareMap);
         rightRear = new DcMotorWrapper("rightRear", hardwareMap);
 
-        dcMotorMap.put(leftFront.getName(), leftFront);
-        dcMotorMap.put(rightFront.getName(), rightFront);
-        dcMotorMap.put(leftRear.getName(), leftRear);
-        dcMotorMap.put(rightRear.getName(), rightRear);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        driveMotorMap.put(leftFront.getName(), leftFront);
+        driveMotorMap.put(rightFront.getName(), rightFront);
+        driveMotorMap.put(leftRear.getName(), leftRear);
+        driveMotorMap.put(rightRear.getName(), rightRear);
+
+        driveMotorList.addAll(driveMotorMap.values());
+
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
+        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, driveMotorList);
     }
 
 
@@ -69,6 +85,17 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
         leftRear.setPower(powerV3 * Math.signum(v3));
         rightRear.setPower(powerV4 * Math.signum(v4));
     }
+
+    // Autonomous APIs
+
+    @Override
+    public void stop() {
+        for(DcMotor motor : driveMotorList) {
+            motor.setPower(0d);
+        }
+    }
+
+    // Telemetry API
 
     @Override
     public void printTelemetry() {
