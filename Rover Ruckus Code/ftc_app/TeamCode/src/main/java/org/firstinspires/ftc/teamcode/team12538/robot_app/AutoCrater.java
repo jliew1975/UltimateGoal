@@ -46,24 +46,26 @@ public class AutoCrater extends RoverRuckusAutoApp {
         if (mineralLocation == MineralLocation.Left) {
             robot.corneringLeft(0.5, -41);
             robot.moveForward(0.5, 18);
-            robot.corneringLeft(0.5, -26);
+            robot.corneringLeft(0.5, -25);
 
         } else if(mineralLocation == MineralLocation.Right) {
             robot.corneringLeft(0.5, -41);
             robot.moveForward(0.5, 19);
-            robot.corneringLeft(0.5, -26);
+            robot.corneringLeft(0.5, -25);
         } else {
             robot.corneringLeft(0.5, -41);
-            robot.moveForward(0.5, 18);
-            robot.corneringLeft(0.5, -26);
+            robot.moveForward(0.5, 17);
+            robot.corneringLeft(0.5, -25);
         }
 
+        /*
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
                 robot.moveForward(0.5, mineralLocation.getDistance());
             }
         });
+        */
 
         robot.getCollector().positionArmExt(1000);
         robot.placeTeamMarker();

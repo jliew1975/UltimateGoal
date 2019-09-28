@@ -70,14 +70,6 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
             if(enableLanding) {
                 robot.getRobotLatch().powerLiftRunToPosition(1.0, 7500);
                 robot.moveForward(0.3, 3.0);
-                /*
-                ThreadUtils.getExecutorService().submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            robot.getRobotLatch().powerLiftRunToPosition(1.0, 0);
-                        }
-                });
-                */
             }
 
             double startAngle = robot.getAngle();
@@ -97,10 +89,9 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
             depositMineral(mineralLocation);
 
             navigateToDepot(mineralLocation);
-            navigateForParking(mineralLocation);
-
-            robot.stop();
+            //navigateForParking(mineralLocation);
         } finally {
+            // disable detector
             if(detector != null) {
                 detector.disable();
             }
@@ -127,7 +118,12 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         telemetry.update();
 
         if(!detector.isAligned()) {
-            robot.rotate(-60, 0.05, -1, detector);
+            robot.rotate(-30, 0.05, -1, detector);
+
+            if(!detector.isAligned()) {
+                robot.getCameraTilt().setPosition(0.45);
+                robot.rotate(30, 0.05, -1, detector);
+            }
         }
 
         return location;
@@ -202,34 +198,54 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
     }
 
     protected void navigateToDepot(MineralLocation mineralLocation) throws InterruptedException {
+        if (mineralLocation == MineralLocation.Left) {
+            robot.corneringRight(0.5, -41);
+            robot.moveForward(0.5, 18);
+            robot.corneringRight(0.5, -25);
+
+        } else if(mineralLocation == MineralLocation.Right) {
+            robot.corneringRight(0.5, -41);
+            robot.moveForward(0.5, 19);
+            robot.corneringRight(0.5, -25);
+        } else {
+            robot.corneringRight(0.5, -41);
+            robot.moveForward(0.5, 17);
+            robot.corneringRight(0.5, -25);
+        }
+
+        robot.getCollector().positionArmExt(1000);
+        robot.placeTeamMarker();
+
+        /*
         if(mineralLocation == MineralLocation.Left) {
             robot.corneringLeft(0.5, -40);
-            robot.moveForward(0.5, 5.5);
-            robot.corneringRight(0.5, -61);
+            //robot.moveForward(0.5, 5.0);
+            //robot.corneringRight(0.5, -65);
         } else if(mineralLocation == MineralLocation.Right) {
             robot.corneringLeft(0.5, -40);
-            robot.moveForward(0.5, 5.5);
-            robot.corneringRight(0.5, -61);
+            //robot.moveForward(0.5, 5.0);
+            //robot.corneringRight(0.5, -65);
         } else {
             robot.corneringLeft(0.5, -40);
-            robot.moveForward(0.5, 5.5);
-            robot.corneringRight(0.5, -62);
+            //robot.moveForward(0.5, 5.0);
+            //robot.corneringRight(0.5, -65);
         }
 
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
-                robot.moveForward(0.5, 5);
+                robot.moveForward(0.5, 7);
             }
         });
 
         robot.getCollector().positionArmExt(1000);
         robot.placeTeamMarker();
+        */
     }
 
     protected void navigateForParking(MineralLocation mineralLocation) throws InterruptedException {
         robot.moveBackward(0.5, 30);
-        robot.strafeLeft(0.5, 20);
+        robot.strafeLeft(0.5, 10);
         robot.moveBackward(0.5, 35);
         robot.getParkingRod().setPosition(0d); // for breaking the crater plain to score parking points
         sleep(100);
@@ -251,11 +267,11 @@ public abstract class RoverRuckusAutoApp extends LinearOpMode implements Detecto
         detector.ratioScorer.weight = 5;
         detector.ratioScorer.perfectRatio = 1.0;
 
-        detector.yMinOffset = -180;
+        detector.yMinOffset = -75;
         detector.yMaxOffset = 110;
 
         detector.useDefaults();
-        detector.listener = this;
+        // detector.listener = this;
         return detector;
     }
 

@@ -126,8 +126,6 @@ public abstract class MecanumDriveBase {
         rearLeftDrive.setPower(power);
     }
 
-
-
     protected double limitPower(double power) {
         return Math.min(Math.abs(power), 1);
     }
