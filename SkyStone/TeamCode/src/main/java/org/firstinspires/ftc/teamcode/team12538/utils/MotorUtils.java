@@ -27,4 +27,14 @@ public class MotorUtils {
             motor.setZeroPowerBehavior(zeroPowerBehavior);
         }
     }
+
+    public static boolean motorIsBusy(List<DcMotorWrapper> motors) {
+        for(DcMotorWrapper motor : motors) {
+            if(!motor.isBusy()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
