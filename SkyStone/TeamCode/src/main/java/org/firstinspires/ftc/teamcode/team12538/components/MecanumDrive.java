@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,6 +42,9 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
     protected List<DcMotorWrapper> driveMotorList = new ArrayList<>();
     protected Map<String, DcMotorWrapper> driveMotorMap = new ConcurrentHashMap<>();
 
+    protected List<DcMotorWrapper> strafeEncoderMotors;
+    protected List<DcMotorWrapper> forwardBackwardEncoderMotors;
+
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -64,10 +68,14 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
 
         driveMotorList.addAll(driveMotorMap.values());
 
+        strafeEncoderMotors = Arrays.asList(leftRear);
+        forwardBackwardEncoderMotors = Arrays.asList(leftFront, rightFront);
+
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, driveMotorList);
     }
 
+    // TeleOp Drive APIs
 
     @Override
     public void navigateWithGamepad(Gamepad gamepad) {
@@ -104,7 +112,7 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
         rightRear.setPower(powerV4 * Math.signum(v4));
     }
 
-    // Autonomous APIs
+    // Autonomous Drive APIs
 
     @Override
     public void resetEncoderValues() {
@@ -116,6 +124,66 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
     public void stop() {
         for(DcMotor motor : driveMotorList) {
             motor.setPower(0d);
+        }
+    }
+
+    @Override
+    public void encoderDrive(double speed, double distanceInInches, double timeout) {
+        encoderDrive(speed,distanceInInches, timeout, null);
+    }
+
+    @Override
+    public void encoderDrive(double speed, double distanceInInches, double timeout, VisionDetector detector) {
+        // reset encoders
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, driveMotorList);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
+
+        int[] targetPositions = new int[driveMotorList.size()];
+
+        //ensure that the opmode is still active
+        if(OpModeUtils.getOpMode().opModeIsActive()) {
+            //determine target positions
+            int index = 0;
+            for(DcMotor motor : driveMotorList) {
+                targetPositions[index] = motor.getCurrentPosition() + (int) (distanceInInches * MECANUM_WHEEL_COUNTS_PER_INCH);
+                motor.setTargetPosition(targetPositions[index]);
+                index++;
+            }
+
+            MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, driveMotorList);
+            runtime.reset();
+
+            for(DcMotor motor : driveMotorList) {
+                motor.setPower(Math.abs(speed));
+            }
+
+            // keep looping until at least one of the motors finished its movement
+            while(OpModeUtils.opModeIsActive() &&
+                    (runtime.seconds() < timeout) &&
+                    (MotorUtils.motorIsBusy(driveMotorList)))
+            {
+                if(detector != null) {
+                    if(detector.isAligned()) {
+                        break;
+                    }
+                }
+
+                //report target and current positions to driver station
+                /*
+                telemetry.addData("Path1", "Running to %7d : %7d : %7d : %7d",
+                        targetPositions[0], targetPositions[1], targetPositions[2], targetPositions[3]);
+
+                telemetry.addData("Path2", "Running at %7d : %7d : %7d : %7d",
+                        motors.get(0).getCurrentPosition(),
+                        motors.get(1).getCurrentPosition(),
+                        motors.get(2).getCurrentPosition(),
+                        motors.get(3).getCurrentPosition());
+                telemetry.update();
+                */
+            }
+
+            stop();
+            MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
         }
     }
 
