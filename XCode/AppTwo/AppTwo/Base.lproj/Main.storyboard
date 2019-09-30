@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina5_5" orientation="landscape">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="AppTwo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="landscape" translatesAutoresizingMaskIntoConstraints="NO" id="If7-ed-Zu6">
+                                <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rfp-Cu-7q4">
+                                <rect key="frame" x="0.0" y="289.66666666666669" width="736" height="124.33333333333331"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="City by the Sea" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hvr-KU-iB7">
+                                        <rect key="frame" x="20" y="20" width="696" height="29"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is such a beautiful place!" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W1G-jb-vrx">
+                                        <rect key="frame" x="20" y="59.000000000000007" width="696" height="20.333333333333336"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.79681998239436624" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="W1G-jb-vrx" secondAttribute="trailing" constant="20" id="7VH-3n-bcq"/>
+                                    <constraint firstItem="W1G-jb-vrx" firstAttribute="top" secondItem="Hvr-KU-iB7" secondAttribute="bottom" constant="10" id="Ee0-4h-hTj"/>
+                                    <constraint firstItem="Hvr-KU-iB7" firstAttribute="top" secondItem="rfp-Cu-7q4" secondAttribute="top" constant="20" id="Hbd-fO-pCs"/>
+                                    <constraint firstAttribute="trailing" secondItem="Hvr-KU-iB7" secondAttribute="trailing" constant="20" id="IYD-DD-gYc"/>
+                                    <constraint firstItem="W1G-jb-vrx" firstAttribute="leading" secondItem="rfp-Cu-7q4" secondAttribute="leading" constant="20" id="XT9-0A-qZe"/>
+                                    <constraint firstItem="Hvr-KU-iB7" firstAttribute="leading" secondItem="rfp-Cu-7q4" secondAttribute="leading" constant="20" id="Y30-ba-9vF"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="If7-ed-Zu6" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="0JC-2M-gTO"/>
+                            <constraint firstAttribute="trailing" secondItem="If7-ed-Zu6" secondAttribute="trailing" id="6Yr-HJ-rdP"/>
+                            <constraint firstItem="rfp-Cu-7q4" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.3" id="8bC-Xo-VA0"/>
+                            <constraint firstAttribute="trailing" secondItem="rfp-Cu-7q4" secondAttribute="trailing" id="Jwk-2Z-6O0"/>
+                            <constraint firstItem="rfp-Cu-7q4" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="VIz-ge-6df"/>
+                            <constraint firstAttribute="bottom" secondItem="rfp-Cu-7q4" secondAttribute="bottom" id="e2s-BM-mgw"/>
+                            <constraint firstAttribute="bottom" secondItem="If7-ed-Zu6" secondAttribute="bottom" id="fqt-D0-5gE"/>
+                            <constraint firstItem="If7-ed-Zu6" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="rfA-fl-18D"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="landscape" width="2005" height="1085"/>
+    </resources>
+</document>

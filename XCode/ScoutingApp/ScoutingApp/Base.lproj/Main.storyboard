@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina5_9" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ScoutingApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Rover_Ruckus_logo" translatesAutoresizingMaskIntoConstraints="NO" id="tP8-db-KVO">
+                                <rect key="frame" x="77.666666666666686" y="44" width="220" height="220"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="tP8-db-KVO" secondAttribute="height" multiplier="1:1" id="kRG-n6-x8Z"/>
+                                    <constraint firstAttribute="height" constant="220" id="v4U-19-YNd"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scouting App" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JIp-Qi-Drx">
+                                <rect key="frame" x="0.0" y="246" width="375" height="50"/>
+                                <color key="backgroundColor" red="0.96078431369999995" green="0.86666666670000003" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="buc-52-gRf"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="28"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alignment="bottom" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="IGw-Ok-bIn" userLabel="User Stack View">
+                                <rect key="frame" x="20" y="371" width="335" height="31.666666666666686"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Gd-8m-zGc">
+                                        <rect key="frame" x="0.0" y="0.0" width="52.666666666666664" height="31.666666666666668"/>
+                                        <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="23"/>
+                                        <color key="textColor" red="0.96078431369999995" green="0.86666666670000003" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9fQ-Yt-nsh">
+                                        <rect key="frame" x="62.666666666666657" y="1.6666666666666856" width="272.33333333333337" height="30"/>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                </subviews>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="-220" translatesAutoresizingMaskIntoConstraints="NO" id="e63-p7-Mnj" userLabel="Event Stack View">
+                                <rect key="frame" x="20" y="402.66666666666669" width="335" height="216.00000000000006"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Event:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p9B-2q-HTb">
+                                        <rect key="frame" x="0.0" y="92.333333333333314" width="277.66666666666669" height="31.666666666666671"/>
+                                        <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="23"/>
+                                        <color key="textColor" red="0.96078431369999995" green="0.86666666670000003" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cS2-rV-lcj">
+                                        <rect key="frame" x="58" y="0.0" width="277" height="216"/>
+                                        <connections>
+                                            <outlet property="dataSource" destination="BYZ-38-t0r" id="vOL-dd-RE2"/>
+                                            <outlet property="delegate" destination="BYZ-38-t0r" id="crM-Ux-LRw"/>
+                                        </connections>
+                                    </pickerView>
+                                </subviews>
+                            </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fOu-jH-Y6s">
+                                <rect key="frame" x="20" y="695" width="335" height="53"/>
+                                <color key="backgroundColor" red="0.96078431369999995" green="0.86666666670000003" blue="0.86274509799999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="30"/>
+                                <state key="normal" title="Next">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <segue destination="cjU-Il-bN6" kind="show" id="LNc-zf-qC0"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.67843137254901964" green="0.062745098039215685" blue="0.18431372549019609" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="JIp-Qi-Drx" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="2Tk-Ac-Q6j"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="IGw-Ok-bIn" secondAttribute="trailing" constant="20" id="5Qj-zE-ybW"/>
+                            <constraint firstItem="e63-p7-Mnj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="BZ6-uC-UCo"/>
+                            <constraint firstItem="IGw-Ok-bIn" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="Ef0-8F-V18"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="fOu-jH-Y6s" secondAttribute="bottom" constant="30" id="Ia9-mN-Lac"/>
+                            <constraint firstItem="tP8-db-KVO" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Lab-l8-SNk"/>
+                            <constraint firstItem="JIp-Qi-Drx" firstAttribute="firstBaseline" secondItem="tP8-db-KVO" secondAttribute="baseline" constant="10" id="MNx-Kl-nbk"/>
+                            <constraint firstItem="tP8-db-KVO" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="TXe-r6-UUw"/>
+                            <constraint firstItem="JIp-Qi-Drx" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="bkf-4r-scM"/>
+                            <constraint firstAttribute="trailing" secondItem="e63-p7-Mnj" secondAttribute="trailing" constant="20" id="edZ-DH-m9D"/>
+                            <constraint firstItem="IGw-Ok-bIn" firstAttribute="top" secondItem="JIp-Qi-Drx" secondAttribute="bottom" constant="75" id="h59-KV-Dd3"/>
+                            <constraint firstItem="fOu-jH-Y6s" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="hWF-Uy-rFV"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="fOu-jH-Y6s" secondAttribute="trailing" constant="20" id="kuh-Sx-41a"/>
+                            <constraint firstItem="e63-p7-Mnj" firstAttribute="top" secondItem="IGw-Ok-bIn" secondAttribute="bottom" id="x1H-Wm-Akq"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                    <connections>
+                        <outlet property="eventPickerView" destination="cS2-rV-lcj" id="swN-IT-XU9"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="37.600000000000001" y="18.472906403940886"/>
+        </scene>
+        <!--Review-->
+        <scene sceneID="XCP-1L-Jhm">
+            <objects>
+                <viewController id="Ngv-qp-rV7" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="VtE-Rf-W4b">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="8Qm-ac-8NO"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Review" image="icons8-graph-25" selectedImage="icons8-graph-25" id="yPz-J2-Ggt"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gdD-Bo-1mp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1691" y="423"/>
+        </scene>
+        <!--Edit-->
+        <scene sceneID="pSy-hg-TbA">
+            <objects>
+                <viewController id="nfk-Yp-ol6" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="7Ju-YD-5vt">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="btC-Jl-HSq"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Edit" image="icons8-pencil-25" selectedImage="icons8-pencil-25" id="vA5-sN-zhi"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="P5G-fr-Hgx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1691" y="-225"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="rcY-Fe-xgB">
+            <objects>
+                <tabBarController id="cjU-Il-bN6" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="uOC-I8-old">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="nfk-Yp-ol6" kind="relationship" relationship="viewControllers" id="llF-EB-Und"/>
+                        <segue destination="Ngv-qp-rV7" kind="relationship" relationship="viewControllers" id="ehB-QM-0oN"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5SF-Qs-isQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="667" y="714"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Rover_Ruckus_logo" width="316" height="316"/>
+        <image name="icons8-graph-25" width="25" height="25"/>
+        <image name="icons8-pencil-25" width="25" height="25"/>
+    </resources>
+</document>
