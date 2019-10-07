@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NewMecanumDrive extends MecanumDrive {
     // Declare information about robot
     private static final double TRACKLENGTH = 6;
-    private static final double TRACKBASE = 7.52;
+    private static final double TRACKBASE = 7.645;
     private static final double WHEELRADIUS = 1.969;
 
     @Override
