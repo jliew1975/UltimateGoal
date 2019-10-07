@@ -18,8 +18,4 @@ public class SkyStoneTeleOpRobot extends CommonRobotHardware implements Robot {
         super.init();
         mecanumDrive.init();
     }
-
-    public TeleOpDrive getMecanumDrive() {
-        return mecanumDrive;
-    }
 }

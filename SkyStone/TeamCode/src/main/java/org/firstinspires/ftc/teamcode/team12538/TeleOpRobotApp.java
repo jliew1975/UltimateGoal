@@ -20,8 +20,8 @@ public class TeleOpRobotApp extends RobotApp {
             }
 
             while (opModeIsActive()) {
-                robot.getMecanumDrive().navigateWithGamepad(gamepad1);
-                robot.getMecanumDrive().printTelemetry();
+                robot.mecanumDrive.navigateWithGamepad(gamepad1);
+                robot.mecanumDrive.printTelemetry();
                 telemetry.update();
             }
         } finally {

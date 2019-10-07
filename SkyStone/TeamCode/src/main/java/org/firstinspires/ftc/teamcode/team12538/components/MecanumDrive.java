@@ -15,24 +15,32 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MecanumDrive implements TeleOpDrive, AutoDrive {
     public enum StrafingDirection { Left, Right }
 
+    private final double WHEEL_COUNTS_PER_REV = 537.6;
     private final double DEAD_WHEEL_COUNTS_PER_REV = 1600;
-    private final double MECANUM_WHEEL_COUNTS_PER_REV = 540; // andymark 20:1 gearbox
+
+    private final double WHEEL_DIAMETER_INCHES = 4.0;
+    private final double DEAD_WHEEL_DIAMETER_INCHES = 2.0;
+
+    private final double PI = 3.1415;
+    private final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_INCHES * PI;
+    private final double DEAD_WHEEL_CIRCUMFERENCE = DEAD_WHEEL_DIAMETER_INCHES * PI;
 
     private final double DRIVE_GEAR_REDUCTION = 1.0;  // drive train geared down 1:2
-    private final double WHEEL_DIAMETER_INCHES = 4.0;
 
-    private final double DEAD_WHEEL_COUNTS_PER_INCH =
-            (DEAD_WHEEL_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+    private final double WHEEL_ENCODER_TICKS_PER_INCH =
+            (WHEEL_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_CIRCUMFERENCE);
 
-    private final double MECANUM_WHEEL_COUNTS_PER_INCH =
-            (MECANUM_WHEEL_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+    private final double DEAD_WHEEL_ENCODER_TICKS_PER_INCH =
+            (DEAD_WHEEL_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / (DEAD_WHEEL_CIRCUMFERENCE);
 
     protected DcMotorWrapper leftFront = null;
     protected DcMotorWrapper rightFront = null;
@@ -40,11 +48,13 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
     protected DcMotorWrapper rightRear = null;
 
     protected List<DcMotorWrapper> driveMotorList = new ArrayList<>();
-    protected Map<String, DcMotorWrapper> driveMotorMap = new ConcurrentHashMap<>();
 
     protected List<DcMotorWrapper> strafeEncoderMotors;
-    protected List<DcMotorWrapper> forwardBackwardEncoderMotors;
+    protected List<DcMotorWrapper> directionalEncoderMotors = Arrays.asList(leftFront, rightFront);
 
+    protected Set<String> directionalMotorNames = new HashSet<>(Arrays.asList(leftFront.getName(), rightFront.getName()));
+
+    private Telemetry telemetry;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -61,18 +71,19 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        driveMotorMap.put(leftFront.getName(), leftFront);
-        driveMotorMap.put(rightFront.getName(), rightFront);
-        driveMotorMap.put(leftRear.getName(), leftRear);
-        driveMotorMap.put(rightRear.getName(), rightRear);
-
-        driveMotorList.addAll(driveMotorMap.values());
+        driveMotorList.add(leftFront);
+        driveMotorList.add(rightFront);
+        driveMotorList.add(leftRear);
+        driveMotorList.add(rightRear);
 
         strafeEncoderMotors = Arrays.asList(leftRear);
-        forwardBackwardEncoderMotors = Arrays.asList(leftFront, rightFront);
+        directionalEncoderMotors = Arrays.asList(leftFront, rightFront);
 
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, driveMotorList);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, driveMotorList);
+
+        telemetry = OpModeUtils.getOpMode().telemetry;
     }
 
     // TeleOp Drive APIs
@@ -134,32 +145,34 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
 
     @Override
     public void encoderDrive(double speed, double distanceInInches, double timeout, VisionDetector detector) {
-        // reset encoders
-        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, driveMotorList);
-        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
-
         int[] targetPositions = new int[driveMotorList.size()];
 
         //ensure that the opmode is still active
         if(OpModeUtils.getOpMode().opModeIsActive()) {
             //determine target positions
             int index = 0;
-            for(DcMotor motor : driveMotorList) {
-                targetPositions[index] = motor.getCurrentPosition() + (int) (distanceInInches * MECANUM_WHEEL_COUNTS_PER_INCH);
-                motor.setTargetPosition(targetPositions[index]);
+
+            MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, driveMotorList);
+
+            for(DcMotorWrapper motor : driveMotorList) {
+                if(directionalMotorNames.contains(motor.getName())) {
+                    targetPositions[index] = motor.getCurrentPosition() - (int) (distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                    motor.setTargetPosition(targetPositions[index]);
+                } else {
+                    targetPositions[index] = motor.getCurrentPosition() + (int) (distanceInInches * WHEEL_ENCODER_TICKS_PER_INCH);
+                    motor.setTargetPosition(targetPositions[index]);
+                }
                 index++;
             }
 
-            MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, driveMotorList);
             runtime.reset();
 
-            for(DcMotor motor : driveMotorList) {
+            for(DcMotorWrapper motor : driveMotorList) {
                 motor.setPower(Math.abs(speed));
             }
 
-            // keep looping until at least one of the motors finished its movement
-            while(OpModeUtils.opModeIsActive() &&
-                    (runtime.seconds() < timeout) &&
+            // keep looping until at least one of the motors finished its movement or timeout is reached
+            while(OpModeUtils.opModeIsActive() && (runtime.seconds() < timeout) &&
                     (MotorUtils.motorIsBusy(driveMotorList)))
             {
                 if(detector != null) {
@@ -168,22 +181,21 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
                     }
                 }
 
-                //report target and current positions to driver station
-                /*
-                telemetry.addData("Path1", "Running to %7d : %7d : %7d : %7d",
+                // report target and current positions to driver station
+                telemetry.addData("Target", "Running to %7d : %7d : %7d : %7d",
                         targetPositions[0], targetPositions[1], targetPositions[2], targetPositions[3]);
 
-                telemetry.addData("Path2", "Running at %7d : %7d : %7d : %7d",
-                        motors.get(0).getCurrentPosition(),
-                        motors.get(1).getCurrentPosition(),
-                        motors.get(2).getCurrentPosition(),
-                        motors.get(3).getCurrentPosition());
+                telemetry.addData("Current", "Running at %7d : %7d : %7d : %7d",
+                        driveMotorList.get(0).getCurrentPosition(),
+                        driveMotorList.get(1).getCurrentPosition(),
+                        driveMotorList.get(2).getCurrentPosition(),
+                        driveMotorList.get(3).getCurrentPosition());
+
                 telemetry.update();
-                */
             }
 
             stop();
-            MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
+            MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, directionalEncoderMotors);
         }
     }
 
@@ -198,35 +210,33 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
         // MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motors);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
 
-        int[] targetPositions = new int[driveMotorList.size()];
         double newDistance = (direction == StrafingDirection.Right) ? distance : -1 * distance;
 
-        //ensure that the opmode is still active
+        // ensure that the opmode is still active
         if(OpModeUtils.getOpMode().opModeIsActive()) {
-            int index = 0;
-            for(DcMotorWrapper motor : driveMotorList) {
-                // TODO: Modify logic for deadwheel here
-                // bleftDrive or frightDrive
-                if(motor.getName().contains("left")) {
-                    targetPositions[index] = motor.getCurrentPosition() + (int) (-newDistance * Math.sqrt(2) * DEAD_WHEEL_COUNTS_PER_INCH);
-                } else {
-                    targetPositions[index] = motor.getCurrentPosition() + (int) (newDistance * Math.sqrt(2) * DEAD_WHEEL_COUNTS_PER_INCH);
-                }
-                motor.setTargetPosition(targetPositions[index]);
-                index++;
-            }
-
-            MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, driveMotorList);
+            int directionMultiplier = (direction == StrafingDirection.Left) ? 1 : -1;
+            int targetPosition = rightRear.getCurrentPosition() +
+                    (directionMultiplier * (int) (newDistance * DEAD_WHEEL_ENCODER_TICKS_PER_INCH));
 
             runtime.reset();
-            for(DcMotor motor : driveMotorList) {
-                motor.setPower(Math.abs(speed));
+            for(DcMotorWrapper motor : driveMotorList) {
+                if(direction == StrafingDirection.Left) {
+                    leftFront.setPower(speed);
+                    rightFront.setPower(-speed);
+                    leftRear.setPower(speed);
+                    rightRear.setPower(-speed);
+                } else {
+                    leftFront.setPower(-speed);
+                    rightFront.setPower(speed);
+                    leftRear.setPower(-speed);
+                    rightRear.setPower(speed);
+                }
             }
 
             // keep looping until one of the motors finished its movement
             while (OpModeUtils.getOpMode().opModeIsActive() &&
                     (runtime.seconds() < timeout) &&
-                    (MotorUtils.motorIsBusy(driveMotorList)))
+                    (rightRear.getCurrentPosition() < targetPosition))
             {
                 if(detector != null) {
                     if(detector.isAligned()) {
@@ -234,18 +244,10 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
                     }
                 }
 
-                /*
                 //report current and target positions to driver station
-                telemetry.addData("Path1", "Running to %7d :%7d",
-                        targetPositions[0], targetPositions[1], targetPositions[2], targetPositions[3]);
-
-                telemetry.addData("Path2", "Running at %7d :%7d",
-                        motors.get(0).getCurrentPosition(),
-                        motors.get(1).getCurrentPosition(),
-                        motors.get(2).getCurrentPosition(),
-                        motors.get(3).getCurrentPosition());
+                telemetry.addData("Target", "Running to %7d", targetPosition);
+                telemetry.addData("Current", "Running at %7d", rightRear.getCurrentPosition());
                 telemetry.update();
-                */
             }
 
             stop();

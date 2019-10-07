@@ -33,14 +33,12 @@ public class MotorUtils {
             return false;
         }
 
-        if(motors.size() == 1) {
-            return motors.get(0).isBusy();
-        } else if(motors.size() == 2) {
-            return motors.get(0).isBusy() && motors.get(1).isBusy();
-        } else if(motors.size() == 3) {
-            return motors.get(0).isBusy() && motors.get(1).isBusy() && motors.get(2).isBusy();
+        for(DcMotor motor : motors) {
+            if(!motor.isBusy()) {
+                return false;
+            }
         }
 
-        return motors.get(0).isBusy() && motors.get(1).isBusy() && motors.get(2).isBusy() && motors.get(3).isBusy();
+        return true;
     }
 }

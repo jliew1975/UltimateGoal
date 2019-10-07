@@ -5,6 +5,9 @@ import static org.firstinspires.ftc.teamcode.team12538.components.MecanumDrive.S
 import org.firstinspires.ftc.teamcode.team12538.dogecv.VisionDetector;
 
 public interface AutoDrive {
+    void init();
+    void printTelemetry();
+
     void resetEncoderValues();
     void stop();
 

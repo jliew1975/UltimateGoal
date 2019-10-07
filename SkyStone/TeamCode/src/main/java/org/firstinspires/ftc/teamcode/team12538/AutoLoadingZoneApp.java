@@ -10,6 +10,15 @@ import org.firstinspires.ftc.teamcode.team12538.utils.RobotApp;
 public class AutoLoadingZoneApp extends RobotApp {
     @Override
     public void performRobotOperation() throws InterruptedException {
+        SkyStoneAutoRobot robot = new SkyStoneAutoRobot();
+        robot.init();
+
         waitForStart();
+
+        while(opModeIsActive()) {
+            if(gamepad1.a) {
+                robot.mecanumDrive.encoderDrive(0.1, 1.0, 10.0);
+            }
+        }
     }
 }

@@ -11,6 +11,11 @@ public class SkyStoneAutoRobot extends CommonRobotHardware implements Robot  {
      */
     protected AutoDrive mecanumDrive = new NewMecanumDrive();
 
+    public void init() {
+        super.init();
+        mecanumDrive.init();
+    }
+
     public void strafeLeft(MecanumDrive.StrafingDirection direction, double speed, double distance) {
         mecanumDrive.encoderStrafe(direction, speed, distance, 5d);
     }
