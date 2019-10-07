@@ -27,7 +27,7 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
     private final double WHEEL_COUNTS_PER_REV = 537.6;
     private final double DEAD_WHEEL_COUNTS_PER_REV = 1600;
 
-    private final double WHEEL_DIAMETER_INCHES = 4.0;
+    private final double WHEEL_DIAMETER_INCHES = 3.93701;
     private final double DEAD_WHEEL_DIAMETER_INCHES = 2.0;
 
     private final double PI = 3.1415;
