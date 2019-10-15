@@ -4,4 +4,5 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 public interface TeleOpDrive extends RobotComponent {
     void navigateWithGamepad(Gamepad gamepad);
+    void resetEncoderValues();
 }

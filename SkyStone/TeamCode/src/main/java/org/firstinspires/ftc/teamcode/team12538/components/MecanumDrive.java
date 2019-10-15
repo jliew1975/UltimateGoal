@@ -47,12 +47,12 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
     protected DcMotorWrapper leftRear = null;
     protected DcMotorWrapper rightRear = null;
 
-    protected List<DcMotorWrapper> driveMotorList = new ArrayList<>();
+    protected List<DcMotorWrapper> driveMotorList;
 
     protected List<DcMotorWrapper> strafeEncoderMotors;
-    protected List<DcMotorWrapper> directionalEncoderMotors = Arrays.asList(leftFront, rightFront);
+    protected List<DcMotorWrapper> directionalEncoderMotors;
 
-    protected Set<String> directionalMotorNames = new HashSet<>(Arrays.asList(leftFront.getName(), rightFront.getName()));
+    protected Set<String> directionalMotorNames;
 
     private Telemetry telemetry;
     private ElapsedTime runtime = new ElapsedTime();
@@ -67,17 +67,14 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
         rightRear = new DcMotorWrapper("rightRear", hardwareMap);
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        driveMotorList.add(leftFront);
-        driveMotorList.add(rightFront);
-        driveMotorList.add(leftRear);
-        driveMotorList.add(rightRear);
-
+        driveMotorList = Arrays.asList(leftFront, rightFront, leftRear, rightRear);
         strafeEncoderMotors = Arrays.asList(leftRear);
         directionalEncoderMotors = Arrays.asList(leftFront, rightFront);
+        directionalMotorNames = new HashSet<>(Arrays.asList(leftFront.getName(), rightFront.getName()));
 
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, driveMotorList);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);

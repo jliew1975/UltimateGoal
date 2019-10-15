@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.team12538;
+package org.firstinspires.ftc.teamcode.team12538.robot;
 
 import org.firstinspires.ftc.teamcode.team12538.components.AutoDrive;
 import org.firstinspires.ftc.teamcode.team12538.components.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.components.NewMecanumDrive;
 
-public class SkyStoneAutoRobot extends CommonRobotHardware implements Robot  {
+public class SkyStoneAutoRobot extends CommonRobotHardware implements Robot {
     /**
      * We can swap the drive logic with either
      * MecanumDrive or NewMecanumDrive implementation here
@@ -18,5 +18,9 @@ public class SkyStoneAutoRobot extends CommonRobotHardware implements Robot  {
 
     public void strafeLeft(MecanumDrive.StrafingDirection direction, double speed, double distance) {
         mecanumDrive.encoderStrafe(direction, speed, distance, 5d);
+    }
+
+    public AutoDrive getMecanumDrive() {
+        return mecanumDrive;
     }
 }

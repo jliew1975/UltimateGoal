@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.team12538;
+package org.firstinspires.ftc.teamcode.team12538.robot;
 
-import org.firstinspires.ftc.teamcode.team12538.components.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.components.NewMecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.components.TeleOpDrive;
 
@@ -17,5 +16,9 @@ public class SkyStoneTeleOpRobot extends CommonRobotHardware implements Robot {
     public void init() {
         super.init();
         mecanumDrive.init();
+    }
+
+    public TeleOpDrive getMecanumDrive() {
+        return mecanumDrive;
     }
 }
