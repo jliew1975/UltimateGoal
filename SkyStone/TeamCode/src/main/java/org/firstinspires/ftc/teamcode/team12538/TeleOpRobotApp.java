@@ -35,8 +35,11 @@ public class TeleOpRobotApp extends RobotApp {
                     robot.getIntake().setPower(0d);
                 }
 
+                robot.getOuttakeSlides().control(gamepad1);
+
                 // telemetry printing
                 robot.getMecanumDrive().printTelemetry();
+                robot.getOuttakeSlides().printTelemetry();
                 telemetry.update();
             }
         } finally {
