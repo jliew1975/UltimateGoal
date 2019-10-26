@@ -12,8 +12,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "DogeCV Skystone Detection Test", group = "Test")
-public class DogeCVDetectorTest extends LinearOpMode {
+@TeleOp(name = "DogeCV PhoneCam Test", group = "Test")
+public class DogeCVPhoneCamTest extends LinearOpMode {
     enum DetectMode { Stone, SkyStone }
 
     @Override
