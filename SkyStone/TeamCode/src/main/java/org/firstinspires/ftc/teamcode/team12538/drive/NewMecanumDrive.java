@@ -1,19 +1,6 @@
-package org.firstinspires.ftc.teamcode.team12538.components;
+package org.firstinspires.ftc.teamcode.team12538.drive;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
-import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
-import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class NewMecanumDrive extends MecanumDrive {
     // Declare information about robot

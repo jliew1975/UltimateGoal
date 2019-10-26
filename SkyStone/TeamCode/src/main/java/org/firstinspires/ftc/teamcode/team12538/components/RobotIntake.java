@@ -9,13 +9,13 @@ import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
-public class RobotIntake implements RobotComponent {
-    DcMotorWrapper leftRoller;
-    DcMotorWrapper rightRoller;
+public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware {
+    private DcMotorWrapper leftRoller;
+    private DcMotorWrapper rightRoller;
 
     @Override
     public void init() {
-        HardwareMap hardwareMap = OpModeUtils.getOpMode().hardwareMap;
+        HardwareMap hardwareMap = OpModeUtils.getHardwareMap();
 
         leftRoller =  new DcMotorWrapper("leftRollerIntake", hardwareMap);
         rightRoller = new DcMotorWrapper("rightRollerIntake", hardwareMap);
@@ -25,13 +25,37 @@ public class RobotIntake implements RobotComponent {
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, leftRoller, rightRoller);
     }
 
-    public void setPower(double power) {
-        leftRoller.setPower(power);
-        rightRoller.setPower(power);
+    @Override
+    public void control(Gamepad gamepad) {
+        if(gamepad.right_bumper) {
+            setPower(0.5d);
+        } else if(gamepad.left_bumper) {
+            setPower(-0.5d);
+        } else {
+            setPower(0d);
+        }
     }
 
     @Override
     public void printTelemetry() {
         // intensionally left blank
+    }
+
+    public void setPower(double power) {
+        setPower(power, false, false);
+    }
+
+    public void setPower(double power, boolean stopleft, boolean stopRight) {
+        if(stopleft) {
+            leftRoller.setPower(0d);
+        } else {
+            leftRoller.setPower(power);
+        }
+
+        if(stopRight) {
+            rightRoller.setPower(0d);
+        } else {
+            rightRoller.setPower(power);
+        }
     }
 }

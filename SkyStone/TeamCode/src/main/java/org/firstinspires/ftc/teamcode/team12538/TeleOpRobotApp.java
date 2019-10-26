@@ -21,25 +21,19 @@ public class TeleOpRobotApp extends RobotApp {
 
             while (opModeIsActive()) {
                 // mecanum drive controls
-                robot.getMecanumDrive().navigateWithGamepad(gamepad1);
+                robot.mecanumDrive.navigateWithGamepad(gamepad1);
+
                 if(gamepad1.a) {
-                    robot.getMecanumDrive().resetEncoderValues();
+                    robot.mecanumDrive.resetEncoderValues();
                 }
 
-                // intake controls
-                if(gamepad1.right_bumper) {
-                    robot.getIntake().setPower(1d);
-                } else if(gamepad1.left_bumper) {
-                    robot.getIntake().setPower(-1d);
-                } else {
-                    robot.getIntake().setPower(0d);
-                }
-
-                robot.getOuttakeSlides().control(gamepad1);
+                robot.intake.control(gamepad1);
+                robot.outtakeSlides.control(gamepad1);
+                robot.foundationClaw.control(gamepad1);
 
                 // telemetry printing
-                robot.getMecanumDrive().printTelemetry();
-                robot.getOuttakeSlides().printTelemetry();
+                robot.mecanumDrive.printTelemetry();
+                robot.outtakeSlides.printTelemetry();
                 telemetry.update();
             }
         } finally {

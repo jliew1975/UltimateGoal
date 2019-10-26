@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.team12538.components;
+package org.firstinspires.ftc.teamcode.team12538.drive;
 
-import static org.firstinspires.ftc.teamcode.team12538.components.MecanumDrive.StrafingDirection;
+import static org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive.StrafingDirection;
 
 import org.firstinspires.ftc.teamcode.team12538.dogecv.VisionDetector;
 

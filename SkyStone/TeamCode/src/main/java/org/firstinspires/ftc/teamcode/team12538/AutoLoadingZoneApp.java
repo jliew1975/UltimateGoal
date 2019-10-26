@@ -15,7 +15,7 @@ public class AutoLoadingZoneApp extends RobotApp {
 
         while(opModeIsActive()) {
             if(gamepad1.a) {
-                robot.getMecanumDrive().encoderDrive(0.1, 1.0, 10.0);
+                robot.mecanumDrive.encoderDrive(0.1, 1.0, 10.0);
             }
         }
     }

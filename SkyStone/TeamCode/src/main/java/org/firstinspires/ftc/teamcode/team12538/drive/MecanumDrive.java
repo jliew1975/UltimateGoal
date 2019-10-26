@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.team12538.components;
+package org.firstinspires.ftc.teamcode.team12538.drive;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -13,13 +12,10 @@ import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class MecanumDrive implements TeleOpDrive, AutoDrive {
     public enum StrafingDirection { Left, Right }
@@ -101,10 +97,10 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
             powerMultiplier = 0.3;
         }
 
-        double powerV1 = powerMultiplier;
-        double powerV2 = powerMultiplier;
-        double powerV3 = powerMultiplier;
-        double powerV4 = powerMultiplier;
+        double powerV1 = v1 * powerMultiplier;
+        double powerV2 = v2 * powerMultiplier;
+        double powerV3 = v3 * powerMultiplier;
+        double powerV4 = v4 * powerMultiplier;
 
         if(gamepad.right_bumper) {
             powerV2 = 0d;
@@ -114,10 +110,10 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
             powerV3 = 0d;
         }
 
-        leftFront.setPower(powerV1 * Math.signum(v1));
-        rightFront.setPower(powerV2 * Math.signum(v2));
-        leftRear.setPower(powerV3 * Math.signum(v3));
-        rightRear.setPower(powerV4 * Math.signum(v4));
+        leftFront.setPower(powerV1);
+        rightFront.setPower(powerV2);
+        leftRear.setPower(powerV3);
+        rightRear.setPower(powerV4);
     }
 
     // Autonomous Drive APIs
@@ -260,5 +256,39 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
         telemetry.addData("Right Front Motor", rightFront.getCurrentPosition());
         telemetry.addData("Left Rear Motor", leftRear.getCurrentPosition());
         telemetry.addData("Right Rear Motor", rightRear.getCurrentPosition());
+    }
+
+    private void navigate(double left_stick_x, double left_stick_y, double right_stick_x, double right_trigger, boolean right_bumper, boolean left_bumper) {
+        double r = Math.hypot(left_stick_x, left_stick_y);
+        double robotAngle = Math.atan2(left_stick_x, left_stick_y) - Math.PI / 4;
+        double rightX = right_stick_x;
+
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
+
+        double powerMultiplier = 1.0;
+        if(right_trigger > 0) {
+            powerMultiplier = 0.3;
+        }
+
+        double powerV1 = powerMultiplier;
+        double powerV2 = powerMultiplier;
+        double powerV3 = powerMultiplier;
+        double powerV4 = powerMultiplier;
+
+        if(right_bumper) {
+            powerV2 = 0d;
+            powerV4 = 0d;
+        } else if(left_bumper) {
+            powerV1 = 0d;
+            powerV3 = 0d;
+        }
+
+        leftFront.setPower(powerV1 * Math.signum(v1));
+        rightFront.setPower(powerV2 * Math.signum(v2));
+        leftRear.setPower(powerV3 * Math.signum(v3));
+        rightRear.setPower(powerV4 * Math.signum(v4));
     }
 }
