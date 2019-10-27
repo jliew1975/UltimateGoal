@@ -20,10 +20,22 @@ public class TeleOpTestRobotApp extends RobotApp {
                 return;
             }
 
+            double power = 0.1;
+
             while (opModeIsActive()) {
-                if(gamepad1.a) {
-                    robot.getMecanumDrive().encoderDrive(0.1, 5.0, 5.0);
+                if(gamepad1.b) {
+                    robot.mecanumDrive.resetEncoderValues();
                 }
+
+                if(gamepad1.a) {
+                    robot.mecanumDrive.encoderDrive(power, 5.0, 5);
+                } else if(gamepad1.y) {
+                    robot.mecanumDrive.encoderDrive(power, -5.0, 5);
+                }
+
+                // robot.mecanumDrive.printEncoderValue();
+                // telemetry.update();
+                // robot.foundationClaw.control(gamepad1);
             }
         } finally {
             OpModeUtils.stop();

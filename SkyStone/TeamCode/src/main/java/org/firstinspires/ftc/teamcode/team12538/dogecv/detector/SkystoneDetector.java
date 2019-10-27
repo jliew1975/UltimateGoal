@@ -1,9 +1,7 @@
-package com.disnodeteam.dogecv.detectors.skystone;
+package org.firstinspires.ftc.teamcode.team12538.dogecv.detector;
 
-import android.util.Log;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.DogeCVDetector;
-import com.disnodeteam.dogecv.filters.CbColorFilter;
 import com.disnodeteam.dogecv.filters.DogeCVColorFilter;
 import com.disnodeteam.dogecv.filters.GrayscaleFilter;
 import com.disnodeteam.dogecv.filters.LeviColorFilter;

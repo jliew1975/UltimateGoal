@@ -1,4 +1,4 @@
-package com.disnodeteam.dogecv.detectors.skystone;
+package org.firstinspires.ftc.teamcode.team12538.dogecv.detector;
 
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.DogeCVDetector;

@@ -16,7 +16,6 @@ public class NewMecanumDrive extends MecanumDrive {
         double yVelocity = gamepad.left_stick_x;
         double angularVelocity = gamepad.right_stick_x;
 
-
         // Convert desired velocities into wheel velocities
         double leftFrontPower = (xVelocity - yVelocity - (TRACKBASE + TRACKLENGTH) * (angularVelocity)) / WHEELRADIUS;
         double leftRearPower = (xVelocity + yVelocity - (TRACKBASE + TRACKLENGTH) * (angularVelocity)) / WHEELRADIUS;

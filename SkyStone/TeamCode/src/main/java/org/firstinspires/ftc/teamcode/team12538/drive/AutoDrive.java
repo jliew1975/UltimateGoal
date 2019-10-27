@@ -15,4 +15,6 @@ public interface AutoDrive {
     void encoderDrive(double speed, double distanceInInches, double timeout, VisionDetector detector);
     void encoderStrafe(StrafingDirection direction, double speed, double distanceInInches, double timeout);
     void encoderStrafe(StrafingDirection direction, double speed, double distanceInInches, double timeout, VisionDetector detector);
+
+    void printEncoderValue();
 }

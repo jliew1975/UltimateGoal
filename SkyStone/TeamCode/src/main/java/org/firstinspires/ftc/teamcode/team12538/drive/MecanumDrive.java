@@ -145,19 +145,22 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
             //determine target positions
             int index = 0;
 
-            MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, driveMotorList);
-
             for(DcMotorWrapper motor : driveMotorList) {
                 if(directionalMotorNames.contains(motor.getName())) {
-                    targetPositions[index] = motor.getCurrentPosition() - (int) (distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                    targetPositions[index] = motor.getCurrentPosition() + (int) (distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
                     motor.setTargetPosition(targetPositions[index]);
                 } else {
-                    targetPositions[index] = motor.getCurrentPosition() + (int) (distanceInInches * WHEEL_ENCODER_TICKS_PER_INCH);
+                    if(distanceInInches < 0) {
+                        targetPositions[index] = motor.getCurrentPosition() - (int) (Math.abs(distanceInInches) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                    } else {
+                        targetPositions[index] = motor.getCurrentPosition() + (int) (Math.abs(distanceInInches) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                    }
                     motor.setTargetPosition(targetPositions[index]);
                 }
                 index++;
             }
 
+            MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, driveMotorList);
             runtime.reset();
 
             for(DcMotorWrapper motor : driveMotorList) {
@@ -165,12 +168,32 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
             }
 
             // keep looping until at least one of the motors finished its movement or timeout is reached
-            while(OpModeUtils.opModeIsActive() && (runtime.seconds() < timeout) &&
+            while(OpModeUtils.opModeIsActive() &&
                     (MotorUtils.motorIsBusy(driveMotorList)))
             {
                 if(detector != null) {
                     if(detector.isAligned()) {
                         break;
+                    }
+                }
+
+                if(OpModeUtils.getOpMode().gamepad1.x) {
+                    break;
+                }
+
+                if(OpModeUtils.getOpMode().gamepad1.dpad_up) {
+                    for(DcMotorWrapper motor : driveMotorList) {
+                        if(motor.getPower() < 1d) {
+                            motor.setPower(0d);
+                            motor.setPower(motor.getPower() + 0.1);
+                        }
+                    }
+                } else if(OpModeUtils.getOpMode().gamepad1.dpad_down) {
+                    for(DcMotorWrapper motor : driveMotorList) {
+                        if(motor.getPower() > 0d) {
+                            motor.setPower(0);
+                            motor.setPower(motor.getPower() - 0.1);
+                        }
                     }
                 }
 
@@ -183,6 +206,12 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
                         driveMotorList.get(1).getCurrentPosition(),
                         driveMotorList.get(2).getCurrentPosition(),
                         driveMotorList.get(3).getCurrentPosition());
+
+                telemetry.addData( "Power", "Running at %.1f : %.1f : %.1f : %.1f",
+                        driveMotorList.get(0).getPower(),
+                        driveMotorList.get(1).getPower(),
+                        driveMotorList.get(2).getPower(),
+                        driveMotorList.get(3).getPower());
 
                 telemetry.update();
             }
@@ -290,5 +319,12 @@ public class MecanumDrive implements TeleOpDrive, AutoDrive {
         rightFront.setPower(powerV2 * Math.signum(v2));
         leftRear.setPower(powerV3 * Math.signum(v3));
         rightRear.setPower(powerV4 * Math.signum(v4));
+    }
+
+    public void printEncoderValue() {
+        Telemetry telemetry = OpModeUtils.getTelemetry();
+        telemetry.addData("Encoder Value", "Running at %7d : %7d",
+                directionalEncoderMotors.get(0).getCurrentPosition(),
+                directionalEncoderMotors.get(1).getCurrentPosition());
     }
 }

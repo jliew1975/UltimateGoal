@@ -23,10 +23,6 @@ public class TeleOpRobotApp extends RobotApp {
                 // mecanum drive controls
                 robot.mecanumDrive.navigateWithGamepad(gamepad1);
 
-                if(gamepad1.a) {
-                    robot.mecanumDrive.resetEncoderValues();
-                }
-
                 robot.intake.control(gamepad1);
                 robot.outtakeSlides.control(gamepad1);
                 robot.foundationClaw.control(gamepad1);
