@@ -20,6 +20,14 @@ public class OpModeUtils {
         getGlobalStore().setOpMode(opMode);
     }
 
+    public static boolean isDriveEncoderEnabled() {
+        return getGlobalStore().isEnableDriveEncoder();
+    }
+
+    public static void setDriveEncoderEnabled(boolean driveEncoderEnabled) {
+        getGlobalStore().setEncoderDriveEnabled(driveEncoderEnabled);
+    }
+
     public static OpModeStore getGlobalStore() {
         return GLOBAL_STORE;
     }

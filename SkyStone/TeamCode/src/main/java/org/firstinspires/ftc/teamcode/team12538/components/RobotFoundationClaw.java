@@ -34,9 +34,11 @@ public class RobotFoundationClaw implements RobotComponent, ControlAware, Teleme
 
     public void raiseClaw() {
         servoClaw.setPosition(1d);
+        OpModeUtils.getGlobalStore().setFoundationClawDown(false);
     }
 
     public void lowerClaw() {
+        OpModeUtils.getGlobalStore().setFoundationClawDown(true);
         servoClaw.setPosition(0d);
     }
 }

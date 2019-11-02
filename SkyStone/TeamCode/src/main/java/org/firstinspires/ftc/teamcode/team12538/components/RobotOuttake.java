@@ -21,12 +21,16 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
     @Override
     public void control(Gamepad gamepad) {
-
+        if(gamepad.x) {
+            outtakeClaw.setClawPosition(1);
+        } else if(gamepad.b) {
+            outtakeClaw.setClawPosition(0);
+        }
     }
 
     @Override
     public void printTelemetry() {
-
+        outtakeSlides.printTelemetry();
     }
 
     private synchronized void readyForFoundationDeployment() {

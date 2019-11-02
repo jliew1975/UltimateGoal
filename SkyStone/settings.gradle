@@ -1,2 +1,2 @@
-include ':FtcRobotController', ':DogeCV', ':easyopencv'
+include ':FtcRobotController'
 include ':TeamCode'
