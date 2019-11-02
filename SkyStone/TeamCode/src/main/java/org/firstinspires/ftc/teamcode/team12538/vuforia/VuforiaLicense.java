@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.team12538.vuforia;
 
 public final class VuforiaLicense {
-    public static final String LICENSE_KEY = "AWVGefb/////AAAAGedlPmn1ZUEHqXFtAqsWMjgAUJIwIAU81tlTWgCANApawYPJnKlyulGxzZNv6luzr8M7+Ku74b/i3TL+zmaSGOO6IJYoKKKd1eCbbcZyJm31m1i7PfZu9+MREAOqPV3kf6shs2eZnw9SCLpoa4t2PKfCSRla2cP7gfPayKfZvyNHi3JLrbYcE/nTQr2+TLO++ndG3y9dl3yQ1Ca9Sj5ijTb+Q9JsCi0uoAcdNQtwODqcvUR2t/DTzFcjPKJJridzPLI73v/xFJMrQCY+J5kpcsgTiif9mqvQKSOgxBuZr8+MxeRBn0GYAXuWk7FW9+QYpPydhsynIyuNVpWwmTBVh2MdP5vvtv1hLO2buPcm9wi9";
+    public static final String LICENSE_KEY = "AQSH+Vf/////AAABmU/PGPu9okvkmcUwGeE7yixDGbssUttttrOm+fVHi1iE7XI814uCAMXnelLmtGK8rjpntKaBJvxv2Wv3rU8F2iIaigKGX1aCIqVjdWp0CdZDeE8CMP/uRAre1Tod9EkVH51RcMBwPY31Q44OaVwiUgeKBfWL3LarT8EZmDZMc8tgshyKIIBJZOU+t+cdQ35uDwhE6DToE/t2PrBS1cflgNq++pm+bw5BPzaWIjFcOgNqMYdcFWxgYkatnNTVNqaEZ9d+pkyscUvz4Dcwgb9j/9/OZrkjQFtdty7sbXp5BIFNY6ixLy6jAC5xdqCOuCPckZ02BQ9z2tKv75J3Bejk8DXXznADqnXHLZZQneA1KIzN";
 }
