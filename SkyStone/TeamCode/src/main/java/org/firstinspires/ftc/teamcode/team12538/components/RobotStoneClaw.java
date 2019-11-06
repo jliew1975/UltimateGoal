@@ -7,11 +7,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public class RobotStoneClaw implements RobotComponent, TelemetryAware {
-    public static final float CLAW_CLAM_POSITION = 1f;
-    public static final float CLAW_RELEASE_POSITION = 0f;
+    public static final double CLAW_CLOSE_POSITION = 1d;
+    public static final double CLAW_OPEN_POSITION = 0.5;
 
-    public static final float ARM_DEPLOYMENT_POSITION = 1f;
-    public static final float ARM_STONE_PICKUP_POSITION = 0f;
+    public static final double ARM_DEPLOYMENT_POSITION = 1d;
+    public static final double ARM_STONE_PICKUP_POSITION = 0d;
 
     private Servo leftArm;
     private Servo rightArm;
@@ -27,7 +27,9 @@ public class RobotStoneClaw implements RobotComponent, TelemetryAware {
         rightArm.setDirection(Servo.Direction.REVERSE);
 
         stoneClaw = hardwareMap.get(Servo.class, "stoneClaw");
-        stoneClaw.setPosition(CLAW_RELEASE_POSITION);
+        stoneClaw.setPosition(CLAW_OPEN_POSITION);
+
+        setArmPosition(0);
     }
 
     @Override
@@ -38,11 +40,15 @@ public class RobotStoneClaw implements RobotComponent, TelemetryAware {
         telemetry.addData("rightArm", rightArm.getPosition());
     }
 
-    public void setClawPosition(float position) {
+    public void setClawPosition(double position) {
         stoneClaw.setPosition(position);
     }
 
-    public void setArmPosition(float position) {
+    public double getArmPosition() {
+        return Math.min(leftArm.getPosition(), rightArm.getPosition());
+    }
+
+    public void setArmPosition(double position) {
         leftArm.setPosition(position);
         rightArm.setPosition(position);
     }

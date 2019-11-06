@@ -5,6 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public abstract class RobotApp extends LinearOpMode {
+    enum AutoColor { Blue, Red, Unknown };
+
+    protected AutoColor autoColor = AutoColor.Unknown;
+
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtils.init(this);

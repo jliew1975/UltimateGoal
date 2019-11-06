@@ -3,10 +3,20 @@ package org.firstinspires.ftc.teamcode.team12538.utils;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class OpModeStore {
-    private LinearOpMode opMode = null;
-    private boolean encoderDriveEnabled = false;
+    public enum RunMode { Autonomous, TeleOp }
 
+    private LinearOpMode opMode = null;
+    public RunMode runMode = RunMode.TeleOp;
+
+    private volatile boolean resetEncoder = false;
     private volatile boolean foundationClawDown = false;
+
+    private volatile boolean liftOuttake = false;
+
+    public void init() {
+        resetEncoder = false;
+        foundationClawDown = false;
+    }
 
     public LinearOpMode getOpMode() {
         return opMode;
@@ -20,12 +30,12 @@ public class OpModeStore {
         this.opMode = null;
     }
 
-    public boolean isEnableDriveEncoder() {
-        return encoderDriveEnabled;
+    public boolean isResetEncoder() {
+        return resetEncoder;
     }
 
-    public void setEncoderDriveEnabled(boolean encoderDriveEnabled) {
-        this.encoderDriveEnabled = encoderDriveEnabled;
+    public void setResetEncoder(boolean resetEncoder) {
+        this.resetEncoder = resetEncoder;
     }
 
     public boolean isFoundationClawDown() {
@@ -34,5 +44,13 @@ public class OpModeStore {
 
     public void setFoundationClawDown(boolean foundationClawDown) {
         this.foundationClawDown = foundationClawDown;
+    }
+
+    public boolean isLiftOuttake() {
+        return liftOuttake;
+    }
+
+    public void setLiftOuttake(boolean liftOuttake) {
+        this.liftOuttake = liftOuttake;
     }
 }

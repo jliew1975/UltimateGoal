@@ -17,15 +17,16 @@ public class OpModeUtils {
 
     public static void init(LinearOpMode opMode) {
         ThreadUtils.init();
+        getGlobalStore().init();
         getGlobalStore().setOpMode(opMode);
     }
 
-    public static boolean isDriveEncoderEnabled() {
-        return getGlobalStore().isEnableDriveEncoder();
+    public static boolean isResetEncoder() {
+        return getGlobalStore().isResetEncoder();
     }
 
-    public static void setDriveEncoderEnabled(boolean driveEncoderEnabled) {
-        getGlobalStore().setEncoderDriveEnabled(driveEncoderEnabled);
+    public static void setResetEncoder(boolean resetEncoder) {
+        getGlobalStore().setResetEncoder(resetEncoder);
     }
 
     public static OpModeStore getGlobalStore() {

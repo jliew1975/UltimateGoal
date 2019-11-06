@@ -9,11 +9,14 @@ public class AutoGamepad {
     public double timeout = 5d;
     public double distanceInInches = 0d;
 
+    public double power = 0d;
+
     public void reset() {
         left_stick_x = 0f;
         left_stick_y = 0f;
         right_stick_x = 0f;
         right_stick_y = 0f;
+        power = 0d;
     }
 
     public boolean isStrafing() {

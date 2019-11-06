@@ -13,7 +13,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
     private static final double TRACKBASE = 7.645;
     private static final double WHEELRADIUS = 1.969;
 
-    private double rearWheelFactor = 0.75;
+    private double rearWheelFactor = 0.70;
 
     @Override
     public void navigateWithGamepad(Gamepad gamepad) {
@@ -85,59 +85,75 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         double maxPower = Math.max(maxLeftPower, maxRightPower);
 
         // Calculate factor to scale all wheel powers to make less than 1
-        double scaleFactor = 1 / maxPower;
+        double scaleFactor = gamepad.power;
 
         // Calculate the destination encoder tick values for the given distance
         int[] targetPositions = new int[gamepad.isStrafing() ? strafeEncoderMotors.size() : directionalEncoderMotors.size()];
         if(gamepad.isStrafing()) {
-            targetPositions[0] = strafeEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            if(gamepad.left_stick_x < 0) {
+                targetPositions[0] = strafeEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            } else {
+                targetPositions[0] = strafeEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            }
         } else {
-            targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-            targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            if(gamepad.left_stick_y < 0) {
+                targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            } else {
+                targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            }
         }
 
-        // Due to uneven weight distribution on the robot,
-        // power for the rear wheel motors are multiplied by the rearWheelFactor to slow it down
-        // so it can strafe correctly.
-        leftFront.setPower(Math.abs(leftFrontPower * scaleFactor) <= 0.2 ? 0d : leftFrontPower * scaleFactor);
-        leftRear.setPower(Math.abs(leftRearPower * scaleFactor * rearWheelFactor) <= 0.2 ? 0d : leftRearPower * scaleFactor * rearWheelFactor);
-        rightRear.setPower(Math.abs(rightRearPower * scaleFactor * rearWheelFactor) <= 0.2 ? 0d : rightRearPower * scaleFactor * rearWheelFactor);
-        rightFront.setPower(Math.abs(rightFrontPower * scaleFactor) <= 0.2 ? 0d : rightFrontPower * scaleFactor);
+        leftFront.setPower(leftFrontPower * scaleFactor);
+        leftRear.setPower(leftRearPower * scaleFactor);
+        rightRear.setPower(rightRearPower * scaleFactor);
+        rightFront.setPower(rightFrontPower * scaleFactor);
 
         runtime.reset();
-        while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout) {
+        while(OpModeUtils.opModeIsActive()) { //&& runtime.seconds() < gamepad.timeout) {
+
             if(gamepad.isStrafing()) {
-                if(Math.signum(gamepad.left_stick_x) >= 0 && strafeEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
-                        Math.signum(gamepad.left_stick_x) < 0 && strafeEncoderMotors.get(0).getCurrentPosition() < targetPositions[0])
+                if((Math.signum(gamepad.left_stick_x) >= 0 && strafeEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0]) ||
+                        (Math.signum(gamepad.left_stick_x) < 0 && strafeEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0]))
                 {
                     break;
                 }
             } else {
                 if((Math.signum(gamepad.left_stick_y) >= 0 &&
                     (directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
-                            directionalEncoderMotors.get(1).getCurrentPosition() >= targetPositions[0])) ||
+                            directionalEncoderMotors.get(1).getCurrentPosition() >= targetPositions[1])) ||
                         (Math.signum(gamepad.left_stick_y) < 0 &&
-                                (directionalEncoderMotors.get(0).getCurrentPosition() < targetPositions[0] ||
-                                        directionalEncoderMotors.get(1).getCurrentPosition() < targetPositions[0]))) {
+                                (directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0] ||
+                                        directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1]))) {
                     break;
                 }
             }
 
+
             // report target and current positions to driver station
-            telemetry.addData("Target", "Running to %7d : %7d : %7d : %7d",
-                    targetPositions[0], targetPositions[1], targetPositions[2], targetPositions[3]);
+            if(gamepad.isStrafing()) {
+                // report target and current positions to driver station
+                telemetry.addData("Target", "Running to %7d",
+                        targetPositions[0]);
 
-            telemetry.addData("Current", "Running at %7d : %7d : %7d : %7d",
-                    driveMotorList.get(0).getCurrentPosition(),
-                    driveMotorList.get(1).getCurrentPosition(),
-                    driveMotorList.get(2).getCurrentPosition(),
-                    driveMotorList.get(3).getCurrentPosition());
+                telemetry.addData("Current", "Running at %7d",
+                        strafeEncoderMotors.get(0).getCurrentPosition());
 
-            telemetry.addData( "Power", "Running at %.1f : %.1f : %.1f : %.1f",
-                    driveMotorList.get(0).getPower(),
-                    driveMotorList.get(1).getPower(),
-                    driveMotorList.get(2).getPower(),
-                    driveMotorList.get(3).getPower());
+                telemetry.addData( "Power", "Running at %.1f",
+                        strafeEncoderMotors.get(0).getPower());
+            } else {
+                telemetry.addData("Target", "Running to %7d : %7d",
+                        targetPositions[0], targetPositions[1]);
+
+                telemetry.addData("Current", "Running at %7d : %7d",
+                        directionalEncoderMotors.get(0).getCurrentPosition(),
+                        directionalEncoderMotors.get(1).getCurrentPosition());
+
+                telemetry.addData("Power", "Running at %.1f : %.1f",
+                        directionalEncoderMotors.get(0).getPower(),
+                        directionalEncoderMotors.get(1).getPower());
+            }
 
             telemetry.update();
         }
@@ -148,12 +164,6 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
 
     @Override
     public void printTelemetry() {
-        Telemetry telemetry = OpModeUtils.getTelemetry();
-        telemetry.addData("rearWheelFactor", rearWheelFactor);
-        telemetry.addData("leftFront", leftFront.getPower());
-        telemetry.addData("leftRear", leftRear.getPower());
-        telemetry.addData("rightRear", rightRear.getPower());
-        telemetry.addData("rightFront", rightFront.getPower());
-
+        telemetry.addData("leftRear", leftRear.getCurrentPosition());
     }
 }

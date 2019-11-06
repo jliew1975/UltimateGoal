@@ -24,12 +24,12 @@ public class TeleOpRobotApp extends RobotApp {
                 robot.mecanumDrive.navigateWithGamepad(gamepad1);
 
                 robot.intake.control(gamepad1);
-                robot.outtakeSlides.control(gamepad1);
-                robot.foundationClaw.control(gamepad1);
+                robot.outtake.control(gamepad1);
+                robot.foundationClaw.control(gamepad2);
 
                 // telemetry printing
                 robot.mecanumDrive.printTelemetry();
-                robot.outtakeSlides.printTelemetry();
+                robot.outtake.printTelemetry();
                 telemetry.update();
             }
         } finally {

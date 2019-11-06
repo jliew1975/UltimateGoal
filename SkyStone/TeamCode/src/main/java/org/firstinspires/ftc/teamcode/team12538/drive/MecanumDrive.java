@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
-import org.firstinspires.ftc.teamcode.team12538.dogecv.VisionDetector;
 import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
@@ -40,10 +38,10 @@ public class MecanumDrive implements TeleOpDrive {
     protected final double DEAD_WHEEL_ENCODER_TICKS_PER_INCH =
             (DEAD_WHEEL_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / (DEAD_WHEEL_CIRCUMFERENCE);
 
-    protected DcMotorWrapper leftFront = null;
-    protected DcMotorWrapper rightFront = null;
-    protected DcMotorWrapper leftRear = null;
-    protected DcMotorWrapper rightRear = null;
+    public DcMotorWrapper leftFront = null;
+    public DcMotorWrapper rightFront = null;
+    public DcMotorWrapper leftRear = null;
+    public DcMotorWrapper rightRear = null;
 
     protected List<DcMotorWrapper> driveMotorList;
 
@@ -74,13 +72,11 @@ public class MecanumDrive implements TeleOpDrive {
         directionalEncoderMotors = Arrays.asList(leftFront, rightFront);
         directionalMotorNames = new HashSet<>(Arrays.asList(leftFront.getName(), rightFront.getName()));
 
-        if(OpModeUtils.isDriveEncoderEnabled()) {
+        if(OpModeUtils.isResetEncoder()) {
             MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, driveMotorList);
-            MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
-        } else {
-            MotorUtils.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER, driveMotorList);
         }
 
+        MotorUtils.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER, driveMotorList);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, driveMotorList);
 
         telemetry = OpModeUtils.getOpMode().telemetry;

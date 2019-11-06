@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.team12538;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneTeleOpRobot;
@@ -16,6 +17,9 @@ public class TeleOpTestRobotApp extends RobotApp {
         try {
             AutoGamepad autoGamepad = new AutoGamepad();
 
+            // Reset encoder values
+            OpModeUtils.setResetEncoder(true);
+
             SkyStoneAutoRobot robot = new SkyStoneAutoRobot();
             robot.init();
 
@@ -25,7 +29,7 @@ public class TeleOpTestRobotApp extends RobotApp {
                 return;
             }
 
-            double power = 0.1;
+            double power = 0.7;
 
             while (opModeIsActive()) {
                 if(gamepad1.a) {
@@ -35,16 +39,15 @@ public class TeleOpTestRobotApp extends RobotApp {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, power,3.0);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.x) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, power,3.0);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, power,10.0);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.b) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, power,3.0);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, power,10.0);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 }
 
-                // robot.mecanumDrive.printEncoderValue();
-                // telemetry.update();
-                // robot.foundationClaw.control(gamepad1);
+                robot.mecanumDrive.printTelemetry();
+                telemetry.update();
             }
         } finally {
             OpModeUtils.stop();

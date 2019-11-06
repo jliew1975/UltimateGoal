@@ -6,15 +6,18 @@ import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive.AutoDirection;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.OpModeStore;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
-@Autonomous(name="Auto (Loading Zone)", group="Linear Opmode")
 public class AutoLoadingZoneApp extends RobotApp {
 
     @Override
     public void performRobotOperation() throws InterruptedException {
-        // Enable encoder
-        OpModeUtils.setDriveEncoderEnabled(true);
+        // Tell global store that runMode is in Autonomous mode
+        OpModeUtils.getGlobalStore().runMode = OpModeStore.RunMode.Autonomous;
+
+        // Reset encoder
+        OpModeUtils.setResetEncoder(true);
 
         // Initialize a autonomous gamepad
         AutoGamepad gamepad = new AutoGamepad();
@@ -23,12 +26,5 @@ public class AutoLoadingZoneApp extends RobotApp {
         robot.init();
 
         waitForStart();
-
-        while(opModeIsActive()) {
-            if(gamepad1.a) {
-                AutoGamepadUtils.move(gamepad, AutoDirection.Forward,0.1,3.0);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-            }
-        }
     }
 }

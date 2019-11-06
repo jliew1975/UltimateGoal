@@ -29,8 +29,10 @@ public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware
     public void control(Gamepad gamepad) {
         if(gamepad.right_bumper) {
             setPower(0.5d);
+            OpModeUtils.getGlobalStore().setLiftOuttake(true);
         } else if(gamepad.left_bumper) {
             setPower(-0.5d);
+            OpModeUtils.getGlobalStore().setLiftOuttake(true);
         } else {
             setPower(0d);
         }
