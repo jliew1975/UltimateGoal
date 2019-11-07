@@ -41,6 +41,10 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
             scaleFactor *= 0.3 ;
         }
 
+        if(gamepad.left_trigger > 0) {
+            scaleFactor *= 0.5;
+        }
+
         // Set motors to correct powers
         /*
         leftFront.setPower(leftFrontPower * scaleFactor);

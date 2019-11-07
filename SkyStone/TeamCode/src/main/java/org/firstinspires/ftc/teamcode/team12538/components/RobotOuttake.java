@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.team12538.components;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.team12538.robot.Robot;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
@@ -24,6 +25,29 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
     @Override
     public void control(Gamepad gamepad) {
+        // lift slides for intake
+        if(gamepad.y) {
+            if(!busy) {
+                synchronized (outtakeLock) {
+                    if(!busy) {
+                        busy = true;
+                        OpModeUtils.getGlobalStore().setLiftOuttake(false);
+                        ThreadUtils.getExecutorService().submit(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+                                    liftSlideForStoneIntake();
+                                } finally {
+                                    busy = false;
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        }
+
         // outtake claw controls
         if(gamepad.right_trigger > 0) {
             if(!busy) {
@@ -117,6 +141,11 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     }
 
     private void performStonePickupOperation() {
+        OpModeUtils.getGlobalStore().setDepositMode(false);
+
+        RobotFoundationClaw foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
+        foundationClaw.setClawPosition(RobotFoundationClaw.LOWER_CLAW_POS);
+
         if (outtakeSlides.getCurrentPosition() < 1750 && outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION) {
             liftSlide();
         }
@@ -144,6 +173,8 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
         clawMode = ClawMode.Close;
 
+        OpModeUtils.getGlobalStore().setDepositMode(true);
+
         ThreadUtils.sleep(100);
 
         // raise outtake slide
@@ -151,6 +182,11 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
         // swing outtake arm out for stone deployment
         outtakeClaw.setArmPosition(RobotStoneClaw.ARM_DEPLOYMENT_POSITION);
+
+        ThreadUtils.sleep(500);
+
+        RobotFoundationClaw foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
+        foundationClaw.setClawPosition(RobotFoundationClaw.INIT_POSITION);
     }
 
     private void liftSlideForStoneIntake() {

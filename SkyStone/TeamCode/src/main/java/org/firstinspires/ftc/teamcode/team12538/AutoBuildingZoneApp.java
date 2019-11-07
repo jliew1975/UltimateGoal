@@ -26,18 +26,20 @@ public class AutoBuildingZoneApp extends RobotApp {
         waitForStart();
 
         // Navigate halfway to foundation
-        AutoGamepadUtils.move(gamepad, AutoDirection.Backward, 0.5,15);
+        AutoGamepadUtils.move(gamepad, AutoDirection.Backward, 0.9,15);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+
+        sleep(500);
 
         // strafe to the left/right base on auto color to align with foundation
         AutoDirection direction1 =
-                (autoColor == AutoColor.Blue) ? AutoDirection.StrafeLeft : AutoDirection.StrafeRight;
+                (autoColor == AutoColor.Blue) ? AutoDirection.StrafeRight : AutoDirection.StrafeLeft;
 
         AutoGamepadUtils.move(gamepad, direction1, 0.8,10);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         // Navigate the to foundation
-        AutoGamepadUtils.move(gamepad, AutoDirection.Backward, 0.5,15);
+        AutoGamepadUtils.move(gamepad, AutoDirection.Backward, 0.9,15);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         // Position foundation claw to pull foundation
@@ -45,7 +47,7 @@ public class AutoBuildingZoneApp extends RobotApp {
         sleep(500);
 
         // Pull foundation to building site
-        AutoGamepadUtils.move(gamepad, AutoDirection.Forward, 0.5,30);
+        AutoGamepadUtils.move(gamepad, AutoDirection.Forward, 0.9,35);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         // Release foundation by lifting foundation claw
@@ -53,9 +55,9 @@ public class AutoBuildingZoneApp extends RobotApp {
         sleep(500);
 
         AutoDirection direction2 =
-                (autoColor == AutoColor.Blue) ? AutoDirection.StrafeRight : AutoDirection.StrafeLeft;
+                (autoColor == AutoColor.Blue) ? AutoDirection.StrafeLeft : AutoDirection.StrafeRight;
 
-        AutoGamepadUtils.move(gamepad, direction2, 0.7,30);
+        AutoGamepadUtils.move(gamepad, direction2, 0.8,50);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }
 }

@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.team12538.robot;
 
+import android.graphics.Path;
+
 import org.firstinspires.ftc.teamcode.team12538.components.RobotFoundationClaw;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotOuttake;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotOuttakeSlides;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotIntake;
+import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 /**
  * Define all robot components this class for easy maintenance
@@ -19,5 +22,7 @@ public abstract class CommonRobotHardware {
         outtakeSlides.init();
         foundationClaw.init();
         outtake.init();
+
+        OpModeUtils.getGlobalStore().addComponent("foundationClaw", foundationClaw);
     }
 }
