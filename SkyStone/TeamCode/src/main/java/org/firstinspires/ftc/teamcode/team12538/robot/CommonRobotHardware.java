@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.team12538.components.RobotFoundationClaw;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotOuttake;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotOuttakeSlides;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotIntake;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 /**
@@ -16,12 +17,14 @@ public abstract class CommonRobotHardware {
     public RobotOuttakeSlides outtakeSlides = new RobotOuttakeSlides();
     public RobotFoundationClaw foundationClaw = new RobotFoundationClaw();
     public RobotOuttake outtake = new RobotOuttake();
+    public RobotStoneArm autoStoneArm = new RobotStoneArm();
 
     public void init() {
         intake.init();
         outtakeSlides.init();
         foundationClaw.init();
         outtake.init();
+        autoStoneArm.init();
 
         OpModeUtils.getGlobalStore().addComponent("foundationClaw", foundationClaw);
     }

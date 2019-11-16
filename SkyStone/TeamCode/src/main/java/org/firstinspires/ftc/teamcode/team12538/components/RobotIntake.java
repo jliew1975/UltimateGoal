@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
@@ -27,11 +28,18 @@ public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware
 
     @Override
     public void control(Gamepad gamepad) {
+        double power = 0.6;
+
+        double currentBatteryVoltage =  getBatteryVoltage();
+        if(currentBatteryVoltage < 12.5) {
+            power = 0.8;
+        }
+
         if(gamepad.right_bumper) {
-            setPower(0.5d);
+            setPower(power);
             // OpModeUtils.getGlobalStore().setLiftOuttake(true);
         } else if(gamepad.left_bumper) {
-            setPower(-0.5d);
+            setPower(-1 * power);
             // OpModeUtils.getGlobalStore().setLiftOuttake(true);
         } else {
             setPower(0d);
@@ -59,5 +67,17 @@ public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware
         } else {
             rightRoller.setPower(power);
         }
+    }
+
+    // Computes the current battery voltage
+    private double getBatteryVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+        for (VoltageSensor sensor : OpModeUtils.getHardwareMap().voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0) {
+                result = Math.min(result, voltage);
+            }
+        }
+        return result;
     }
 }

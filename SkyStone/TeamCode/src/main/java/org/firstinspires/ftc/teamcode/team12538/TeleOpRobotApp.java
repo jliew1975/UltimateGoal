@@ -30,6 +30,7 @@ public class TeleOpRobotApp extends RobotApp {
                 robot.intake.control(gamepad1);
                 robot.outtake.control(gamepad1);
                 robot.foundationClaw.control(gamepad2);
+                robot.autoStoneArm.control(gamepad2);
 
                 // telemetry printing
                 robot.mecanumDrive.printTelemetry();

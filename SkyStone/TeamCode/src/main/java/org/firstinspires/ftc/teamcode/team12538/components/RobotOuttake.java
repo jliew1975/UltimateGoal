@@ -104,9 +104,9 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
         // outtake slides controls
         if(gamepad.dpad_up && !busy) {
-            outtakeSlides.setPower(0.5);
+            outtakeSlides.setPower(1d);
         } else if(gamepad.dpad_down && !busy) {
-            outtakeSlides.setPower(-0.5);
+            outtakeSlides.setPower(-1d);
         } else {
             if(OpModeUtils.getGlobalStore().isLiftOuttake()) {
                 if(!busy) {
@@ -118,7 +118,6 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                                 @Override
                                 public void run() {
                                     try {
-                                        outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
                                         liftSlideForStoneIntake();
                                     } finally {
                                         busy = false;
@@ -140,7 +139,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         outtakeSlides.printTelemetry();
     }
 
-    private void performStonePickupOperation() {
+    public void performStonePickupOperation() {
         OpModeUtils.getGlobalStore().setDepositMode(false);
 
         RobotFoundationClaw foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
@@ -160,25 +159,19 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         ThreadUtils.sleep(500);
 
         lowerSlideForStonePickup();
-
-        // clam the stone for pickup
-        outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
-        clawMode = ClawMode.Close;
-
-
     }
 
-    private void prepareForStoneDeployment() {
+    public void prepareForStoneDeployment() {
         // make sure the claw is closed/clammed position
-        outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
         clawMode = ClawMode.Close;
+        outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
 
         OpModeUtils.getGlobalStore().setDepositMode(true);
 
         ThreadUtils.sleep(100);
 
         // raise outtake slide
-        liftSlideForStoneIntake();
+        liftSlide();
 
         // swing outtake arm out for stone deployment
         outtakeClaw.setArmPosition(RobotStoneClaw.ARM_DEPLOYMENT_POSITION);
@@ -189,23 +182,21 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         foundationClaw.setClawPosition(RobotFoundationClaw.INIT_POSITION);
     }
 
-    private void liftSlideForStoneIntake() {
-        liftSlide();
-    }
-
-    private void lowerSlideForStonePickup() {
-        lowerSlide();
-    }
-
-    private void liftSlide() {
+    public void liftSlideForStoneIntake() {
+        clawMode = ClawMode.Open;
+        outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
         outtakeSlides.runToPosition(RobotOuttakeSlides.ENCODER_TICKS_FOR_INTAKE);
     }
 
-    private void lowerSlide() {
-        outtakeSlides.runToPosition(RobotOuttakeSlides.ENCODER_TICKS_FOR_STONE_PICKUP);
+    public void lowerSlideForStonePickup() {
+        lowerSlide();
+
+        // clam the stone for pickup
+        clawMode = ClawMode.Close;
+        outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
     }
 
-    private void performOuttakeClawOperation() {
+    public void performOuttakeClawOperation() {
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
@@ -219,10 +210,18 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                 } finally {
                     clawMode =
                             (clawMode == ClawMode.Open) ?
-                                ClawMode.Close : ClawMode.Open;
+                                    ClawMode.Close : ClawMode.Open;
                     busy = false;
                 }
             }
         });
+    }
+
+    private void liftSlide() {
+        outtakeSlides.runToPosition(RobotOuttakeSlides.ENCODER_TICKS_FOR_DEPLOY);
+    }
+
+    private void lowerSlide() {
+        outtakeSlides.runToPosition(RobotOuttakeSlides.ENCODER_TICKS_FOR_STONE_PICKUP);
     }
 }

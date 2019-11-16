@@ -46,12 +46,26 @@ public class TensorFlowDetector implements VisionDetector {
      */
     private TFObjectDetector tfod;
 
+    private volatile boolean targetVisible = false;
+    private volatile boolean targetAligned = false;
+    private volatile float targetPosition = 0f;
+
+    private boolean activated = false;
+
     @Override
     public boolean isAligned() {
-        return false;
+        return targetAligned;
     }
 
-    public void activate() {
+    public boolean isTargetVisible() {
+        return targetVisible;
+    }
+
+    public float getTargetPosition() {
+        return targetPosition;
+    }
+
+    public void init() {
         Telemetry telemetry = OpModeUtils.getTelemetry();
 
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
@@ -74,11 +88,16 @@ public class TensorFlowDetector implements VisionDetector {
 
         telemetry.update();
 
+    }
+
+    public void activate() {
+        activated = true;
         ThreadUtils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
-                Telemetry telemetry = OpModeUtils.getTelemetry();
-                while(OpModeUtils.opModeIsActive()) {
+                while(activated) {
+                    Telemetry telemetry = OpModeUtils.getTelemetry();
+
                     if (tfod != null) {
                         // getUpdatedRecognitions() will return null if no new information is available since
                         // the last time that call was made.
@@ -89,6 +108,12 @@ public class TensorFlowDetector implements VisionDetector {
                             // step through the list of recognitions and display boundary info.
                             int i = 0;
                             for (Recognition recognition : updatedRecognitions) {
+                                if (recognition.getLabel().equals("Skystone")) {
+                                    targetVisible = true;
+                                    targetPosition = recognition.getLeft();
+                                    targetAligned = recognition.getLeft() > -80;
+                                }
+
                                 telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                                 telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
                                         recognition.getLeft(), recognition.getTop());
@@ -101,6 +126,13 @@ public class TensorFlowDetector implements VisionDetector {
                 }
             }
         });
+    }
+
+    public void deactivate() {
+        if(tfod != null) {
+            activated = false;
+            tfod.deactivate();
+        }
     }
 
     /**

@@ -25,12 +25,24 @@ public class AutoGamepadUtils {
             case StrafeRight:
                 gamepad.left_stick_x = power;
                 break;
+        }
+    }
+
+    public static void turn(AutoGamepad gamepad,
+                            MecanumDrive.AutoDirection direction,
+                            double power,
+                            double degree) {
+        gamepad.power = power;
+
+        switch(direction) {
             case TurnLeft:
+                gamepad.turnDegree = -1 * degree;
                 gamepad.right_stick_x = -1 * power;
                 break;
             case TurnRight:
+                gamepad.turnDegree = degree;
                 gamepad.right_stick_x = power;
-
+                break;
         }
     }
 }

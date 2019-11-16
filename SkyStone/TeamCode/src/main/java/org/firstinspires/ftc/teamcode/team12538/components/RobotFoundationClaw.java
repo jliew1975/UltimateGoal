@@ -36,29 +36,10 @@ public class RobotFoundationClaw implements RobotComponent, ControlAware, Teleme
 
     @Override
     public void control(Gamepad gamepad) {
-        if(gamepad.a) {
-            if(!busy) {
-                synchronized (lock) {
-                    if(!busy) {
-                        busy = true;
-                        ThreadUtils.getExecutorService().submit(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    if(servoClawMode == ClawMode.Open) {
-                                        lowerClaw();
-                                    } else {
-                                        raiseClaw();
-                                    }
-                                    ThreadUtils.sleep(100);
-                                } finally {
-                                    busy = false;
-                                }
-                            }
-                        });
-                    }
-                }
-            }
+        if(gamepad.y) {
+            raiseClaw();
+        } else if(gamepad.a) {
+            lowerClaw();
         }
     }
 

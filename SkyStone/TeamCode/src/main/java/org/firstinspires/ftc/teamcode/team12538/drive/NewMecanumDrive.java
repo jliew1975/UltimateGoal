@@ -3,9 +3,10 @@ package org.firstinspires.ftc.teamcode.team12538.drive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+
+import static org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils.sleep;
 
 public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
     // Declare information about robot
@@ -37,21 +38,15 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         // Calculate factor to scale all wheel powers to make less than 1
         double scaleFactor = 1 / maxPower;
 
+        /*
         if(OpModeUtils.getGlobalStore().isFoundationClawDown()) {
-            scaleFactor *= 0.3 ;
+            scaleFactor *= 0.5 ;
         }
+        */
 
         if(gamepad.left_trigger > 0) {
             scaleFactor *= 0.5;
         }
-
-        // Set motors to correct powers
-        /*
-        leftFront.setPower(leftFrontPower * scaleFactor);
-        leftRear.setPower(leftRearPower * scaleFactor);
-        rightRear.setPower(rightRearPower * scaleFactor);
-        rightFront.setPower(rightFrontPower * scaleFactor);
-        */
 
         // Due to uneven weight distribution on the robot,
         // power for the rear wheel motors are multiplied by the rearWheelFactor to slow it down
@@ -91,6 +86,11 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         // Calculate factor to scale all wheel powers to make less than 1
         double scaleFactor = gamepad.power;
 
+        leftFront.setPower(Math.signum(leftFrontPower) * scaleFactor);
+        leftRear.setPower(Math.signum(leftRearPower) * scaleFactor);
+        rightRear.setPower(Math.signum(rightRearPower) * scaleFactor);
+        rightFront.setPower(Math.signum(rightFrontPower) * scaleFactor);
+
         // Calculate the destination encoder tick values for the given distance
         int[] targetPositions = new int[gamepad.isStrafing() ? strafeEncoderMotors.size() : directionalEncoderMotors.size()];
         if(gamepad.isStrafing()) {
@@ -100,40 +100,55 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
                 targetPositions[0] = strafeEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
             }
         } else {
-            if(gamepad.left_stick_y < 0) {
-                targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            if(gamepad.isTurning()) {
+                if(gamepad.right_stick_x < 0) {
+                    targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                    targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                } else {
+                    targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                    targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                }
             } else {
-                targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                if(gamepad.left_stick_y < 0) {
+                    targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                    targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                } else {
+                    targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                    targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                }
             }
         }
 
-        leftFront.setPower(leftFrontPower * scaleFactor);
-        leftRear.setPower(leftRearPower * scaleFactor);
-        rightRear.setPower(rightRearPower * scaleFactor);
-        rightFront.setPower(rightFrontPower * scaleFactor);
-
         runtime.reset();
-        while(OpModeUtils.opModeIsActive()) { //&& runtime.seconds() < gamepad.timeout) {
-
-            if(gamepad.isStrafing()) {
+        while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout) {
+            if(gamepad.isTurning()) {
+                if((gamepad.right_stick_x < 0 && (directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0] ||
+                            directionalEncoderMotors.get(1).getCurrentPosition() >= targetPositions[1])) ||
+                        (gamepad.right_stick_x > 0 && (directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
+                            directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1])))
+                {
+                    break;
+                }
+            } else if(gamepad.isStrafing()) {
                 if((Math.signum(gamepad.left_stick_x) >= 0 && strafeEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0]) ||
                         (Math.signum(gamepad.left_stick_x) < 0 && strafeEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0]))
                 {
                     break;
                 }
             } else {
-                if((Math.signum(gamepad.left_stick_y) >= 0 &&
+                if(gamepad.left_stick_y >= 0 &&
                     (directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
-                            directionalEncoderMotors.get(1).getCurrentPosition() >= targetPositions[1])) ||
-                        (Math.signum(gamepad.left_stick_y) < 0 &&
+                            directionalEncoderMotors.get(1).getCurrentPosition() >= targetPositions[1]) ||
+                        (gamepad.left_stick_y < 0 &&
                                 (directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0] ||
                                         directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1]))) {
                     break;
                 }
             }
 
+            if(gamepad.detector != null && gamepad.detector.isAligned()) {
+                break;
+            }
 
             // report target and current positions to driver station
             if(gamepad.isStrafing()) {
@@ -169,5 +184,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
     @Override
     public void printTelemetry() {
         telemetry.addData("leftRear", leftRear.getCurrentPosition());
+        telemetry.addData("leftFront", leftFront.getCurrentPosition());
+        telemetry.addData("rightFront", rightFront.getCurrentPosition());
     }
 }
