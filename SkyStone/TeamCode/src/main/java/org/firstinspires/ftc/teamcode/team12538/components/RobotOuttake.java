@@ -36,7 +36,6 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                             @Override
                             public void run() {
                                 try {
-                                    outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
                                     liftSlideForStoneIntake();
                                 } finally {
                                     busy = false;
