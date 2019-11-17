@@ -142,14 +142,16 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     public void performStonePickupOperation() {
         OpModeUtils.getGlobalStore().setDepositMode(false);
 
-        RobotFoundationClaw foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
-        foundationClaw.setClawPosition(RobotFoundationClaw.A_POSITION);
+        if(outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION) {
+            RobotFoundationClaw foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
+            foundationClaw.setClawPosition(RobotFoundationClaw.A_POSITION);
+        }
 
         if (outtakeSlides.getCurrentPosition() < 1750 && outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION) {
             liftSlide();
         }
 
-        foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
+        RobotFoundationClaw foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
         foundationClaw.setClawPosition(RobotFoundationClaw.LOWER_CLAW_POS);
 
         ThreadUtils.sleep(200);
@@ -192,6 +194,10 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     }
 
     public void lowerSlideForStonePickup() {
+        if(outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_STONE_PICKUP_POSITION) {
+            outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
+        }
+
         lowerSlide();
 
         // clam the stone for pickup
@@ -207,7 +213,11 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                     if(clawMode == ClawMode.Open) {
                         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
                     } else {
-                        outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+                        if (outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION) {
+                            outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+                        } else {
+                            outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
+                        }
                     }
                     ThreadUtils.sleep(500);
                 } finally {
