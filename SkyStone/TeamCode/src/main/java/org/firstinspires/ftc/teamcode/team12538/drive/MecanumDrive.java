@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.team12538.drive;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -7,11 +9,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
-import org.firstinspires.ftc.teamcode.team12538.dogecv.VisionDetector;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,13 +25,12 @@ import java.util.Set;
 
 public class MecanumDrive implements TeleOpDrive {
     public enum AutoDirection {Forward, Backward, TurnLeft, TurnRight, StrafeLeft, StrafeRight}
-    public enum AutoStrafingDirection { Left, Right }
 
     protected final double WHEEL_COUNTS_PER_REV = 537.6;
     protected final double DEAD_WHEEL_COUNTS_PER_REV = 1600;
 
     protected final double WHEEL_DIAMETER_INCHES = 4.0;
-    protected final double DEAD_WHEEL_DIAMETER_INCHES = 2.0;
+    protected final double DEAD_WHEEL_DIAMETER_INCHES = 1.96;
 
     protected final double PI = 3.1415;
     protected final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_INCHES * PI;
@@ -40,10 +44,10 @@ public class MecanumDrive implements TeleOpDrive {
     protected final double DEAD_WHEEL_ENCODER_TICKS_PER_INCH =
             (DEAD_WHEEL_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / (DEAD_WHEEL_CIRCUMFERENCE);
 
-    protected DcMotorWrapper leftFront = null;
-    protected DcMotorWrapper rightFront = null;
-    protected DcMotorWrapper leftRear = null;
-    protected DcMotorWrapper rightRear = null;
+    public DcMotorWrapper leftFront = null;
+    public DcMotorWrapper rightFront = null;
+    public DcMotorWrapper leftRear = null;
+    public DcMotorWrapper rightRear = null;
 
     protected List<DcMotorWrapper> driveMotorList;
 
@@ -51,6 +55,11 @@ public class MecanumDrive implements TeleOpDrive {
     protected List<DcMotorWrapper> directionalEncoderMotors;
 
     protected Set<String> directionalMotorNames;
+
+    protected BNO055IMUImpl imu = null;
+
+    protected double globalAngle;
+    protected Orientation lastAngles = new Orientation();
 
     protected Telemetry telemetry;
     protected ElapsedTime runtime = new ElapsedTime();
@@ -74,16 +83,33 @@ public class MecanumDrive implements TeleOpDrive {
         directionalEncoderMotors = Arrays.asList(leftFront, rightFront);
         directionalMotorNames = new HashSet<>(Arrays.asList(leftFront.getName(), rightFront.getName()));
 
-        if(OpModeUtils.isDriveEncoderEnabled()) {
+        if(OpModeUtils.isResetEncoder()) {
             MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, driveMotorList);
-            MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
-        } else {
-            MotorUtils.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER, driveMotorList);
         }
 
+        MotorUtils.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER, driveMotorList);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, driveMotorList);
 
         telemetry = OpModeUtils.getOpMode().telemetry;
+    }
+
+    public void init_imu() {
+        imu = OpModeUtils.getHardwareMap().get(BNO055IMUImpl.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.loggingEnabled = false;   //For debugging
+        imu.initialize(parameters);
+
+        while (OpModeUtils.opModeIsActive() && !imu.isGyroCalibrated()) {
+            ThreadUtils.idle();
+        }
+
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        telemetry.addData("imu", "finish imu calabration");
+        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
+        telemetry.update();
     }
 
     // TeleOp Drive APIs
@@ -129,8 +155,8 @@ public class MecanumDrive implements TeleOpDrive {
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, driveMotorList);
     }
 
-    // Telemetry API
 
+    // Telemetry API
     @Override
     public void printTelemetry() {
         Telemetry telemetry = OpModeUtils.getOpMode().telemetry;
