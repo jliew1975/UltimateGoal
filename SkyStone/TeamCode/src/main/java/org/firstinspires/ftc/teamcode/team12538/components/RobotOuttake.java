@@ -36,7 +36,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                             @Override
                             public void run() {
                                 try {
-                                    outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+                                    outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
                                     liftSlideForStoneIntake();
                                 } finally {
                                     busy = false;
@@ -143,11 +143,14 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         OpModeUtils.getGlobalStore().setDepositMode(false);
 
         RobotFoundationClaw foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
-        foundationClaw.setClawPosition(RobotFoundationClaw.LOWER_CLAW_POS);
+        foundationClaw.setClawPosition(RobotFoundationClaw.A_POSITION);
 
         if (outtakeSlides.getCurrentPosition() < 1750 && outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION) {
             liftSlide();
         }
+
+        foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
+        foundationClaw.setClawPosition(RobotFoundationClaw.LOWER_CLAW_POS);
 
         ThreadUtils.sleep(200);
 
@@ -184,7 +187,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
     public void liftSlideForStoneIntake() {
         clawMode = ClawMode.Open;
-        outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+        outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
         outtakeSlides.runToPosition(RobotOuttakeSlides.ENCODER_TICKS_FOR_INTAKE);
     }
 

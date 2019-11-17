@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 public class RobotStoneClaw implements RobotComponent, TelemetryAware {
     public static final double CLAW_CLOSE_POSITION = 1d;
     public static final double CLAW_OPEN_POSITION = 0.5;
+    public static final double CLAW_INTAKE_POSITION = 0d;
 
     public static final double ARM_DEPLOYMENT_POSITION = 1d;
     public static final double ARM_STONE_PICKUP_POSITION = 0d;

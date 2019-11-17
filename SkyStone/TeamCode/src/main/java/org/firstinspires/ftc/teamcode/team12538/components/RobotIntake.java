@@ -28,12 +28,14 @@ public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware
 
     @Override
     public void control(Gamepad gamepad) {
-        double power = 0.6;
+        double power = 0.8;
 
+        /*
         double currentBatteryVoltage =  getBatteryVoltage();
-        if(currentBatteryVoltage < 12.5) {
-            power = 0.8;
+        if(currentBatteryVoltage < 12.2) {
+            power = 1d;
         }
+        */
 
         if(gamepad.right_bumper) {
             setPower(power);
