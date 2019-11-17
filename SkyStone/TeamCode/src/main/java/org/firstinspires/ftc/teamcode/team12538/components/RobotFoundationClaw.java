@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 public class RobotFoundationClaw implements RobotComponent, ControlAware, TelemetryAware {
     public static final double INIT_POSITION = 0.88;
-    public static final double A_POSITION = 0.9;
+    public static final double A_POSITION = 0.9d;
     public static final double RAISE_CLAW_POS = 0.4;
     public static final double LOWER_CLAW_POS = 0d;
 

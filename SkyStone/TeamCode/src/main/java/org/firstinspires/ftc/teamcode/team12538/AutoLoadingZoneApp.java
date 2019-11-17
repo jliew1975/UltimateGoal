@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.team12538;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
 import org.firstinspires.ftc.teamcode.team12538.detectors.vuforia.VuforiaDetector;
@@ -14,6 +16,8 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 public class AutoLoadingZoneApp extends RobotApp {
     private AutoGamepad gamepad = null;
     private SkyStoneAutoRobot robot = null;
+
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void performRobotOperation() throws InterruptedException {

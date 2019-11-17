@@ -183,7 +183,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         ThreadUtils.sleep(500);
 
         RobotFoundationClaw foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
-        foundationClaw.setClawPosition(RobotFoundationClaw.INIT_POSITION);
+        foundationClaw.setClawPosition(RobotFoundationClaw.A_POSITION);
     }
 
     public void liftSlideForStoneIntake() {
