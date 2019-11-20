@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.team12538;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.team12538.utils.AutoColor;
+import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
+import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public abstract class RobotApp extends LinearOpMode {
-    public AutoColor autoColor = AutoColor.Unknown;
+    public AutonomousMode autoMode = AutonomousMode.Unknown;
+    public AutonomousColor autoColor = AutonomousColor.Unknown;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -41,6 +43,10 @@ public abstract class RobotApp extends LinearOpMode {
                 return MecanumDrive.AutoDirection.TurnLeft;
             case TurnLeft:
                 return MecanumDrive.AutoDirection.TurnRight;
+            case ConceringRight:
+                return MecanumDrive.AutoDirection.ConceringLeft;
+            case ConceringLeft:
+                return MecanumDrive.AutoDirection.ConceringRight;
             case StrafeLeft:
                 return MecanumDrive.AutoDirection.StrafeRight;
             default:

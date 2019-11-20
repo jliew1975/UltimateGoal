@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.team12538.drive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
@@ -86,18 +87,20 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         // Calculate factor to scale all wheel powers to make less than 1
         double scaleFactor = gamepad.power;
 
-        leftFront.setPower(Math.signum(leftFrontPower) * scaleFactor);
-        leftRear.setPower(Math.signum(leftRearPower) * scaleFactor);
-        rightRear.setPower(Math.signum(rightRearPower) * scaleFactor);
-        rightFront.setPower(Math.signum(rightFrontPower) * scaleFactor);
 
         // Calculate the destination encoder tick values for the given distance
         int[] targetPositions = new int[gamepad.isStrafing() ? strafeEncoderMotors.size() : directionalEncoderMotors.size()];
         if(gamepad.isStrafing()) {
-            if(gamepad.left_stick_x < 0) {
+            if (gamepad.left_stick_x < 0) {
                 targetPositions[0] = strafeEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
             } else {
                 targetPositions[0] = strafeEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            }
+        } else if(gamepad.isCornering()) {
+            if(gamepad.conceringRight) {
+                targetPositions[1] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            } else {
+                targetPositions[0] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
             }
         } else {
             if(gamepad.isTurning()) {
@@ -119,9 +122,29 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
             }
         }
 
+        if(gamepad.isCornering()) {
+            if(gamepad.conceringLeft) {
+                rightRear.setPower(Math.signum(rightRearPower) * scaleFactor);
+                rightFront.setPower(Math.signum(rightFrontPower) * scaleFactor);
+            } else {
+                leftFront.setPower(Math.signum(leftFrontPower) * scaleFactor);
+                leftRear.setPower(Math.signum(leftRearPower) * scaleFactor);
+            }
+        } else {
+            leftFront.setPower(Math.signum(leftFrontPower) * scaleFactor);
+            leftRear.setPower(Math.signum(leftRearPower) * scaleFactor);
+            rightRear.setPower(Math.signum(rightRearPower) * scaleFactor);
+            rightFront.setPower(Math.signum(rightFrontPower) * scaleFactor);
+        }
+
         runtime.reset();
         while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout) {
-            if(gamepad.isTurning()) {
+            if(gamepad.isCornering()) {
+                if((gamepad.conceringRight && directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1]) ||
+                        (gamepad.conceringLeft && directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0])) {
+                    break;
+                }
+            } else if(gamepad.isTurning()) {
                 if((gamepad.right_stick_x < 0 && (directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0] ||
                             directionalEncoderMotors.get(1).getCurrentPosition() >= targetPositions[1])) ||
                         (gamepad.right_stick_x > 0 && (directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
@@ -146,11 +169,14 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
                 }
             }
 
-            if(gamepad.detector != null && gamepad.detector.isAligned()) {
+            if(gamepad.detector != null && gamepad.detector.isDetected()) {
                 break;
             }
 
+            // TODO: What should we do if the left and right encoder have different values
+
             // report target and current positions to driver station
+            /*
             if(gamepad.isStrafing()) {
                 // report target and current positions to driver station
                 telemetry.addData("Target", "Running to %7d",
@@ -175,6 +201,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
             }
 
             telemetry.update();
+            */
         }
 
         stop();
@@ -183,7 +210,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
 
     @Override
     public void printTelemetry() {
-        telemetry.addData("leftRear", leftRear.getCurrentPosition());
+        telemetry.addData("strafe", leftRear.getCurrentPosition());
         telemetry.addData("leftFront", leftFront.getCurrentPosition());
         telemetry.addData("rightFront", rightFront.getCurrentPosition());
     }

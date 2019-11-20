@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.team12538;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.team12538.utils.AutoColor;
+import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
+import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
 
-@Autonomous(name="Auto Red (Building Zone)", group="Linear Opmode")
+@Autonomous(name="Red Building", group="Linear Opmode")
 public class AutoBuildingRedApp extends AutoBuildingZoneApp {
     public AutoBuildingRedApp() {
         super();
-        super.autoColor = AutoColor.Red;
+        super.autoMode = AutonomousMode.RedBuilding;
+        super.autoColor = AutonomousColor.Red;
     }
 }
