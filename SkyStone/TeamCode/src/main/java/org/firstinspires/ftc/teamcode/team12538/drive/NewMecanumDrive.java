@@ -217,10 +217,16 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
 
     @Override
     public double toAngleinDegrees(double leftEncoder, double rightEncoder) {
-        return ((rightEncoder - leftEncoder) / (4 * TRACKBASE * Math.PI)) * 360;
+        if (Math.signum(leftEncoder * rightEncoder) == -1)
+            return ((rightEncoder - leftEncoder) / (4 * TRACKBASE * Math.PI)) * 360;
+        else
+            return (rightEncoder + leftEncoder) / (2 * TRACKBASE) * 180 / Math.PI
     }
 
     public double toAngleinRadians(double leftEncoder, double rightEncoder) {
-        return ((rightEncoder - leftEncoder) / (4 * TRACKBASE * Math.PI)) * 2 * Math.PI;
+        if (Math.signum(leftEncoder * rightEncoder) == -1)
+            return ((rightEncoder - leftEncoder) / (4 * TRACKBASE * Math.PI)) * 2 * Math.PI;
+        else
+            return (rightEncoder + leftEncoder) / (2 * TRACKBASE);
     }
 }
