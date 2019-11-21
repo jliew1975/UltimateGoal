@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode.team12538.drive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
-import static org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils.sleep;
-
 public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
+    MotorPower motorPower = new MotorPower();
+
     // Declare information about robot
     private static final double TRACKLENGTH = 6;
     private static final double TRACKBASE = 7.645;
@@ -85,8 +84,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         double maxPower = Math.max(maxLeftPower, maxRightPower);
 
         // Calculate factor to scale all wheel powers to make less than 1
-        double scaleFactor = gamepad.power;
-
+        double scaleFactor = (1 / maxPower) * gamepad.power;
 
         // Calculate the destination encoder tick values for the given distance
         int[] targetPositions = new int[gamepad.isStrafing() ? strafeEncoderMotors.size() : directionalEncoderMotors.size()];
@@ -123,7 +121,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         }
 
         if(gamepad.isCornering()) {
-            if(gamepad.conceringLeft) {
+            if (gamepad.conceringLeft) {
                 rightRear.setPower(Math.signum(rightRearPower) * scaleFactor);
                 rightFront.setPower(Math.signum(rightFrontPower) * scaleFactor);
             } else {
@@ -138,6 +136,11 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         }
 
         runtime.reset();
+
+        // int rightOldEncoderVal = rightFront.getCurrentPosition();
+        // int leftOldEncoderVal = leftFront.getCurrentPosition();
+
+        int rightOldEncoderVal = 0, leftOldEncoderVal = 0;
         while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout) {
             if(gamepad.isCornering()) {
                 if((gamepad.conceringRight && directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1]) ||
@@ -158,6 +161,19 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
                 {
                     break;
                 }
+
+                double angleRad = -toAngleinRadians(
+                        (rightFront.getCurrentPosition() - rightOldEncoderVal) / DEAD_WHEEL_ENCODER_TICKS_PER_INCH,
+                        (leftFront.getCurrentPosition() - leftOldEncoderVal) / DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+
+                gamepad.right_stick_x = angleRad * 20;
+                calculateMotorPower(gamepad, motorPower);
+
+                leftFront.setPower(motorPower.leftFront);
+                leftRear.setPower(motorPower.leftRear);
+                rightRear.setPower(motorPower.rightRear);
+                rightFront.setPower(motorPower.rightFront);
+
             } else {
                 if(gamepad.left_stick_y >= 0 &&
                     (directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
@@ -172,6 +188,9 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
             if(gamepad.detector != null && gamepad.detector.isDetected()) {
                 break;
             }
+
+            leftOldEncoderVal = leftFront.getCurrentPosition();
+            rightOldEncoderVal = rightFront.getCurrentPosition();
 
             // TODO: What should we do if the left and right encoder have different values
 
@@ -215,18 +234,43 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         telemetry.addData("rightFront", rightFront.getCurrentPosition());
     }
 
-    @Override
-    public double toAngleinDegrees(double leftEncoder, double rightEncoder) {
+    private double toAngleinDegrees(double leftEncoder, double rightEncoder) {
         if (Math.signum(leftEncoder * rightEncoder) == -1)
             return ((rightEncoder - leftEncoder) / (4 * TRACKBASE * Math.PI)) * 360;
         else
-            return (rightEncoder + leftEncoder) / (2 * TRACKBASE) * 180 / Math.PI
+            return (rightEncoder + leftEncoder) / (2 * TRACKBASE) * 180 / Math.PI;
     }
 
-    public double toAngleinRadians(double leftEncoder, double rightEncoder) {
+    private double toAngleinRadians(double leftEncoder, double rightEncoder) {
         if (Math.signum(leftEncoder * rightEncoder) == -1)
             return ((rightEncoder - leftEncoder) / (4 * TRACKBASE * Math.PI)) * 2 * Math.PI;
         else
             return (rightEncoder + leftEncoder) / (2 * TRACKBASE);
+    }
+
+    private void calculateMotorPower(AutoGamepad gamepad, MotorPower motorPower) {
+        // Set desired velocities
+        double xVelocity = gamepad.left_stick_y;
+        double yVelocity = gamepad.left_stick_x;
+        double angularVelocity = gamepad.right_stick_x;
+
+        // Convert desired velocities into wheel velocities
+        double leftFrontPower = (xVelocity - yVelocity - (TRACKBASE + TRACKLENGTH) * (angularVelocity)) / WHEELRADIUS;
+        double leftRearPower = (xVelocity + yVelocity - (TRACKBASE + TRACKLENGTH) * (angularVelocity)) / WHEELRADIUS;
+        double rightRearPower = (xVelocity - yVelocity + (TRACKBASE + TRACKLENGTH) * (angularVelocity)) / WHEELRADIUS;
+        double rightFrontPower = (xVelocity + yVelocity + (TRACKBASE + TRACKLENGTH) * (angularVelocity)) / WHEELRADIUS;
+
+        // Calculate wheel with max power
+        double maxLeftPower = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
+        double maxRightPower = Math.max(Math.abs(rightFrontPower), Math.abs(rightRearPower));
+        double maxPower = Math.max(maxLeftPower, maxRightPower);
+
+        // Calculate factor to scale all wheel powers to make less than 1
+        double scaleFactor = (1 / maxPower) * gamepad.power;
+
+        motorPower.leftFront = leftFrontPower * scaleFactor;
+        motorPower.rightFront = rightFrontPower * scaleFactor;
+        motorPower.leftRear = leftRearPower * scaleFactor;
+        motorPower.rightRear = rightRearPower * scaleFactor;
     }
 }

@@ -38,7 +38,7 @@ public class AutoGamepad {
     }
 
     public boolean isTurning() {
-        return right_stick_x != 0;
+        return left_stick_x == 0 && right_stick_x != 0;
     }
 
     public boolean isCornering() {

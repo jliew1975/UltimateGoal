@@ -51,6 +51,7 @@ public class DcMotorWrapper implements DcMotor {
     }
 
     @Override
+    @Deprecated
     public void setPowerFloat() {
         this.dcMotor.setPowerFloat();
     }

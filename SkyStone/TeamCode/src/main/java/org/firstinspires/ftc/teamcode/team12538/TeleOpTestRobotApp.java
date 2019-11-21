@@ -50,20 +50,21 @@ public class TeleOpTestRobotApp extends RobotApp {
             final double SCALE_FACTOR = 255;
 
             while (!isStarted() && !isStopRequested()) {
-                Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
-                        (int) (sensorColor.green() * SCALE_FACTOR),
-                        (int) (sensorColor.blue() * SCALE_FACTOR),
-                        hsvValues);
-
+                telemetry.addData("Distance (cm)",
+                        String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
                 // send the info back to driver station using telemetry function.
-                robot.mecanumDrive.printTelemetry();
+                // robot.mecanumDrive.printTelemetry();
                 telemetry.update();
             }
 
             while(opModeIsActive()) {
                 if(gamepad1.a) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.ConceringLeft, 0.3,30);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.3,20);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
+                } else if (gamepad1.b) {
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, 0.3, 20);
+                    robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
+
                 }
             }
         } finally {

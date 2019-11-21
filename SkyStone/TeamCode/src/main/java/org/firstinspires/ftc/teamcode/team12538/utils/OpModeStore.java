@@ -70,6 +70,7 @@ public class OpModeStore {
         this.liftOuttake = liftOuttake;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends RobotComponent> T getComponent(String name) {
         return (T) componentMap.get(name);
     }
