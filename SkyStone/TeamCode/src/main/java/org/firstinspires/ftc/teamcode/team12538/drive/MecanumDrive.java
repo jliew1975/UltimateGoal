@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
+import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 public class MecanumDrive implements TeleOpDrive {
-    public enum AutoDirection {Forward, Backward, TurnLeft, TurnRight, StrafeLeft, StrafeRight}
+    public enum AutoDirection {Forward, Backward, TurnLeft, TurnRight, StrafeLeft, StrafeRight, ConceringLeft, ConceringRight}
 
     protected final double WHEEL_COUNTS_PER_REV = 537.6;
     protected final double DEAD_WHEEL_COUNTS_PER_REV = 1600;
@@ -64,6 +65,8 @@ public class MecanumDrive implements TeleOpDrive {
     protected Telemetry telemetry;
     protected ElapsedTime runtime = new ElapsedTime();
 
+    protected ExpansionHubEx expansionHub;
+
     @Override
     public void init() {
         // Do all the initial stuff
@@ -89,6 +92,8 @@ public class MecanumDrive implements TeleOpDrive {
 
         MotorUtils.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER, driveMotorList);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, driveMotorList);
+
+        expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
 
         telemetry = OpModeUtils.getOpMode().telemetry;
     }

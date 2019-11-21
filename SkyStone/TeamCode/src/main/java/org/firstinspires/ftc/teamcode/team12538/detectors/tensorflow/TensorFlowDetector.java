@@ -8,14 +8,14 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.team12538.detectors.VisionDetector;
+import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetector;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 import org.firstinspires.ftc.teamcode.team12538.vuforia.VuforiaLicense;
 
 import java.util.List;
 
-public class TensorFlowDetector implements VisionDetector {
+public class TensorFlowDetector implements RobotDetector {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
@@ -53,7 +53,7 @@ public class TensorFlowDetector implements VisionDetector {
     private boolean activated = false;
 
     @Override
-    public boolean isAligned() {
+    public boolean isDetected() {
         return targetAligned;
     }
 

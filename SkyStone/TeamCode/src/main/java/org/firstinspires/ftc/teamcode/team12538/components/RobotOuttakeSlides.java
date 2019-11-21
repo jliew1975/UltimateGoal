@@ -18,7 +18,7 @@ public class RobotOuttakeSlides implements RobotComponent, TelemetryAware {
     public static final int ENCODER_TICKS_FOR_DEPLOY = 1750;
     public static final int ENCODER_TICKS_FOR_MAX_HEIGHT = 3100;
     public static final int ENCODER_TICKS_FOR_STONE_PICKUP = 20;
-    public static final int ENCODER_TICKS_FOR_INCREMENTAL_STONE_HEIGHT = 250;
+    public static final int ENCODER_TICKS_FOR_STONE_DROP = 500;
 
     private DcMotorWrapper leftOuttakeSlide = null;
     private DcMotorWrapper rightOuttakeSlide = null;

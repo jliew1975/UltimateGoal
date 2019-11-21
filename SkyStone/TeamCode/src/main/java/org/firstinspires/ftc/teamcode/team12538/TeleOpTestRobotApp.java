@@ -6,10 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotDistanceSensor;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
@@ -33,6 +35,10 @@ public class TeleOpTestRobotApp extends RobotApp {
             DistanceSensor sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
             ColorSensor sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
 
+
+            // RobotDistanceSensor distanceSensor = new RobotDistanceSensor("left", 2);
+            // distanceSensor.init();
+
             // hsvValues is an array that will hold the hue, saturation, and value information.
             float hsvValues[] = {0F, 0F, 0F};
 
@@ -50,57 +56,15 @@ public class TeleOpTestRobotApp extends RobotApp {
                         hsvValues);
 
                 // send the info back to driver station using telemetry function.
-                telemetry.addData("Distance (cm)",
-                        String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-                telemetry.addData("Alpha", sensorColor.alpha());
-                telemetry.addData("Red  ", sensorColor.red());
-                telemetry.addData("Green", sensorColor.green());
-                telemetry.addData("Blue ", sensorColor.blue());
-                telemetry.addData("Hue", hsvValues[0]);
-                telemetry.update();
-            }
-
-            if(isStopRequested()) {
-                return;
-            }
-
-            double power = 0.3d;
-
-            while (opModeIsActive()) {
-
-                if(gamepad1.a) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, power,20.0);
-                    robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
-                } else if(gamepad1.y) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, power,20.0);
-                    robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
-                } else if(gamepad1.x) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, power,10.0);
-                    robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
-                    // AutoGamepadUtils.turn(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.2, 45);
-                    // robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
-
-                    // AutoGamepadUtils.turn(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.3, 45);
-                    // robot.mecanumDrive.rotateUsingIMU(autoGamepad);
-                } else if(gamepad1.b) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, power,10.0);
-                    robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
-                    // AutoGamepadUtils.turn(autoGamepad, MecanumDrive.AutoDirection.TurnRight, 0.2, 45);
-                    // robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
-                    // AutoGamepadUtils.turn(autoGamepad, MecanumDrive.AutoDirection.TurnRight, 0.3, 45);
-                    // robot.mecanumDrive.rotateUsingIMU(autoGamepad);
-                }
-
                 robot.mecanumDrive.printTelemetry();
                 telemetry.update();
+            }
 
-                /*
-                if(gamepad1.y) {
-                    robot.autoStoneArm.setPosition(1d);
-                } else if(gamepad1.a) {
-                    robot.autoStoneArm.setPosition(0.45);
+            while(opModeIsActive()) {
+                if(gamepad1.a) {
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.ConceringLeft, 0.3,30);
+                    robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 }
-                */
             }
         } finally {
             OpModeUtils.stop();

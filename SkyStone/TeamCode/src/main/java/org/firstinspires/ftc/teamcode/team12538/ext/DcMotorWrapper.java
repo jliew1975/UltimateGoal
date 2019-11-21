@@ -5,13 +5,15 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.openftc.revextensions2.ExpansionHubMotor;
+
 public class DcMotorWrapper implements DcMotor {
     private String name;
-    private DcMotor dcMotor;
+    private ExpansionHubMotor dcMotor;
 
     public DcMotorWrapper(String name, HardwareMap hardwareMap) {
         this.name = name;
-        this.dcMotor = hardwareMap.get(DcMotor.class, name);
+        this.dcMotor = (ExpansionHubMotor) hardwareMap.dcMotor.get(name);
     }
 
     public String getName() {
@@ -136,5 +138,9 @@ public class DcMotorWrapper implements DcMotor {
     @Override
     public void close() {
         this.dcMotor.close();
+    }
+
+    public ExpansionHubMotor getMotor() {
+        return dcMotor;
     }
 }

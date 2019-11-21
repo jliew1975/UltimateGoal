@@ -3,15 +3,16 @@ package org.firstinspires.ftc.teamcode.team12538;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
-import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotOuttakeSlides;
 import org.firstinspires.ftc.teamcode.team12538.detectors.vuforia.VuforiaDetector;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive.AutoDirection;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
-import org.firstinspires.ftc.teamcode.team12538.utils.AutoColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeStore;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.RobotUtils;
 
 public class AutoLoadingZoneApp extends RobotApp {
     private AutoGamepad gamepad = null;
@@ -33,7 +34,7 @@ public class AutoLoadingZoneApp extends RobotApp {
         robot = new SkyStoneAutoRobot();
         robot.init();
 
-        VuforiaDetector detector = new VuforiaDetector(autoColor);
+        VuforiaDetector detector = new VuforiaDetector();
         detector.init();
         // detector.activate();
         detector.activate(VuforiaDetector.TargetMode.StoneDetection);
@@ -48,19 +49,32 @@ public class AutoLoadingZoneApp extends RobotApp {
     }
 
     private void autoVuforiaLogic(VuforiaDetector detector) {
-        AutoGamepadUtils.move(gamepad, AutoDirection.Forward, 0.3, 16);
+        AutoGamepadUtils.move(gamepad, AutoDirection.Forward, 0.3, 20);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.outtake.liftSlideForStoneIntake();
-
         // wait for 1 second for vuforia to pickup skystone position.
-        sleep(1000);
-        VuforiaDetector.TargetPosition position = detector.getTargetPosition();
+        sleep(2000);
+
+        detector.targetPosition = VuforiaDetector.TargetPosition.Left;
+        if(!detector.isTargetVisible()) {
+            AutoGamepadUtils.move(gamepad, AutoDirection.StrafeRight, 0.3, 7);
+            robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+
+            // wait for 1 second for vuforia to pickup skystone position.
+            sleep(1000);
+            if(detector.isTargetVisible()) {
+                detector.targetPosition = VuforiaDetector.TargetPosition.Center;
+            } else {
+                detector.targetPosition = VuforiaDetector.TargetPosition.Right;
+            }
+        }
+
+        robot.outtake.liftSlideForStoneIntake();
 
         // enable intake rollers
         robot.intake.setPower(0.6);
 
-        switch (position) {
+        switch (detector.targetPosition) {
             case Left:
                 executeLeftLogic();
                 break;
@@ -74,72 +88,9 @@ public class AutoLoadingZoneApp extends RobotApp {
         sleep(500);
     }
 
-    private void autoArmLogic() {
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.StrafeLeft), 0.3, 30);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        robot.autoStoneArm.setPosition(RobotStoneArm.DOWN);
-
-        sleep(300);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.StrafeRight), 0.3, 13);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.Forward), 0.5, 40);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.autoStoneArm.setPosition(RobotStoneArm.UP);
-        sleep(300);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.Backward), 0.5, 10);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        gamepad.timeout = 3d;
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.StrafeLeft), 0.3, 10);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.StrafeRight), 0.3, 5);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.Backward), 0.5, 40);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.turn(gamepad, resolveDirectionForArm(AutoDirection.TurnRight), 0.2, 10);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.StrafeLeft), 0.3, 12);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.autoStoneArm.setPosition(RobotStoneArm.DOWN);
-
-        sleep(500);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.StrafeRight), 0.3, 13);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.Forward), 0.5, 50);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.autoStoneArm.setPosition(RobotStoneArm.UP);
-        sleep(300);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.Backward), 0.5, 10);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForArm(AutoDirection.StrafeLeft), 0.3, 5d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-    }
-
     private void executeLeftLogic() {
         // Position our robot in an angle due to our roller intake limitation
-        AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.StrafeRight), 0.3, 3d);
+        AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.StrafeRight), 0.3, 10d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         pickupStoneNavigation();
@@ -151,23 +102,16 @@ public class AutoLoadingZoneApp extends RobotApp {
         AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Backward), 0.3, 10d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.intake.setPower(0d);
-        robot.outtake.lowerSlideForStonePickup();
+        RobotUtils.prepareForStonePickup(robot);
 
         // Start of navigation to Building site logic
         AutoGamepadUtils.turn(gamepad, resolveDirectionForVuforia(AutoDirection.TurnLeft), 0.5, 40d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Backward), 0.5, 50d);
+        AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Backward), 0.5, 60d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.outtake.prepareForStoneDeployment();
-
-        sleep(500);
-
-        robot.outtake.performOuttakeClawOperation();
-
-        sleep(500);
+        RobotUtils.deploySkyStone(robot);
 
         AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Forward), 0.5, 5d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
@@ -195,23 +139,16 @@ public class AutoLoadingZoneApp extends RobotApp {
         AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Backward), 0.3, 10d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.intake.setPower(0d);
-        robot.outtake.lowerSlideForStonePickup();
+        RobotUtils.prepareForStonePickup(robot);
 
         // Start of navigation to Building site logic
-        AutoGamepadUtils.turn(gamepad, resolveDirectionForVuforia(AutoDirection.TurnLeft), 0.5, 40d);
+        AutoGamepadUtils.turn(gamepad, resolveDirectionForVuforia(AutoDirection.TurnLeft), 0.5, 50d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Backward), 0.5, 50d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.outtake.prepareForStoneDeployment();
-
-        sleep(500);
-
-        robot.outtake.performOuttakeClawOperation();
-
-        sleep(500);
+        RobotUtils.deploySkyStone(robot);
 
         AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Forward), 0.5, 5d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
@@ -239,8 +176,7 @@ public class AutoLoadingZoneApp extends RobotApp {
         AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Backward), 0.3, 15d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.intake.setPower(0d);
-        robot.outtake.lowerSlideForStonePickup();
+        RobotUtils.prepareForStonePickup(robot);
 
         AutoGamepadUtils.turn(gamepad, resolveDirectionForVuforia(AutoDirection.TurnLeft), 0.5, 40d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
@@ -248,13 +184,7 @@ public class AutoLoadingZoneApp extends RobotApp {
         AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Backward), 0.5, 40d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.outtake.prepareForStoneDeployment();
-
-        sleep(500);
-
-        robot.outtake.performOuttakeClawOperation();
-
-        sleep(500);
+        RobotUtils.deploySkyStone(robot);
 
         AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Forward), 0.5, 5d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
@@ -269,20 +199,16 @@ public class AutoLoadingZoneApp extends RobotApp {
     }
 
     private void pickupStoneNavigation() {
-        // TODO: Need sensor to know if we have stone in the robot.
-        // Currently we assume the stone is in.
-        AutoGamepadUtils.turn(gamepad, resolveDirectionForVuforia(AutoDirection.TurnLeft), 0.2, 15d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Forward), 0.3, 25d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
         AutoGamepadUtils.turn(gamepad, resolveDirectionForVuforia(AutoDirection.TurnLeft), 0.2, 20d);
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+
+        gamepad.detector = robot.intakeSensor;
+        AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Forward), 0.3, 30d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }
 
     private MecanumDrive.AutoDirection resolveDirectionForVuforia(MecanumDrive.AutoDirection currentDirection) {
-        if(autoColor == AutoColor.Blue) {
+        if(autoColor == AutonomousColor.Blue) {
             switch(currentDirection) {
                 case StrafeLeft:
                 case StrafeRight:
@@ -297,7 +223,7 @@ public class AutoLoadingZoneApp extends RobotApp {
     }
 
     private MecanumDrive.AutoDirection resolveDirectionForArm(MecanumDrive.AutoDirection currentDirection) {
-        if(autoColor == AutoColor.Blue) {
+        if(autoColor == AutonomousColor.Blue) {
             switch(currentDirection) {
                 case Forward:
                 case Backward:

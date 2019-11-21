@@ -4,13 +4,13 @@ import com.disnodeteam.dogecv.detectors.skystone.SkystoneDetector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.team12538.detectors.VisionDetector;
+import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetector;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-public class DogeCvDetector implements VisionDetector {
+public class DogeCvDetector implements RobotDetector {
     enum DetectMode { Stone, SkyStone }
 
     private boolean targetVisible = false;
@@ -88,7 +88,7 @@ public class DogeCvDetector implements VisionDetector {
     }
 
     @Override
-    public boolean isAligned() {
+    public boolean isDetected() {
         return targetAligned;
     }
 }

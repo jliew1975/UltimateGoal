@@ -12,8 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.team12538.detectors.VisionDetector;
-import org.firstinspires.ftc.teamcode.team12538.utils.AutoColor;
+import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetector;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 import org.firstinspires.ftc.teamcode.team12538.vuforia.VuforiaLicense;
@@ -27,7 +26,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
-public class VuforiaDetector implements VisionDetector {
+public class VuforiaDetector implements RobotDetector {
     public enum TargetMode { StoneDetection, Navigation }
     public enum TargetPosition { Left, Center, Right, Unknown }
 
@@ -77,19 +76,14 @@ public class VuforiaDetector implements VisionDetector {
     private float targetY = 0;
     private float targetZ = 0;
 
-    private TargetPosition targetPosition = TargetPosition.Unknown;
+    public TargetPosition targetPosition = TargetPosition.Unknown;
 
     VuforiaTrackables targetsSkyStone = null;
     List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
 
-    private AutoColor color;
-
-    public VuforiaDetector(AutoColor color) {
-        this.color = color;
-    }
 
     @Override
-    public boolean isAligned() {
+    public boolean isDetected() {
         return targetAligned;
     }
 
@@ -332,12 +326,6 @@ public class VuforiaDetector implements VisionDetector {
 
                         targetAligned = (Math.abs(targetX) >= 0 && Math.abs(targetX) <= 4.0);
 
-                        if (targetX >= -12.3) {
-                            targetPosition = TargetPosition.Center;
-                        } else {
-                            targetPosition = TargetPosition.Left;
-                        }
-
                         telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                                 translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
 
@@ -349,7 +337,6 @@ public class VuforiaDetector implements VisionDetector {
                         telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
                     } else {
                         targetAligned = false;
-                        targetPosition = TargetPosition.Right;
                         telemetry.addData("Skystone Position", targetPosition);
                     }
                     telemetry.update();

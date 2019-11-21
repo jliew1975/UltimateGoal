@@ -25,6 +25,14 @@ public class AutoGamepadUtils {
             case StrafeRight:
                 gamepad.left_stick_x = power;
                 break;
+            case ConceringLeft:
+                gamepad.left_stick_y = -1 * power;
+                gamepad.conceringLeft = true;
+                break;
+            case ConceringRight:
+                gamepad.left_stick_y = -1 * power;
+                gamepad.conceringRight = true;
+                break;
         }
     }
 
