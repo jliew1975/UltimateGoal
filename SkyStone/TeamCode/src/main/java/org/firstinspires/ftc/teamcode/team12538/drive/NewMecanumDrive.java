@@ -214,4 +214,13 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         telemetry.addData("leftFront", leftFront.getCurrentPosition());
         telemetry.addData("rightFront", rightFront.getCurrentPosition());
     }
+
+    @Override
+    public double toAngleinDegrees(double leftEncoder, double rightEncoder) {
+        return ((rightEncoder - leftEncoder) / (4 * TRACKBASE * Math.PI)) * 360;
+    }
+
+    public double toAngleinRadians(double leftEncoder, double rightEncoder) {
+        return ((rightEncoder - leftEncoder) / (4 * TRACKBASE * Math.PI)) * 2 * Math.PI;
+    }
 }
