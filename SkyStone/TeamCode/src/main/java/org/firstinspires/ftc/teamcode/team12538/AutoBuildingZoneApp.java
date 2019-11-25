@@ -55,7 +55,7 @@ public class AutoBuildingZoneApp extends RobotApp {
 
         sleep(500);
 
-        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeLeft), 0.3,10);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeLeft), 0.5,10);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         // Navigate the to foundation
@@ -82,12 +82,6 @@ public class AutoBuildingZoneApp extends RobotApp {
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         if(sideViewDetector.isDetected()) {
-            // align robot against the field wall
-            leftDistanceSensor.setLimit(0);
-            gamepad.detector = leftDistanceSensor;
-            AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Forward), 0.5,5);
-            robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
             AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Backward), 0.3,18);
             robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
@@ -132,12 +126,10 @@ public class AutoBuildingZoneApp extends RobotApp {
                     default:
                         // executeRightLogic();
                 }
-
-                sleep(500);
             }
         }
 
-        // TODO: Pickup skystone deliver to foundation and park
+        sleep(500);
     }
 
     private MecanumDrive.AutoDirection resolveDirection(MecanumDrive.AutoDirection currentDirection) {

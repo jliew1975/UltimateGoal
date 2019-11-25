@@ -39,8 +39,18 @@ public class RobotDistanceSensor implements RobotComponent, RobotDetectorLimit {
     }
 
     @Override
+    public double getLimit() {
+        return limit;
+    }
+
+    @Override
     public void setLimit(double limit) {
         this.limit = limit;
+    }
+
+    @Override
+    public double getCurrentDistance() {
+        return distanceSensor.getDistance(DistanceUnit.INCH);
     }
 
     public void frontView() {

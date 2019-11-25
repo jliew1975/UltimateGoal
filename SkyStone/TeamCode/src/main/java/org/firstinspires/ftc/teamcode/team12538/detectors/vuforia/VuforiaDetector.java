@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.team12538.detectors.vuforia;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -67,7 +68,8 @@ public class VuforiaDetector implements RobotDetector {
 
     private boolean activated     = false;
     private boolean targetAligned = false;
-    private boolean targetVisible = false;
+    private volatile boolean targetVisible = false;
+
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
@@ -345,6 +347,14 @@ public class VuforiaDetector implements RobotDetector {
         });
     }
 
+    public void wait(long timeoutInSecond, ElapsedTime elapsedTime) {
+        while(OpModeUtils.opModeIsActive() && elapsedTime.seconds() < timeoutInSecond) {
+            if(isTargetVisible()) {
+                break;
+            }
+        }
+    }
+
     private void executeNavigationLogic() {
         Telemetry telemetry = OpModeUtils.getTelemetry();
 
@@ -428,8 +438,10 @@ public class VuforiaDetector implements RobotDetector {
     }
 
     public void deactivate() {
-        activated = false;
-        targetsSkyStone.deactivate();
+        try {
+            activated = false;
+            targetsSkyStone.deactivate();
+        } catch(Throwable th) {}
     }
 
     private static float round (float value, int precision) {

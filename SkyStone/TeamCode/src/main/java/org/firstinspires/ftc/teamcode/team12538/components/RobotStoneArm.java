@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public class RobotStoneArm implements RobotComponent, ControlAware, TelemetryAware {
     public static final double UP = 1d;
-    public static final double DOWN = 0.45;
+    public static final double DOWN = 0d;
 
     private Servo stoneArm;
 
@@ -24,9 +24,14 @@ public class RobotStoneArm implements RobotComponent, ControlAware, TelemetryAwa
         stoneArm.setPosition(UP);
     }
 
+    public double getPosition() {
+        return stoneArm.getPosition();
+    }
+
     public void setPosition(double position) {
         stoneArm.setPosition(position);
     }
+
 
     @Override
     public void printTelemetry() {

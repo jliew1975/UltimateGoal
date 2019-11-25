@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
-import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -59,13 +58,11 @@ public class MecanumDrive implements TeleOpDrive {
 
     protected BNO055IMUImpl imu = null;
 
-    protected double globalAngle;
+    protected double globalAngle = 0d;
     protected Orientation lastAngles = new Orientation();
 
     protected Telemetry telemetry;
     protected ElapsedTime runtime = new ElapsedTime();
-
-    protected ExpansionHubEx expansionHub;
 
     @Override
     public void init() {
@@ -92,8 +89,6 @@ public class MecanumDrive implements TeleOpDrive {
 
         MotorUtils.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER, driveMotorList);
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.BRAKE, driveMotorList);
-
-        expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
 
         telemetry = OpModeUtils.getOpMode().telemetry;
     }
@@ -169,5 +164,26 @@ public class MecanumDrive implements TeleOpDrive {
         telemetry.addData("Right Front Motor", rightFront.getCurrentPosition());
         telemetry.addData("Left Rear Motor", leftRear.getCurrentPosition());
         telemetry.addData("Right Rear Motor", rightRear.getCurrentPosition());
+    }
+
+    public double getAngle()
+    {
+        // We experimentally determined the Z axis is the axis we want to use for heading angle.
+        // We have to process the angle because the imu works in euler angles so the Z axis is
+        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+        if (deltaAngle < -180) {
+            deltaAngle += 360;
+        } else if (deltaAngle > 180) {
+            deltaAngle -= 360;
+        }
+
+        globalAngle += deltaAngle;
+        lastAngles = angles;
+
+        return globalAngle;
     }
 }

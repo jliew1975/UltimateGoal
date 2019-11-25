@@ -18,5 +18,6 @@ public class RobotUtils {
     public static void prepareForStonePickup(SkyStoneAutoRobot robot) {
         robot.intake.setPower(0d);
         robot.outtake.lowerSlideForStonePickup();
+        ThreadUtils.sleep(500);
     }
 }

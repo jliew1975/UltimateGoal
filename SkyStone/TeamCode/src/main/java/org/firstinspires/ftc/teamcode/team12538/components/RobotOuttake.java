@@ -32,6 +32,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                     if(!busy) {
                         busy = true;
                         OpModeUtils.getGlobalStore().setLiftOuttake(false);
+
                         ThreadUtils.getExecutorService().submit(new Runnable() {
                             @Override
                             public void run() {
@@ -166,9 +167,11 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     }
 
     public void prepareForStoneDeployment() {
+        /*
         // make sure the claw is closed/clammed position
         clawMode = ClawMode.Close;
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
+        */
 
         OpModeUtils.getGlobalStore().setDepositMode(true);
 
@@ -227,6 +230,12 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                 }
             }
         });
+    }
+
+    public void conttrolForCapstone(Gamepad gamepad) {
+        if(gamepad.right_bumper) {
+            outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_CAPSTONE_POSITION);
+        }
     }
 
     private void liftSlide() {

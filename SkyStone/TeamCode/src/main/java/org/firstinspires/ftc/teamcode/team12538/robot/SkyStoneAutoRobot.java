@@ -14,6 +14,7 @@ public class SkyStoneAutoRobot extends CommonRobotHardware implements Robot {
     public void init() {
         super.init();
         mecanumDrive.init();
+        mecanumDrive.init_imu();
 
         // leftDistSensor.init();
         // rightDistSensor.init();

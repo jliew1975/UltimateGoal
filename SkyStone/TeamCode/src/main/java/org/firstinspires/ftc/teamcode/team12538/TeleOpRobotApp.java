@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.team12538;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneTeleOpRobot;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeStore;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
@@ -30,6 +31,14 @@ public class TeleOpRobotApp extends RobotApp {
                 robot.intake.control(gamepad1);
                 robot.outtake.control(gamepad1);
                 robot.foundationClaw.control(gamepad2);
+                robot.outtake.conttrolForCapstone(gamepad2);
+
+                if(gamepad2.x) {
+                    robot.stoneArm.setPosition(RobotStoneArm.UP);
+                } else if(gamepad2.b) {
+                    robot.stoneArm.setPosition(RobotStoneArm.DOWN);
+                }
+
 
                 // telemetry printing
                 // robot.mecanumDrive.printTelemetry();

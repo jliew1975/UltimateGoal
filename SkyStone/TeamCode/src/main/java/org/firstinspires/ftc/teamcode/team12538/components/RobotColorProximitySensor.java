@@ -17,7 +17,7 @@ public class RobotColorProximitySensor implements RobotDetector {
 
     public boolean isDetected() {
         Double distance = sensorDistance.getDistance(DistanceUnit.CM);
-        return distance != Double.NaN && distance < 7d;
+        return distance != Double.NaN && distance < 6.55d;
     }
 
 }

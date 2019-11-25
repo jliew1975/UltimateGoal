@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.teamcode.team12538.drive;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
+import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetectorLimit;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
@@ -45,7 +51,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         */
 
         if(gamepad.left_trigger > 0) {
-            scaleFactor *= 0.5;
+            scaleFactor *= 0.3;
         }
 
         // Due to uneven weight distribution on the robot,
@@ -84,7 +90,10 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         double maxPower = Math.max(maxLeftPower, maxRightPower);
 
         // Calculate factor to scale all wheel powers to make less than 1
-        double scaleFactor = (1 / maxPower) * gamepad.power;
+        double scaleFactor = gamepad.power;
+        if(gamepad.isStrafing()) {
+            scaleFactor = (1/ maxPower) * gamepad.power;
+        }
 
         // Calculate the destination encoder tick values for the given distance
         int[] targetPositions = new int[gamepad.isStrafing() ? strafeEncoderMotors.size() : directionalEncoderMotors.size()];
@@ -122,23 +131,28 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
 
         if(gamepad.isCornering()) {
             if (gamepad.conceringLeft) {
-                rightRear.setPower(Math.signum(rightRearPower) * scaleFactor);
-                rightFront.setPower(Math.signum(rightFrontPower) * scaleFactor);
+                rightRear.setPower(rightRearPower * scaleFactor);
+                rightFront.setPower(rightFrontPower * scaleFactor);
             } else {
-                leftFront.setPower(Math.signum(leftFrontPower) * scaleFactor);
-                leftRear.setPower(Math.signum(leftRearPower) * scaleFactor);
+                leftFront.setPower(leftFrontPower * scaleFactor);
+                leftRear.setPower(leftRearPower * scaleFactor);
             }
         } else {
             leftFront.setPower(Math.signum(leftFrontPower) * scaleFactor);
             leftRear.setPower(Math.signum(leftRearPower) * scaleFactor);
             rightRear.setPower(Math.signum(rightRearPower) * scaleFactor);
-            rightFront.setPower(Math.signum(rightFrontPower) * scaleFactor);
+            rightFront.setPower(Math.signum(rightFrontPower)  * scaleFactor);
         }
 
         runtime.reset();
 
         // int rightOldEncoderVal = rightFront.getCurrentPosition();
         // int leftOldEncoderVal = leftFront.getCurrentPosition();
+
+        RobotDetectorLimit detectorLimit = null;
+        if(gamepad.detector != null && gamepad.detector instanceof  RobotDetectorLimit) {
+            detectorLimit = (RobotDetectorLimit) gamepad.detector;
+        }
 
         int rightOldEncoderVal = 0, leftOldEncoderVal = 0;
         while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout) {
@@ -162,11 +176,9 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
                     break;
                 }
 
-                double angleRad = -toAngleinRadians(
-                        (rightFront.getCurrentPosition() - rightOldEncoderVal) / DEAD_WHEEL_ENCODER_TICKS_PER_INCH,
-                        (leftFront.getCurrentPosition() - leftOldEncoderVal) / DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                double angleRad = getAngle() * (Math.PI/180)/10;
 
-                gamepad.right_stick_x = angleRad * 20;
+                gamepad.right_stick_x = angleRad;
                 calculateMotorPower(gamepad, motorPower);
 
                 leftFront.setPower(motorPower.leftFront);
@@ -174,6 +186,11 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
                 rightRear.setPower(motorPower.rightRear);
                 rightFront.setPower(motorPower.rightFront);
 
+                /*
+                double angleRad = -toAngleinRadians(
+                        (rightFront.getCurrentPosition() - rightOldEncoderVal) / DEAD_WHEEL_ENCODER_TICKS_PER_INCH,
+                        (leftFront.getCurrentPosition() - leftOldEncoderVal) / DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                 */
             } else {
                 if(gamepad.left_stick_y >= 0 &&
                     (directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
@@ -185,17 +202,19 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
                 }
             }
 
+            if(detectorLimit != null) {
+                telemetry.addData("Distance", detectorLimit.getCurrentDistance());
+                telemetry.update();
+            }
+
             if(gamepad.detector != null && gamepad.detector.isDetected()) {
                 break;
             }
 
-            leftOldEncoderVal = leftFront.getCurrentPosition();
-            rightOldEncoderVal = rightFront.getCurrentPosition();
-
-            // TODO: What should we do if the left and right encoder have different values
+            //leftOldEncoderVal = leftFront.getCurrentPosition();
+            //rightOldEncoderVal = rightFront.getCurrentPosition();
 
             // report target and current positions to driver station
-            /*
             if(gamepad.isStrafing()) {
                 // report target and current positions to driver station
                 telemetry.addData("Target", "Running to %7d",
@@ -220,7 +239,6 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
             }
 
             telemetry.update();
-            */
         }
 
         stop();

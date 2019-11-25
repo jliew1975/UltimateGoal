@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
-import org.openftc.revextensions2.ExpansionHubEx;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware {
     private DcMotorWrapper leftRoller;
@@ -34,13 +34,6 @@ public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware
     public void control(Gamepad gamepad) {
         double power = 0.8;
 
-        /*
-        double currentBatteryVoltage =  getBatteryVoltage();
-        if(currentBatteryVoltage < 12.2) {
-            power = 1d;
-        }
-        */
-
         if(gamepad.right_bumper) {
             setPower(power);
             // OpModeUtils.getGlobalStore().setLiftOuttake(true);
@@ -54,13 +47,26 @@ public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware
 
     @Override
     public void printTelemetry() {
+        /*
         Telemetry telemetry = OpModeUtils.getTelemetry();
         telemetry.addData("leftRoller", leftRoller.getMotor().getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
         telemetry.addData("rightRoller", rightRoller.getMotor().getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
+        */
     }
 
     public void setPower(double power) {
         setPower(power, false, false);
+    }
+
+    public void setPower(final double power, final long timeout) {
+        ThreadUtils.getExecutorService().submit(new Runnable() {
+            @Override
+            public void run() {
+                setPower(power);
+                ThreadUtils.sleep(timeout);
+                setPower(0);
+            }
+        });
     }
 
     public void setPower(double power, boolean stopleft, boolean stopRight) {
