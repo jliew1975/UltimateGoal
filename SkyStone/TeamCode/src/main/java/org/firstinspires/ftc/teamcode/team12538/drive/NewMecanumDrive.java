@@ -109,23 +109,21 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
             } else {
                 targetPositions[0] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
             }
-        } else {
-            if(gamepad.isTurning()) {
-                if(gamepad.right_stick_x < 0) {
-                    targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                    targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                } else {
-                    targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                    targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                }
+        } else if(gamepad.isTurning()) {
+            if(gamepad.right_stick_x < 0) {
+                targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
             } else {
-                if(gamepad.left_stick_y < 0) {
-                    targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                    targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                } else {
-                    targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                    targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                }
+                targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            }
+        } else {
+            if(gamepad.left_stick_y < 0) {
+                targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+            } else {
+                targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
             }
         }
 
@@ -154,43 +152,29 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
             detectorLimit = (RobotDetectorLimit) gamepad.detector;
         }
 
-        int rightOldEncoderVal = 0, leftOldEncoderVal = 0;
         while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout) {
-            if(gamepad.isCornering()) {
-                if((gamepad.conceringRight && directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1]) ||
-                        (gamepad.conceringLeft && directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0])) {
-                    break;
-                }
-            } else if(gamepad.isTurning()) {
-                if((gamepad.right_stick_x < 0 && (directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0] ||
-                            directionalEncoderMotors.get(1).getCurrentPosition() >= targetPositions[1])) ||
-                        (gamepad.right_stick_x > 0 && (directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
-                            directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1])))
-                {
-                    break;
-                }
-            } else if(gamepad.isStrafing()) {
+            if(gamepad.isStrafing()) {
                 if((Math.signum(gamepad.left_stick_x) >= 0 && strafeEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0]) ||
                         (Math.signum(gamepad.left_stick_x) < 0 && strafeEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0]))
                 {
                     break;
                 }
 
-                double angleRad = getAngle() * (Math.PI/180)/10;
-
-                gamepad.right_stick_x = angleRad;
-                calculateMotorPower(gamepad, motorPower);
-
-                leftFront.setPower(motorPower.leftFront);
-                leftRear.setPower(motorPower.leftRear);
-                rightRear.setPower(motorPower.rightRear);
-                rightFront.setPower(motorPower.rightFront);
-
-                /*
-                double angleRad = -toAngleinRadians(
-                        (rightFront.getCurrentPosition() - rightOldEncoderVal) / DEAD_WHEEL_ENCODER_TICKS_PER_INCH,
-                        (leftFront.getCurrentPosition() - leftOldEncoderVal) / DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
-                 */
+                gamepad.right_stick_x = getAngle() * (Math.PI / 180) / 10;
+                angularAdjustment(gamepad);
+            } if(gamepad.isCornering()) {
+                if((gamepad.conceringRight && directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1]) ||
+                        (gamepad.conceringLeft && directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0])) {
+                    break;
+                }
+            } else if(gamepad.isTurning()) {
+                if((gamepad.right_stick_x < 0 && (directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0] ||
+                        directionalEncoderMotors.get(1).getCurrentPosition() >= targetPositions[1])) ||
+                        (gamepad.right_stick_x > 0 && (directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
+                                directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1])))
+                {
+                    break;
+                }
             } else {
                 if(gamepad.left_stick_y >= 0 &&
                     (directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
@@ -200,6 +184,9 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
                                         directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1]))) {
                     break;
                 }
+
+                gamepad.right_stick_x = getAngle() * (Math.PI / 180) / 10;
+                angularAdjustment(gamepad);
             }
 
             if(detectorLimit != null) {
@@ -210,9 +197,6 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
             if(gamepad.detector != null && gamepad.detector.isDetected()) {
                 break;
             }
-
-            //leftOldEncoderVal = leftFront.getCurrentPosition();
-            //rightOldEncoderVal = rightFront.getCurrentPosition();
 
             // report target and current positions to driver station
             if(gamepad.isStrafing()) {
@@ -266,7 +250,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
             return (rightEncoder + leftEncoder) / (2 * TRACKBASE);
     }
 
-    private void calculateMotorPower(AutoGamepad gamepad, MotorPower motorPower) {
+    private void angularAdjustment(AutoGamepad gamepad) {
         // Set desired velocities
         double xVelocity = gamepad.left_stick_y;
         double yVelocity = gamepad.left_stick_x;
@@ -286,9 +270,9 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         // Calculate factor to scale all wheel powers to make less than 1
         double scaleFactor = (1 / maxPower) * gamepad.power;
 
-        motorPower.leftFront = leftFrontPower * scaleFactor;
-        motorPower.rightFront = rightFrontPower * scaleFactor;
-        motorPower.leftRear = leftRearPower * scaleFactor;
-        motorPower.rightRear = rightRearPower * scaleFactor;
+        leftFront.setPower(leftFrontPower * scaleFactor);
+        leftRear.setPower(leftRearPower * scaleFactor);
+        rightRear.setPower(rightRearPower * scaleFactor);
+        rightFront.setPower(rightFrontPower * scaleFactor);
     }
 }

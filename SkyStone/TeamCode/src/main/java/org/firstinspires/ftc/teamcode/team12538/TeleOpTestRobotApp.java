@@ -23,7 +23,6 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import java.util.Locale;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
-@Disabled
 public class TeleOpTestRobotApp extends RobotApp {
     @Override
     public void performRobotOperation() throws InterruptedException {
@@ -70,10 +69,10 @@ public class TeleOpTestRobotApp extends RobotApp {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 60d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.y) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 0.5, 20d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 0.5, 30d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.a) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.5, 20d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.5, 30d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 }
 

@@ -13,6 +13,8 @@ public class AutoGamepad {
     public double timeout = 5d;
     public double distanceInInches = 0d;
 
+    public boolean turningLeft = false;
+    public boolean turningRight = false;
     public boolean conceringLeft = false;
     public boolean conceringRight = false;
 
@@ -29,6 +31,8 @@ public class AutoGamepad {
         power = 0d;
         timeout = 5d;
         detector = null;
+        turningLeft = false;
+        turningRight = false;
         conceringLeft = false;
         conceringRight = false;
     }
@@ -38,7 +42,7 @@ public class AutoGamepad {
     }
 
     public boolean isTurning() {
-        return left_stick_x == 0 && right_stick_x != 0;
+        return (turningLeft || turningRight);
     }
 
     public boolean isCornering() {

@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
-import org.firstinspires.ftc.teamcode.team12538.utils.RobotUtils;
 
 @Autonomous(name="Loading Red", group="Linear Opmode")
 public class AutoLoadingRedApp extends AutoLoadingZoneApp {
@@ -113,7 +112,7 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
         robot.rightDistSensor.setLimit(4d);
         gamepad.detector = robot.leftDistSensor;
         gamepad.timeout = 2d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.2, 10d);
+        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.2, 9d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         sleep(500);
@@ -203,7 +202,7 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
         robot.rightDistSensor.setLimit(4d);
         gamepad.detector = robot.leftDistSensor;
         gamepad.timeout = 2d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.2, 10d);
+        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.2, 9d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         sleep(500);
@@ -293,7 +292,7 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
         robot.rightDistSensor.setLimit(4d);
         gamepad.detector = robot.leftDistSensor;
         gamepad.timeout = 3d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.2, 20d);
+        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.2, 9d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         sleep(500);
