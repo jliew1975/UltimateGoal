@@ -30,6 +30,10 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         double yVelocity = gamepad.left_stick_x;
         double angularVelocity = gamepad.right_stick_x;
 
+        if(gamepad.left_stick_x != 0 && gamepad.right_stick_x == 0d) {
+            angularVelocity = getAngle() * (Math.PI / 180) / 10;
+        }
+
         // Convert desired velocities into wheel velocities
         double leftFrontPower = (xVelocity - yVelocity - (TRACKBASE + TRACKLENGTH) * (angularVelocity)) / WHEELRADIUS;
         double leftRearPower = (xVelocity + yVelocity - (TRACKBASE + TRACKLENGTH) * (angularVelocity)) / WHEELRADIUS;
@@ -44,12 +48,6 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         // Calculate factor to scale all wheel powers to make less than 1
         double scaleFactor = 1 / maxPower;
 
-        /*
-        if(OpModeUtils.getGlobalStore().isFoundationClawDown()) {
-            scaleFactor *= 0.5 ;
-        }
-        */
-
         if(gamepad.left_trigger > 0) {
             scaleFactor *= 0.3;
         }
@@ -58,8 +56,8 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         // power for the rear wheel motors are multiplied by the rearWheelFactor to slow it down
         // so it can strafe correctly.
         leftFront.setPower(Math.abs(leftFrontPower * scaleFactor) <= 0.2 ? 0d : leftFrontPower * scaleFactor);
-        leftRear.setPower(Math.abs(leftRearPower * scaleFactor * rearWheelFactor) <= 0.2 ? 0d : leftRearPower * scaleFactor * rearWheelFactor);
-        rightRear.setPower(Math.abs(rightRearPower * scaleFactor * rearWheelFactor) <= 0.2 ? 0d : rightRearPower * scaleFactor * rearWheelFactor);
+        leftRear.setPower(Math.abs(leftRearPower * scaleFactor) <= 0.2 ? 0d : leftRearPower * scaleFactor);
+        rightRear.setPower(Math.abs(rightRearPower * scaleFactor) <= 0.2 ? 0d : rightRearPower * scaleFactor);
         rightFront.setPower(Math.abs(rightFrontPower * scaleFactor) <= 0.2 ? 0d : rightFrontPower * scaleFactor);
     }
 
