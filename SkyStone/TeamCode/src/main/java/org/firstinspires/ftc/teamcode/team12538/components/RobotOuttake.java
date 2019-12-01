@@ -167,20 +167,16 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     }
 
     public void prepareForStoneDeployment() {
-        /*
-        // make sure the claw is closed/clammed position
-        clawMode = ClawMode.Close;
-        outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
-        */
-
         OpModeUtils.getGlobalStore().setDepositMode(true);
 
         ThreadUtils.sleep(100);
 
         // raise outtake slide
+        // TODO: Do this in a background thread
         liftSlide();
 
         // swing outtake arm out for stone deployment
+        // TODO: add a check on lift encoder value and then set claw position
         outtakeClaw.setArmPosition(RobotStoneClaw.ARM_DEPLOYMENT_POSITION);
 
         ThreadUtils.sleep(500);

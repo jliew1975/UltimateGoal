@@ -43,10 +43,10 @@ public abstract class RobotApp extends LinearOpMode {
                 return MecanumDrive.AutoDirection.TurnLeft;
             case TurnLeft:
                 return MecanumDrive.AutoDirection.TurnRight;
-            case ConceringRight:
-                return MecanumDrive.AutoDirection.ConceringLeft;
-            case ConceringLeft:
-                return MecanumDrive.AutoDirection.ConceringRight;
+            case CurveRight:
+                return MecanumDrive.AutoDirection.CurveLeft;
+            case CurveLeft:
+                return MecanumDrive.AutoDirection.CurveRight;
             case StrafeLeft:
                 return MecanumDrive.AutoDirection.StrafeRight;
             default:

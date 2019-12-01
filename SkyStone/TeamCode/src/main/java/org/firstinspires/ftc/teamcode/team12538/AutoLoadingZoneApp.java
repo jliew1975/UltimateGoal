@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.team12538;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
-import org.firstinspires.ftc.teamcode.team12538.components.RobotDistanceSensor;
-import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetectorLimit;
-import org.firstinspires.ftc.teamcode.team12538.detectors.vuforia.VuforiaDetector;
+import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
+import org.firstinspires.ftc.teamcode.team12538.detectors.TargetPositionalDetector;
+import org.firstinspires.ftc.teamcode.team12538.detectors.opencv.OpenCvDetector;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive.AutoDirection;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
@@ -34,10 +33,9 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
         robot = new SkyStoneAutoRobot();
         robot.init();
 
-        VuforiaDetector detector = new VuforiaDetector();
+        OpenCvDetector detector = new OpenCvDetector();
         detector.init();
-        // detector.activate();
-        detector.activate(VuforiaDetector.TargetMode.StoneDetection);
+        detector.activate();
 
         waitForStart();
 
@@ -48,7 +46,7 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
         }
     }
 
-    protected abstract void autoVuforiaLogic(VuforiaDetector detector);
+    protected abstract void autoVuforiaLogic(TargetPositionalDetector detector);
 
     protected void pickupStoneNavigation() {
         pickupStoneNavigation(10d);

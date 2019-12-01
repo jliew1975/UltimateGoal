@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538.utils;
 
-import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
+import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 
 public class AutoGamepadUtils {
@@ -10,6 +10,7 @@ public class AutoGamepadUtils {
                             double distanceInInchesOrTurnDegree)
     {
         gamepad.power = power;
+        gamepad.direction = direction;
 
         switch(direction) {
             case Backward:
@@ -23,30 +24,28 @@ public class AutoGamepadUtils {
             case StrafeLeft:
                 gamepad.left_stick_x = -1 * power;
                 gamepad.distanceInInches = distanceInInchesOrTurnDegree;
+                gamepad.strafing = true;
                 break;
             case StrafeRight:
                 gamepad.left_stick_x = power;
                 gamepad.distanceInInches = distanceInInchesOrTurnDegree;
+                gamepad.strafing = true;
                 break;
-            case ConceringLeft:
+            case CurveLeft:
+            case CurveRight:
                 gamepad.left_stick_y = -1 * power;
                 gamepad.distanceInInches = distanceInInchesOrTurnDegree;
-                gamepad.conceringLeft = true;
-                break;
-            case ConceringRight:
-                gamepad.left_stick_y = -1 * power;
-                gamepad.distanceInInches = distanceInInchesOrTurnDegree;
-                gamepad.conceringRight = true;
+                gamepad.curving = true;
                 break;
             case TurnLeft:
                 gamepad.turnDegree = -1 * distanceInInchesOrTurnDegree;
                 gamepad.right_stick_x = -1 * power;
-                gamepad.turningLeft = true;
+                gamepad.turning = true;
                 break;
             case TurnRight:
                 gamepad.turnDegree = distanceInInchesOrTurnDegree;
                 gamepad.right_stick_x = power;
-                gamepad.turningRight = true;
+                gamepad.turning = true;
                 break;
         }
     }

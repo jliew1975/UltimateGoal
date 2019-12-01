@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 public class MecanumDrive implements TeleOpDrive {
-    public enum AutoDirection {Forward, Backward, TurnLeft, TurnRight, StrafeLeft, StrafeRight, ConceringLeft, ConceringRight}
+    public enum AutoDirection {Forward, Backward, TurnLeft, TurnRight, StrafeLeft, StrafeRight, CurveLeft, CurveRight}
 
     protected final double WHEEL_COUNTS_PER_REV = 537.6;
     protected final double DEAD_WHEEL_COUNTS_PER_REV = 1600;

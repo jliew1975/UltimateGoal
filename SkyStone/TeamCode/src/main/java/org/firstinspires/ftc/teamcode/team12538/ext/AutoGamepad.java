@@ -1,8 +1,11 @@
-package org.firstinspires.ftc.teamcode.team12538.components;
+package org.firstinspires.ftc.teamcode.team12538.ext;
 
 import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetector;
+import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive.AutoDirection;
 
 public class AutoGamepad {
+    public AutoDirection direction;
+
     public double left_stick_x = 0d;
     public double left_stick_y = 0d;
     public double right_stick_x = 0d;
@@ -13,13 +16,12 @@ public class AutoGamepad {
     public double timeout = 5d;
     public double distanceInInches = 0d;
 
-    public boolean turningLeft = false;
-    public boolean turningRight = false;
-    public boolean conceringLeft = false;
-    public boolean conceringRight = false;
+    public boolean strafing = false;
+    public boolean turning = false;
+    public boolean curving = false;
+    public boolean resetAngle = true;
 
     public double power = 0d;
-
     public RobotDetector detector = null;
 
     public void reset() {
@@ -31,21 +33,29 @@ public class AutoGamepad {
         power = 0d;
         timeout = 5d;
         detector = null;
-        turningLeft = false;
-        turningRight = false;
-        conceringLeft = false;
-        conceringRight = false;
+        strafing = false;
+        turning = false;
+        curving = false;
+        resetAngle = true;
     }
 
     public boolean isStrafing() {
-        return left_stick_x != 0d && left_stick_y == 0d;
+        return strafing;
     }
 
     public boolean isTurning() {
-        return (turningLeft || turningRight);
+        return turning;
     }
 
-    public boolean isCornering() {
-        return conceringLeft || conceringRight;
+    public boolean isCurving() {
+        return curving;
+    }
+
+    public boolean isCurvingLeft() {
+        return direction == AutoDirection.CurveLeft;
+    }
+
+    public boolean isCurvingRight() {
+        return direction == AutoDirection.CurveRight;
     }
 }

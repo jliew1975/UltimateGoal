@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.team12538;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
+import org.firstinspires.ftc.teamcode.team12538.detectors.TargetPositionalDetector;
 import org.firstinspires.ftc.teamcode.team12538.detectors.vuforia.VuforiaDetector;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
@@ -19,40 +20,10 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
     }
 
     @Override
-    protected void autoVuforiaLogic(VuforiaDetector detector) {
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 22);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+    protected void autoVuforiaLogic(TargetPositionalDetector detector) {
+        TargetPositionalDetector.Position skystonePosition = detector.getPosition();
 
-        // Default to left
-        VuforiaDetector.TargetPosition targetPosition = VuforiaDetector.TargetPosition.Left;
-        detector.targetPosition = targetPosition;
-
-        // wait for 2 second for vuforia skystone detection.
-        runtime.reset();
-        detector.wait(2, runtime);
-
-        try {
-            if (!detector.isTargetVisible()) {
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 7);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-                // wait for 1 second for vuforia to pickup skystone position.
-                runtime.reset();
-                detector.wait(1, runtime);
-
-                if (detector.isTargetVisible()) {
-                    targetPosition = VuforiaDetector.TargetPosition.Center;
-                    detector.targetPosition = targetPosition;
-                } else {
-                    targetPosition = VuforiaDetector.TargetPosition.Right;
-                    detector.targetPosition = targetPosition;
-                }
-            }
-        } finally {
-            detector.deactivate();
-        }
-
-        switch (targetPosition) {
+        switch (skystonePosition) {
             case Left:
                 executeLeftLogic();
                 break;
