@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.team12538.detectors.opencv;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.team12538.detectors.TargetPositionalDetector;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
@@ -26,7 +27,7 @@ public class OpenCvDetector implements TargetPositionalDetector {
         RAW_IMAGE,//displays raw view
     }
 
-    private static Position skystonePosition = Position.Left;
+    private static Position skystonePosition = Position.Unknown;
 
     // 0 means skystone, 1 means yellow stone
     // -1 for debug, but we can keep it like this because if it works, it should change to either 0 or 255
@@ -50,6 +51,7 @@ public class OpenCvDetector implements TargetPositionalDetector {
     private final int cols = 480;
 
     private OpenCvCamera robotCam;
+    private Telemetry telemetry;
 
     public void init() throws InterruptedException {
         HardwareMap hardwareMap = OpModeUtils.getHardwareMap();
@@ -63,6 +65,8 @@ public class OpenCvDetector implements TargetPositionalDetector {
 
         robotCam.openCameraDevice(); // open camera
         robotCam.setPipeline(new StageSwitchingPipeline()); // different stages
+
+        telemetry = OpModeUtils.getTelemetry();
     }
 
     public void activate() {
@@ -161,6 +165,9 @@ public class OpenCvDetector implements TargetPositionalDetector {
             } else if(valRight == 0) {
                 skystonePosition = Position.Right;
             }
+
+            telemetry.addData("Skystone Position", skystonePosition);
+            telemetry.update();
 
             //create three points
             Point pointMid = new Point((int)(input.cols()* midPos[0]), (int)(input.rows()* midPos[1]));
