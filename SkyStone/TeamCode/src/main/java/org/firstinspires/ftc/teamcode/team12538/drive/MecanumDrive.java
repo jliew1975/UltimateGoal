@@ -58,6 +58,7 @@ public class MecanumDrive implements TeleOpDrive {
 
     protected BNO055IMUImpl imu = null;
 
+    protected double worldAngle = 0d; // accumulated angle init angle
     protected double globalAngle = 0d;
     protected Orientation lastAngles = new Orientation();
 

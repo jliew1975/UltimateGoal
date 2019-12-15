@@ -18,10 +18,6 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
 
     private double rearWheelFactor = 0.70;
 
-    private PIDControllerV1 leftController = new PIDControllerV1(0.5, 0, 0);
-    private PIDControllerV1 rightController = new PIDControllerV1(0.5, 0, 0);
-
-
     @Override
     public void navigateWithGamepad(Gamepad gamepad) {
 
@@ -88,10 +84,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         double maxPower = Math.max(maxLeftPower, maxRightPower);
 
         // Calculate factor to scale all wheel powers to make less than 1
-        double scaleFactor = gamepad.power;
-        if(gamepad.isStrafing()) {
-            scaleFactor = (1/ maxPower) * gamepad.power;
-        }
+        double scaleFactor = (1/ maxPower) * gamepad.power;
 
         // Calculate the destination encoder tick values for the given distance
         int[] targetPositions = new int[gamepad.isStrafing() ? strafeEncoderMotors.size() : directionalEncoderMotors.size()];
@@ -115,9 +108,6 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
                 targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
                 targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
             }
-
-            leftController.setSetpoint(targetPositions[0]);
-            rightController.setSetpoint(targetPositions[1]);
         } else {
             if(gamepad.left_stick_y < 0) {
                 targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
@@ -126,9 +116,6 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
                 targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
                 targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
             }
-
-            leftController.setSetpoint(targetPositions[0]);
-            rightController.setSetpoint(targetPositions[1]);
         }
 
         if(gamepad.isCurving()) {
@@ -140,14 +127,10 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
                 leftRear.setPower(leftRearPower * scaleFactor);
             }
         } else {
-            double leftPower = leftController.performPID(directionalEncoderMotors.get(0).getCurrentPosition());
-            double rightPower = rightController.performPID(directionalEncoderMotors.get(1).getCurrentPosition());
-            double normalizedPower = Math.min(leftPower, rightPower);
-
-            leftFront.setPower(Math.signum(leftFrontPower) * scaleFactor * normalizedPower);
-            leftRear.setPower(Math.signum(leftRearPower) * scaleFactor * normalizedPower);
-            rightRear.setPower(Math.signum(rightRearPower) * scaleFactor * normalizedPower);
-            rightFront.setPower(Math.signum(rightFrontPower)  * scaleFactor * normalizedPower);
+            leftFront.setPower(Math.signum(leftFrontPower) * scaleFactor);
+            leftRear.setPower(Math.signum(leftRearPower) * scaleFactor);
+            rightRear.setPower(Math.signum(rightRearPower) * scaleFactor);
+            rightFront.setPower(Math.signum(rightFrontPower)  * scaleFactor);
         }
 
         runtime.reset();
@@ -284,11 +267,8 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive {
         double maxRightPower = Math.max(Math.abs(rightFrontPower), Math.abs(rightRearPower));
         double maxPower = Math.max(maxLeftPower, maxRightPower);
 
-        double leftPower = leftController.performPID(directionalEncoderMotors.get(0).getCurrentPosition());
-        double rightPower = rightController.performPID(directionalEncoderMotors.get(1).getCurrentPosition());
-
         // Calculate factor to scale all wheel powers to make less than 1
-        double scaleFactor = (1 / maxPower) * gamepad.power * Math.min(leftPower, rightPower);
+        double scaleFactor = (1 / maxPower) * gamepad.power;
 
         leftFront.setPower(leftFrontPower * scaleFactor);
         leftRear.setPower(leftRearPower * scaleFactor);

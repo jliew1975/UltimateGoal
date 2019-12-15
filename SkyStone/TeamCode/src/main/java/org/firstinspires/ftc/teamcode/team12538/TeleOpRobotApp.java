@@ -33,13 +33,6 @@ public class TeleOpRobotApp extends RobotApp {
                 robot.foundationClaw.control(gamepad2);
                 robot.outtake.conttrolForCapstone(gamepad2);
 
-                if(gamepad2.x) {
-                    robot.stoneArm.setPosition(RobotStoneArm.UP);
-                } else if(gamepad2.b) {
-                    robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-                }
-
-
                 // telemetry printing
                 // robot.mecanumDrive.printTelemetry();
                 // robot.outtake.printTelemetry();

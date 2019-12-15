@@ -15,7 +15,6 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     private volatile ClawMode clawMode = ClawMode.Open;
 
     private volatile boolean busy = false;
-    private volatile boolean inReadyState = false;
 
     @Override
     public void init() {
@@ -114,14 +113,11 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                         if(!busy) {
                             busy = true;
                             OpModeUtils.getGlobalStore().setLiftOuttake(false);
-                            ThreadUtils.getExecutorService().submit(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        liftSlideForStoneIntake();
-                                    } finally {
-                                        busy = false;
-                                    }
+                            ThreadUtils.getExecutorService().submit(() -> {
+                                try {
+                                    liftSlideForStoneIntake();
+                                } finally {
+                                    busy = false;
                                 }
                             });
                         }
@@ -144,7 +140,6 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
         if(outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION) {
             RobotFoundationClaw foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
-            foundationClaw.setClawPosition(RobotFoundationClaw.A_POSITION);
         }
 
         if (outtakeSlides.getCurrentPosition() < 1750 && outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION) {
@@ -180,9 +175,6 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         outtakeClaw.setArmPosition(RobotStoneClaw.ARM_DEPLOYMENT_POSITION);
 
         ThreadUtils.sleep(500);
-
-        RobotFoundationClaw foundationClaw = OpModeUtils.getGlobalStore().getComponent("foundationClaw");
-        foundationClaw.setClawPosition(RobotFoundationClaw.A_POSITION);
     }
 
     public void liftSlideForStoneIntake() {

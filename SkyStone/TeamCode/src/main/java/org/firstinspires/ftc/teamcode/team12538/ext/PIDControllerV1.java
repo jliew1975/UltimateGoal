@@ -13,11 +13,11 @@ public class PIDControllerV1
     private double m_maximumInput = 0.0;	// maximum input - limit setpoint to this
     private double m_minimumInput = 0.0;	// minimum input - limit setpoint to this
     private boolean m_continuous = false;	// do the endpoints wrap around? eg. Absolute encoder
-    private boolean m_enabled = false;      // is the pid controller enabled
+    private boolean m_enabled = true;       // is the pid controller enabled
     private double m_prevError = 0.0;       // the prior sensor input (used to compute velocity)
     private double m_totalError = 0.0;      // the sum of the errors for use in the integral calc
     private double m_tolerance = 0.05;      // the percentage error that is considered on target
-    private double m_setpoint = 0.0;
+    private double m_target = 0.0;
     private double m_error = 0.0;
     private double m_result = 0.0;
 
@@ -47,7 +47,7 @@ public class PIDControllerV1
         if (m_enabled)
         {
             // Calculate the error signal
-            m_error = m_setpoint - m_input;
+            m_error = m_target - m_input;
 
             // If continuous is set to true allow wrap around
             if (m_continuous)
@@ -182,7 +182,7 @@ public class PIDControllerV1
     {
         m_minimumInput = Math.abs(minimumInput);
         m_maximumInput = Math.abs(maximumInput);
-        setSetpoint(m_setpoint);
+        setTarget(m_target);
     }
 
     /**
@@ -199,34 +199,34 @@ public class PIDControllerV1
 
     /**
      * Set the setpoint for the PIDControllerV1
-     * @param setpoint the desired setpoint
+     * @param target the desired setpoint
      */
-    public void setSetpoint(double setpoint)
-    {
+    public void setTarget(double target) {
         int     sign = 1;
+        if (m_maximumInput > m_minimumInput) {
+            if (target < 0) {
+                sign = -1;
+            }
 
-        if (m_maximumInput > m_minimumInput)
-        {
-            if (setpoint < 0) sign = -1;
-
-            if (Math.abs(setpoint) > m_maximumInput)
-                m_setpoint = m_maximumInput * sign;
-            else if (Math.abs(setpoint) < m_minimumInput)
-                m_setpoint = m_minimumInput * sign;
-            else
-                m_setpoint = setpoint;
+            if (Math.abs(target) > m_maximumInput) {
+                m_target = m_maximumInput * sign;
+            } else if (Math.abs(target) < m_minimumInput) {
+                m_target = m_minimumInput * sign;
+            } else {
+                m_target = target;
+            }
+        } else {
+            m_target = target;
         }
-        else
-            m_setpoint = setpoint;
     }
 
     /**
      * Returns the current setpoint of the PIDControllerV1
      * @return the current setpoint
      */
-    public double getSetpoint()
+    public double getTarget()
     {
-        return m_setpoint;
+        return m_target;
     }
 
     /**
@@ -280,7 +280,6 @@ public class PIDControllerV1
      */
     public void reset()
     {
-        disable();
         m_prevError = 0;
         m_totalError = 0;
         m_result = 0;

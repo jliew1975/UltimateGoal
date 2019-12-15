@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.team12538.ext;
 
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
+import lombok.Data;
+
+@Data
 public class PIDControllerV2 {
     private int target;
     private int sensorInput;
@@ -11,8 +14,10 @@ public class PIDControllerV2 {
     private double error = 0;
     private double previousError = 0;
     private double integral = 0;
-    private double integralThreshold = 10;
+    private double integralThresholdMin = 50;
+    private double integralThresholdMax = 1500;
     private double derivative = 0;
+    private double tolerance = 0.5;
     private long delay = 0;
 
     public PIDControllerV2(double kP, double kI, double kD) {
@@ -32,28 +37,21 @@ public class PIDControllerV2 {
         return calculate();
     }
 
-    public int getTarget() {
-        return target;
-    }
-
-    public void setTarget(int target) {
-        this.target = target;
-    }
-
-    public long getDelay() {
-        return delay;
-    }
-
-    public void setDelay(long delay) {
-        this.delay = delay;
-    }
-
     public void reset()
     {
         error = 0;
         previousError = 0;
         integral = 0;
         derivative = 0;
+    }
+
+    public boolean onTarget() {
+        double absError = Math.abs(error);
+        if( absError > integralThresholdMin && absError < integralThresholdMax) {
+            return integral == 0;
+        }
+
+        return absError < integralThresholdMin && integral == 0;
     }
 
     private double calculate() {
@@ -66,7 +64,8 @@ public class PIDControllerV2 {
 
         // Begin summing the errors into the integral term if the error is below a threshold,
         // and reset it if not. This is to prevent the integral from growing too large.
-        if(Math.abs(error) < integralThreshold) {
+        double absError = Math.abs(error);
+        if( absError > integralThresholdMin && absError < integralThresholdMax) {
             integral += error;
         } else {
             integral = 0;

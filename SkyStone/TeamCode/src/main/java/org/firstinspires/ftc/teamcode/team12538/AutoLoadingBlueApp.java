@@ -48,8 +48,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 10d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-
         sleep(500);
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 16d);
@@ -58,9 +56,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         // Start of navigation to Building site logic
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.5, 38d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
-
 
         // Start of navigation to Building site logic
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 10d);
@@ -98,8 +93,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 20d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-
         sleep(500);
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 15d);
@@ -121,8 +114,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 45d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
-
         // Start of Parking under the Skybridge logic
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
@@ -142,8 +133,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 10d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-
         sleep(500);
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 16d);
@@ -152,8 +141,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         // Start of navigation to Building site logic
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 50d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
 
         // Start of navigation to Building site logic
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
@@ -191,8 +178,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 20d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-
         sleep(500);
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 15d);
@@ -206,8 +191,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 39d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
 
         // Start of Parking under the Skybridge logic
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 5d);
@@ -226,8 +209,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 10d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-
         sleep(500);
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 16d);
@@ -236,8 +217,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         // Start of navigation to Building site logic
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 60d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
 
         // Start of navigation to Building site logic
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
@@ -275,8 +254,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 20d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-
         sleep(500);
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 15d);
@@ -290,8 +267,6 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 39d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
 
         // Start of Parking under the Skybridge logic
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 5d);

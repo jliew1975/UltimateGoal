@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotFoundationClaw;
+import org.firstinspires.ftc.teamcode.team12538.detectors.opencv.OpenCvDetector;
 import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
@@ -30,8 +32,8 @@ public class TeleOpTestRobotApp extends RobotApp {
             DistanceSensor sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
             ColorSensor sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
 
-            RobotStoneArm stoneArm = new RobotStoneArm();
-            stoneArm.init();
+            RobotFoundationClaw foundationClaw = new RobotFoundationClaw();
+            foundationClaw.init();
 
             // RobotDistanceSensor distanceSensor = new RobotDistanceSensor("left", 2);
             // distanceSensor.init();
@@ -47,10 +49,10 @@ public class TeleOpTestRobotApp extends RobotApp {
             final double SCALE_FACTOR = 255;
 
             while (!isStarted() && !isStopRequested()) {
-                telemetry.addData("Distance (cm)",
-                        String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-                telemetry.addData("distance (Inch)", robot.leftDistSensor.distanceSensor.getDistance(DistanceUnit.INCH));
-                telemetry.update();
+                // telemetry.addData("Distance (cm)",
+                //        String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
+                // telemetry.addData("distance (Inch)", robot.leftDistSensor.distanceSensor.getDistance(DistanceUnit.INCH));
+                // telemetry.update();
             }
 
             while(opModeIsActive()) {
@@ -61,20 +63,20 @@ public class TeleOpTestRobotApp extends RobotApp {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 60d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.y) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 0.5, 60d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 0.6, 60d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.a) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.5, 60d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.6, 60d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 }
 
-                telemetry.addData("position", stoneArm.getPosition());
-                telemetry.update();
+                // telemetry.addData("position", stoneArm.getPosition());
+                // telemetry.update();
 
-                if(gamepad1.dpad_up) {
-                    stoneArm.setPosition(stoneArm.getPosition() + 0.001);
-                } else if(gamepad1.dpad_down) {
-                    stoneArm.setPosition(stoneArm.getPosition() - 0.001);
+                if(gamepad2.y) {
+                    foundationClaw.raiseClaw();
+                } else if(gamepad1.a) {
+                    foundationClaw.lowerClaw();
                 }
             }
         } finally {
