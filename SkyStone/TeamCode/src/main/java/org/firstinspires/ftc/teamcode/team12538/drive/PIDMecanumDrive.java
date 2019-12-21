@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.ext.PIDControllerV1;
 import org.firstinspires.ftc.teamcode.team12538.ext.PIDControllerV2;
@@ -62,14 +65,6 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
         rightFront.setPower(Math.abs(rightFrontPower * scaleFactor) <= 0.2 ? 0d : rightFrontPower * scaleFactor);
     }
 
-
-    @Override
-    public void stop() {
-        for(DcMotor motor : driveMotorList) {
-            motor.setPower(0d);
-        }
-    }
-
     @Override
     public void autoNavigateWithGamepad(AutoGamepad gamepad) {
         // Set desired velocities
@@ -92,7 +87,7 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
         double scaleFactor = (1/maxPower) * gamepad.power;
 
         // Calculate the destination encoder tick values for the given distance
-        int[] targetPositions = calculateTarget(gamepad);
+        double[] targetPositions = calculateTarget(gamepad);
 
         if(gamepad.isCurving()) {
             if (gamepad.isCurvingLeft()) {
@@ -121,6 +116,8 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
             } else if(gamepad.isCurvingLeft()) {
                 double curvingPower = leftController.performPID(strafeEncoderMotors.get(1).getCurrentPosition())/DEAD_WHEEL_ENCODER_TICKS_PER_INCH;
                 gamepad.left_stick_y = Range.clip(curvingPower, -1d, 1d);
+            } else if(gamepad.isTurning()) {
+                gamepad.right_stick_x = -rotateController.performPID(getAngle());
             } else {
                 double leftPower = leftController.performPID(directionalEncoderMotors.get(0).getCurrentPosition());
                 double rightPower = rightController.performPID(directionalEncoderMotors.get(1).getCurrentPosition());
@@ -129,8 +126,13 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
             }
 
             if(!gamepad.isCurving() && !gamepad.isTurning()) {
-                gamepad.right_stick_x = Math.toRadians(getAngle()) / 20;
+                gamepad.right_stick_x = getAngle() / 20;
             }
+
+            telemetry.addData("target angle", rotateController.getTarget());
+            telemetry.addData("current angle", getAngle());
+            telemetry.addData("gamepad.right_stick_x", gamepad.right_stick_x);
+            telemetry.update();
 
             angularAdjustment(gamepad);
 
@@ -138,23 +140,25 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
                 break;
             }
 
-            printTelemetry(gamepad, targetPositions);
-        } while(OpModeUtils.opModeIsActive() && !isOnTarget(gamepad) && runtime.seconds() < gamepad.timeout);
+            // printTelemetry(gamepad, targetPositions);
+        } while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout); // && !isOnTarget(gamepad) && runtime.seconds() < gamepad.timeout);
 
         stop();
 
+        /*
         if(gamepad.resetAngle) {
             worldAngle += globalAngle;
             globalAngle = 0;
         }
+        */
 
         leftController.reset();
         rightController.reset();
         gamepad.reset();
     }
 
-    public int[] calculateTarget(AutoGamepad gamepad) {
-        int[] targetPositions = new int[(gamepad.isStrafing() || gamepad.isCurving()) ? 1 : 2];
+    public double[] calculateTarget(AutoGamepad gamepad) {
+        double[] targetPositions = new double[(gamepad.isStrafing() || gamepad.isCurving()) ? 1 : 2];
         if(gamepad.isStrafing()) {
             if (gamepad.left_stick_x < 0) {
                 targetPositions[0] = strafeEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
@@ -171,6 +175,7 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
                 leftController.setTarget(targetPositions[0]);
             }
         } else if(gamepad.isTurning()) {
+            /*
             if(gamepad.right_stick_x < 0) {
                 targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
                 targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (((gamepad.turnDegree / 360) * Math.PI) * (2 * TRACKBASE) * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
@@ -181,6 +186,9 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
 
             leftController.setTarget(targetPositions[0]);
             rightController.setTarget(targetPositions[1]);
+            */
+            rotateController.setTarget(getAngle() + gamepad.turnRadian);
+
         } else {
             if(gamepad.left_stick_y < 0) {
                 targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
@@ -197,23 +205,23 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
         return targetPositions;
     }
 
-    public void printTelemetry(AutoGamepad gamepad, int[] targetPositions) {
+    public void printTelemetry(AutoGamepad gamepad, double[] targetPositions) {
         // report target and current positions to driver station
         if(gamepad.isStrafing()) {
             // report target and current positions to driver station
-            telemetry.addData("Target", "Running to %7d",
+            telemetry.addData("Target", "Running to %.1f",
                     targetPositions[0]);
 
-            telemetry.addData("Current", "Running at %7d",
+            telemetry.addData("Current", "Running at %.1f",
                     strafeEncoderMotors.get(0).getCurrentPosition());
 
             telemetry.addData( "Power", "Running at %.1f",
                     strafeEncoderMotors.get(0).getPower());
         } else {
-            telemetry.addData("Target", "Running to %7d : %7d",
+            telemetry.addData("Target", "Running to %.1f : %.1f",
                     targetPositions[0], targetPositions[1]);
 
-            telemetry.addData("Current", "Running at %7d : %7d",
+            telemetry.addData("Current", "Running at %.1f : %.1f",
                     directionalEncoderMotors.get(0).getCurrentPosition(),
                     directionalEncoderMotors.get(1).getCurrentPosition());
 

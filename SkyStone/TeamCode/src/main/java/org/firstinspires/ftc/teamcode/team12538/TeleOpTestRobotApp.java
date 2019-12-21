@@ -57,10 +57,12 @@ public class TeleOpTestRobotApp extends RobotApp {
 
             while(opModeIsActive()) {
                 if(gamepad1.x) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 60d);
+                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.5, Math.PI/2);
+                    robot.mecanumDrive.rotate(90, 0.5, 3);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if (gamepad1.b) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 60d);
+                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnRight, 0.5, Math.PI/2);
+                    robot.mecanumDrive.rotate(-90, 0.5, 3);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.y) {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 0.6, 60d);
@@ -68,15 +70,6 @@ public class TeleOpTestRobotApp extends RobotApp {
                 } else if(gamepad1.a) {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.6, 60d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
-                }
-
-                // telemetry.addData("position", stoneArm.getPosition());
-                // telemetry.update();
-
-                if(gamepad2.y) {
-                    foundationClaw.raiseClaw();
-                } else if(gamepad1.a) {
-                    foundationClaw.lowerClaw();
                 }
             }
         } finally {

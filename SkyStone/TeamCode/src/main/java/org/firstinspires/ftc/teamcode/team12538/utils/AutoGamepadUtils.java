@@ -7,7 +7,7 @@ public class AutoGamepadUtils {
     public static void move(AutoGamepad gamepad,
                             MecanumDrive.AutoDirection direction,
                             double power,
-                            double distanceInInchesOrTurnDegree)
+                            double distanceInInchesOrTurnRadian)
     {
         gamepad.power = power;
         gamepad.direction = direction;
@@ -15,35 +15,35 @@ public class AutoGamepadUtils {
         switch(direction) {
             case Backward:
                 gamepad.left_stick_y = power;
-                gamepad.distanceInInches = distanceInInchesOrTurnDegree;
+                gamepad.distanceInInches = distanceInInchesOrTurnRadian;
                 break;
             case Forward:
                 gamepad.left_stick_y = -1 * power;
-                gamepad.distanceInInches = distanceInInchesOrTurnDegree;
+                gamepad.distanceInInches = distanceInInchesOrTurnRadian;
                 break;
             case StrafeLeft:
                 gamepad.left_stick_x = -1 * power;
-                gamepad.distanceInInches = distanceInInchesOrTurnDegree;
+                gamepad.distanceInInches = distanceInInchesOrTurnRadian;
                 gamepad.strafing = true;
                 break;
             case StrafeRight:
                 gamepad.left_stick_x = power;
-                gamepad.distanceInInches = distanceInInchesOrTurnDegree;
+                gamepad.distanceInInches = distanceInInchesOrTurnRadian;
                 gamepad.strafing = true;
                 break;
             case CurveLeft:
             case CurveRight:
                 gamepad.left_stick_y = -1 * power;
-                gamepad.distanceInInches = distanceInInchesOrTurnDegree;
+                gamepad.distanceInInches = distanceInInchesOrTurnRadian;
                 gamepad.curving = true;
                 break;
             case TurnLeft:
-                gamepad.turnDegree = -1 * distanceInInchesOrTurnDegree;
+                gamepad.turnRadian = distanceInInchesOrTurnRadian;
                 gamepad.right_stick_x = -1 * power;
                 gamepad.turning = true;
                 break;
             case TurnRight:
-                gamepad.turnDegree = distanceInInchesOrTurnDegree;
+                gamepad.turnRadian = -1 * distanceInInchesOrTurnRadian;
                 gamepad.right_stick_x = power;
                 gamepad.turning = true;
                 break;

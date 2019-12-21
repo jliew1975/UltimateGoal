@@ -20,6 +20,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class OpenCvDetector implements TargetPositionalDetector {
     public enum Stage {
         detection,//includes outlines
@@ -52,6 +55,12 @@ public class OpenCvDetector implements TargetPositionalDetector {
 
     private OpenCvCamera robotCam;
     private Telemetry telemetry;
+
+    private int numStoneVisible = 3;
+
+    public OpenCvDetector(int numStoneVisible) {
+        this.numStoneVisible = numStoneVisible;
+    }
 
     public void init() throws InterruptedException {
         HardwareMap hardwareMap = OpModeUtils.getHardwareMap();
@@ -148,7 +157,7 @@ public class OpenCvDetector implements TargetPositionalDetector {
             //Imgproc.drawContours(all, contoursList, -1, new Scalar(255, 0, 0), 3, 8);//draws blue contours
 
 
-            //get values from frame
+            //get values from frame (0 represents black, 255 represents white)
             double[] pixMid = thresholdMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
             valMid = (int)pixMid[0];
 

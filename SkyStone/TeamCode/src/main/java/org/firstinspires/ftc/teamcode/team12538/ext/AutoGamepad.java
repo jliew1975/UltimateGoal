@@ -11,7 +11,7 @@ public class AutoGamepad {
     public double right_stick_x = 0d;
     public double right_stick_y = 0d;
 
-    public double turnDegree = 0;
+    public double turnRadian = 0;
 
     public double timeout = 5d;
     public double distanceInInches = 0d;
@@ -29,7 +29,7 @@ public class AutoGamepad {
         left_stick_y = 0d;
         right_stick_x = 0d;
         right_stick_y = 0d;
-        turnDegree = 0;
+        turnRadian = 0;
         power = 0d;
         timeout = 5d;
         detector = null;

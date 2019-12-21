@@ -71,6 +71,11 @@ public class PIDTunerRobotApp extends RobotApp {
                 File controllerFile = null;
 
                 controllers.clear();
+                controllers.add(mecanumDrive.rotateController);
+                selectedController = ControllerName.values()[selectedPIDController.output()];
+                controllerFile = case2PIDTunedValuesFile;
+
+                /*
                 switch(selectedPIDController.output()) {
                     case 0:
                         controllers.add(mecanumDrive.leftController);
@@ -89,6 +94,7 @@ public class PIDTunerRobotApp extends RobotApp {
                         controllerFile = case2PIDTunedValuesFile;
                         break;
                 }
+                */
 
                 initControllers(controllers, controllerFile);
 
@@ -99,15 +105,15 @@ public class PIDTunerRobotApp extends RobotApp {
                 telemetry.update();
             }
 
-            int[] targetPositions = new int[0];;
+            double[] targetPositions = new double[0];;
 
             while(opModeIsActive()) {
                 if(gamepad1.x) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, power, 60d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, power, Math.PI/2);
                     targetPositions = mecanumDrive.calculateTarget(autoGamepad);
                     mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if (gamepad1.b) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, power, 60d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnRight, power, Math.PI/2);
                     targetPositions = mecanumDrive.calculateTarget(autoGamepad);
                     mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.y) {
@@ -117,6 +123,8 @@ public class PIDTunerRobotApp extends RobotApp {
                 } else if(gamepad1.a) {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, power, 60d);
                     mecanumDrive.autoNavigateWithGamepad(autoGamepad);
+                } else if(gamepad1.right_bumper) {
+                    mecanumDrive.resetAngle();
                 }
 
                 dpadUp.input(gamepad2.dpad_up);
@@ -151,6 +159,7 @@ public class PIDTunerRobotApp extends RobotApp {
                     telemetry.addData(stepCaptions[1], stepI);
                     telemetry.addData(stepCaptions[2], stepD);
                     telemetry.addData("Power", power);
+                    telemetry.addData("Current angle", mecanumDrive.getAngle());
                     telemetry.update();
                 } else {
                     if(targetPositions != null) {
@@ -164,6 +173,7 @@ public class PIDTunerRobotApp extends RobotApp {
     }
 
     private void initControllers(List<PIDControllerV2> controllers, File pidTunedValuesFile) {
+        /*
         String pidValues = ReadWriteFile.readFile(pidTunedValuesFile);
         if(StringUtils.isNotBlank(pidValues)) {
             String[] pids = pidValues.split("|");
@@ -173,6 +183,7 @@ public class PIDTunerRobotApp extends RobotApp {
                 c.setKD(Double.parseDouble(StringUtils.trim(pids[2])));
             });
         }
+        */
     }
 
     private void performPIDAdjustment() {

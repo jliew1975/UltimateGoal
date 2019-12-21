@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class PIDControllerV2 {
-    private int target;
-    private int sensorInput;
+    private double target;
+    private double sensorInput;
     private double kP = 0;
     private double kI = 0;
     private double kD = 0;
@@ -32,7 +32,7 @@ public class PIDControllerV2 {
         this.kD = kD;
     }
 
-    public double performPID(int sensorInput) {
+    public double performPID(double sensorInput) {
         this.sensorInput = sensorInput;
         return calculate();
     }

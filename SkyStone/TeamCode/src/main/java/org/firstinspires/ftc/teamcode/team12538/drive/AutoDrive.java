@@ -9,5 +9,7 @@ public interface AutoDrive {
     void resetEncoderValues();
 
     void stop();
+
+    void rotate(int degrees, double power, long timeout);
     void autoNavigateWithGamepad(AutoGamepad gamepad);
 }
