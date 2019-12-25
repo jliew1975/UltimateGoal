@@ -22,9 +22,10 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
 
     private double rearWheelFactor = 0.70;
 
-    public PIDControllerV2 leftController = new PIDControllerV2(0.001, 0.005, 0);
-    public PIDControllerV2 rightController = new PIDControllerV2(0.001, 0.005, 0);
-    public PIDControllerV2 rotateController = new PIDControllerV2(0.001, 0, 0);
+    public PIDControllerV2 leftController = new PIDControllerV2(5, 0, 0);
+    public PIDControllerV2 rightController = new PIDControllerV2(5, 0, 0);
+
+    public PIDControllerV2 rotateController = new PIDControllerV2(12d, 10d, 15d, 0.0001, 0.0001);
     public PIDControllerV2 strafeController = new PIDControllerV2(0.001, 0, 0.5);
 
     @Override
@@ -119,10 +120,22 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
             } else if(gamepad.isTurning()) {
                 gamepad.right_stick_x = -rotateController.performPID(getAngle());
             } else {
+                /*
                 double leftPower = leftController.performPID(directionalEncoderMotors.get(0).getCurrentPosition());
                 double rightPower = rightController.performPID(directionalEncoderMotors.get(1).getCurrentPosition());
                 double normalizedPower = Math.max(leftPower, rightPower)/DEAD_WHEEL_ENCODER_TICKS_PER_INCH;
                 gamepad.left_stick_y = Range.clip(normalizedPower, -1d, 1d);
+                */
+                if(gamepad.left_stick_y >= 0 &&
+                        (directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0] ||
+                                directionalEncoderMotors.get(1).getCurrentPosition() >= targetPositions[1]) ||
+                        (gamepad.left_stick_y < 0 &&
+                                (directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0] ||
+                                        directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1]))) {
+                    break;
+                }
+
+                gamepad.right_stick_x = getAngle() * (Math.PI / 180) / 5;
             }
 
             if(!gamepad.isCurving() && !gamepad.isTurning()) {
@@ -141,7 +154,7 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
             }
 
             // printTelemetry(gamepad, targetPositions);
-        } while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout); // && !isOnTarget(gamepad) && runtime.seconds() < gamepad.timeout);
+        } while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout && !isOnTarget(gamepad));
 
         stop();
 
@@ -188,7 +201,6 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
             rightController.setTarget(targetPositions[1]);
             */
             rotateController.setTarget(getAngle() + gamepad.turnRadian);
-
         } else {
             if(gamepad.left_stick_y < 0) {
                 targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
@@ -249,6 +261,8 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
             return leftController.onTarget();
         } else if(gamepad.isCurvingRight()) {
             return rightController.onTarget();
+        } else if(gamepad.isTurning()) {
+            return rotateController.onTarget();
         } else {
             return (leftController.onTarget() || rightController.onTarget());
         }

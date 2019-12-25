@@ -29,7 +29,7 @@ public class RobotStoneClaw implements RobotComponent, TelemetryAware {
         rightArm.setDirection(Servo.Direction.REVERSE);
 
         stoneClaw = hardwareMap.get(Servo.class, "stoneClaw");
-        stoneClaw.setPosition(CLAW_OPEN_POSITION);
+        stoneClaw.setPosition(CLAW_INTAKE_POSITION);
 
         setArmPosition(0);
     }

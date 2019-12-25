@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotFoundationClaw;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
 import org.firstinspires.ftc.teamcode.team12538.detectors.opencv.OpenCvDetector;
 import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
 
 import java.util.Locale;
 
@@ -37,40 +39,56 @@ public class TeleOpTestRobotApp extends RobotApp {
 
             // RobotDistanceSensor distanceSensor = new RobotDistanceSensor("left", 2);
             // distanceSensor.init();
+            int stoneHeight = 1;
 
-            // hsvValues is an array that will hold the hue, saturation, and value information.
-            float hsvValues[] = {0F, 0F, 0F};
+            Button btnX = new Button();
+            btnX.input(gamepad1.x);
 
-            // values is a reference to the hsvValues array.
-            final float values[] = hsvValues;
+            Button btnB = new Button();
+            btnB.input(gamepad1.b);
 
-            // sometimes it helps to multiply the raw RGB values with a scale factor
-            // to amplify/attentuate the measured values.
-            final double SCALE_FACTOR = 255;
 
             while (!isStarted() && !isStopRequested()) {
-                // telemetry.addData("Distance (cm)",
-                //        String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-                // telemetry.addData("distance (Inch)", robot.leftDistSensor.distanceSensor.getDistance(DistanceUnit.INCH));
-                // telemetry.update();
+                robot.mecanumDrive.printTelemetry();
+                telemetry.update();
             }
 
             while(opModeIsActive()) {
+
                 if(gamepad1.x) {
-                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.5, Math.PI/2);
-                    robot.mecanumDrive.rotate(90, 0.5, 3);
+                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 10d);
+                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.3, Math.PI/2);
+                    autoGamepad.resetAngle = true;
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveLeft, 0.6, 30d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if (gamepad1.b) {
-                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnRight, 0.5, Math.PI/2);
-                    robot.mecanumDrive.rotate(-90, 0.5, 3);
+                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 10d);
+                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnRight, 0.3, Math.PI/2);
+                    autoGamepad.resetAngle = true;
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveRight, 0.6, 30d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.y) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 0.6, 60d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 0.6, 16d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.a) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.6, 60d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.6, 16d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 }
+
+
+                // robot.capstone.control(gamepad1);
+
+                /*
+                if(gamepad1.dpad_up) {
+                    robot.capstone.setPosition(robot.capstone.getPosition() + 0.001);
+                } else if(gamepad1.dpad_down) {
+                    robot.capstone.setPosition(robot.capstone.getPosition() - 0.001);
+                }
+                */
+
+                // telemetry.addData("Capstone Position", robot.capstone.getPosition());
+                // telemetry.update();
+
             }
         } finally {
             OpModeUtils.stop();

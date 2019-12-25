@@ -17,6 +17,8 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
     protected AutoGamepad gamepad = null;
     protected SkyStoneAutoRobot robot = null;
 
+
+
     protected ElapsedTime runtime = new ElapsedTime();
 
     @Override

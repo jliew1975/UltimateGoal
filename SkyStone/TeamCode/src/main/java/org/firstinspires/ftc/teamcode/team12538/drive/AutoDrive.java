@@ -6,10 +6,9 @@ public interface AutoDrive {
     void init();
     void init_imu();
 
+    void printTelemetry();
     void resetEncoderValues();
 
     void stop();
-
-    void rotate(int degrees, double power, long timeout);
     void autoNavigateWithGamepad(AutoGamepad gamepad);
 }

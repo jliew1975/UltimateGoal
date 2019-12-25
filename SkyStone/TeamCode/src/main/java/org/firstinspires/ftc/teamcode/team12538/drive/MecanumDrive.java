@@ -70,7 +70,7 @@ public class MecanumDrive implements TeleOpDrive {
     protected ElapsedTime runtime = new ElapsedTime();
 
     protected double rotation;
-    protected PIDControllerV1 pidRotate = new PIDControllerV1(.003, .00003, 0);
+    protected PIDControllerV1 pidRotate = new PIDControllerV1(0.05, 0, 0);
 
     @Override
     public void init() {
@@ -181,8 +181,12 @@ public class MecanumDrive implements TeleOpDrive {
     }
 
     public void resetAngle() {
+        resetAngle(AngleUnit.RADIANS);
+    }
+
+    public void resetAngle(AngleUnit angleUnit) {
         globalAngle = 0;
-        lastAngles = new Orientation();
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, angleUnit);
     }
 
     public double getAngle() {
@@ -208,83 +212,5 @@ public class MecanumDrive implements TeleOpDrive {
         lastAngles = angles;
 
         return globalAngle;
-    }
-
-    /**
-     * Rotate left or right the number of degrees. Does not support turning more than 359 degrees.
-     * @param degrees Degrees to turn, + is left - is right
-     */
-    public void rotate(int degrees, double power, long timeout)
-    {
-        // restart imu angle tracking.
-        resetAngle();
-
-        // if degrees > 359 we cap at 359 with same sign as original degrees.
-        if (Math.abs(degrees) > 359) degrees = (int) Math.copySign(359, degrees);
-
-        // start pid controller. PID controller will monitor the turn angle with respect to the
-        // target angle and reduce power as we approach the target angle. This is to prevent the
-        // robots momentum from overshooting the turn after we turn off the power. The PID controller
-        // reports onTarget() = true when the difference between turn angle and target angle is within
-        // 1% of target (tolerance) which is about 1 degree. This helps prevent overshoot. Overshoot is
-        // dependant on the motor and gearing configuration, starting power, weight of the robot and the
-        // on target tolerance. If the controller overshoots, it will reverse the sign of the output
-        // turning the robot back toward the setpoint value.
-
-        pidRotate.reset();
-        pidRotate.setTarget(degrees);
-        pidRotate.setInputRange(0, degrees);
-        pidRotate.setOutputRange(0, power);
-        pidRotate.setTolerance(1);
-        pidRotate.enable();
-
-        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
-        // clockwise (right).
-
-        // Reset timer for timeout calculation if robot is stuck due to obstruction
-        runtime.reset();
-
-        // rotate until turn is completed.
-        if (degrees < 0)
-        {
-            // On right turn we have to get off zero first.
-            while (opModeIsActive() && getAngle(AngleUnit.DEGREES) == 0)
-            {
-                leftFront.setPower(power);
-                leftRear.setPower(power);
-                rightFront.setPower(-power);
-                rightRear.setPower(-power);
-                sleep(100);
-            }
-
-            do
-            {
-                power = pidRotate.performPID(getAngle(AngleUnit.DEGREES)); // power will be - on right turn.
-                leftFront.setPower(-power);
-                leftRear.setPower(-power);
-                rightFront.setPower(power);
-                rightRear.setPower(power);
-            } while (opModeIsActive() && !pidRotate.onTarget() && runtime.seconds() < timeout);
-        }
-        else    // left turn.
-            do
-            {
-                power = pidRotate.performPID(getAngle(AngleUnit.DEGREES)); // power will be + on left turn.
-                leftFront.setPower(-power);
-                leftRear.setPower(-power);
-                rightFront.setPower(power);
-                rightRear.setPower(power);
-            } while (opModeIsActive() && !pidRotate.onTarget() && runtime.seconds() < timeout);
-
-        // turn the motors off.
-        stop();
-
-        rotation = getAngle(AngleUnit.DEGREES);
-
-        // wait for rotation to stop.
-        sleep(500);
-
-        // reset angle tracking on new heading.
-        resetAngle();
     }
 }

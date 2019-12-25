@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.team12538.ext;
 
 // PID controller courtesy of Peter Tischler, with modifications.
 
-public class PIDControllerV1
+public class PIDControllerV1 implements PIDController
 {
     private double m_P;                     // factor for "proportional" control
     private double m_I;                     // factor for "integral" control
@@ -103,27 +103,39 @@ public class PIDControllerV1
      * Get the Proportional coefficient
      * @return proportional coefficient
      */
-    public double getP()
+    public double getKP()
     {
         return m_P;
+    }
+
+    public void setKP(double m_P) {
+        this.m_P = m_P;
     }
 
     /**
      * Get the Integral coefficient
      * @return integral coefficient
      */
-    public double getI()
+    public double getKI()
     {
         return m_I;
+    }
+
+    public void setKI(double m_I) {
+        this.m_I = m_I;
     }
 
     /**
      * Get the Differential coefficient
      * @return differential coefficient
      */
-    public double getD()
+    public double getKD()
     {
         return m_D;
+    }
+
+    public void setKD(double m_D) {
+        this.m_D = m_D;
     }
 
     /**

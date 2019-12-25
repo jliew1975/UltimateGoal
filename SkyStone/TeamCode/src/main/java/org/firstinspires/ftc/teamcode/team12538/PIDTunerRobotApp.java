@@ -6,8 +6,11 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.apache.commons.lang3.StringUtils;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.team12538.drive.NewMecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.drive.PIDMecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
+import org.firstinspires.ftc.teamcode.team12538.ext.PIDController;
+import org.firstinspires.ftc.teamcode.team12538.ext.PIDControllerV1;
 import org.firstinspires.ftc.teamcode.team12538.ext.PIDControllerV2;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
@@ -22,7 +25,7 @@ import java.util.List;
 
 @TeleOp(name="Robot PID Tuner", group="Linear Opmode")
 public class PIDTunerRobotApp extends RobotApp {
-    private double power = 0.5;
+    private double power = 0.3;
     private double kP = 0.0, kI = 0.0, kD = 0.0;
     private double stepP = 1, stepI = 0.01, stepD = 0.01;
 
@@ -47,7 +50,7 @@ public class PIDTunerRobotApp extends RobotApp {
     private File case1PIDTunedValuesFile = AppUtil.getInstance().getSettingsFile("Case1PIDTunedValues.txt");
     private File case2PIDTunedValuesFile = AppUtil.getInstance().getSettingsFile("Case2PIDTunedValues.txt");
 
-    private List<PIDControllerV2> controllers = new ArrayList<PIDControllerV2>();
+    private List<PIDController> controllers = new ArrayList<PIDController>();
     private ControllerName selectedController = ControllerName.values()[selectedPIDController.output()];
 
     @Override
@@ -61,7 +64,7 @@ public class PIDTunerRobotApp extends RobotApp {
             SkyStoneAutoRobot robot = new SkyStoneAutoRobot();
             robot.init();
 
-            PIDMecanumDrive mecanumDrive = (PIDMecanumDrive) robot.mecanumDrive;
+            NewMecanumDrive mecanumDrive = (NewMecanumDrive) robot.mecanumDrive;
             String[] KCaptions = new String[] {"KP", "KI", "KD"};
             String[] stepCaptions = new String[] {"stepP", "stepI", "stepD"};
 
@@ -72,7 +75,7 @@ public class PIDTunerRobotApp extends RobotApp {
 
                 controllers.clear();
                 controllers.add(mecanumDrive.rotateController);
-                selectedController = ControllerName.values()[selectedPIDController.output()];
+                selectedController = ControllerName.values()[2];
                 controllerFile = case2PIDTunedValuesFile;
 
                 /*
@@ -96,7 +99,7 @@ public class PIDTunerRobotApp extends RobotApp {
                 }
                 */
 
-                initControllers(controllers, controllerFile);
+                // initControllers(controllers, controllerFile);
 
                 telemetry.addData("Selected Controller", selectedController);
                 telemetry.addData(KCaptions[0], controllers.get(0).getKP());
@@ -110,18 +113,16 @@ public class PIDTunerRobotApp extends RobotApp {
             while(opModeIsActive()) {
                 if(gamepad1.x) {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, power, Math.PI/2);
-                    targetPositions = mecanumDrive.calculateTarget(autoGamepad);
                     mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if (gamepad1.b) {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnRight, power, Math.PI/2);
-                    targetPositions = mecanumDrive.calculateTarget(autoGamepad);
                     mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.y) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, power, 60d);
-                    targetPositions = mecanumDrive.calculateTarget(autoGamepad);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 0.5, 60d);
+                    // targetPositions = mecanumDrive.calculateTarget(autoGamepad);
                     mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.a) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, power, 60d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.5, 60d);
                     mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.right_bumper) {
                     mecanumDrive.resetAngle();
@@ -160,10 +161,11 @@ public class PIDTunerRobotApp extends RobotApp {
                     telemetry.addData(stepCaptions[2], stepD);
                     telemetry.addData("Power", power);
                     telemetry.addData("Current angle", mecanumDrive.getAngle());
+                    telemetry.addData("right_stick_x", gamepad1.right_stick_x);
                     telemetry.update();
                 } else {
                     if(targetPositions != null) {
-                        mecanumDrive.printTelemetry(autoGamepad, targetPositions);
+                        // mecanumDrive.printTelemetry(autoGamepad, targetPositions);
                     }
                 }
             }
@@ -242,7 +244,7 @@ public class PIDTunerRobotApp extends RobotApp {
 
         if (btnA.onPress()) {
             if(controllers.size() > 0) {
-                PIDControllerV2 controller = controllers.get(0);
+                PIDController controller = controllers.get(0);
 
                 switch(selectedPIDController.output()) {
                     case 0:

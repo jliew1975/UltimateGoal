@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 import lombok.Data;
 
 @Data
-public class PIDControllerV2 {
+public class PIDControllerV2 implements PIDController {
     private double target;
     private double sensorInput;
     private double kP = 0;
@@ -24,6 +24,14 @@ public class PIDControllerV2 {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
+    }
+
+    public PIDControllerV2(double kP, double kI, double kD, double integralThreaholdMin, double integralThresholdMax) {
+        this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
+        this.integralThresholdMin = integralThreaholdMin;
+        this.integralThresholdMax = integralThresholdMax;
     }
 
     public void setPID(double kP, double kI, double kD) {
@@ -51,7 +59,7 @@ public class PIDControllerV2 {
             return integral == 0;
         }
 
-        return absError < integralThresholdMin && integral == 0;
+        return absError < integralThresholdMin;
     }
 
     private double calculate() {
