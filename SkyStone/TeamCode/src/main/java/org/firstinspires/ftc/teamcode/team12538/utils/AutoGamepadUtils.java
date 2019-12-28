@@ -9,8 +9,18 @@ public class AutoGamepadUtils {
                             double power,
                             double distanceInInchesOrTurnRadian)
     {
+        move(gamepad, direction, power, distanceInInchesOrTurnRadian, true);
+    }
+
+    public static void move(AutoGamepad gamepad,
+                            MecanumDrive.AutoDirection direction,
+                            double power,
+                            double distanceInInchesOrTurnRadian,
+                            boolean reset)
+    {
         gamepad.power = power;
         gamepad.direction = direction;
+        gamepad.resetAngle = reset;
 
         switch(direction) {
             case Backward:
@@ -33,7 +43,11 @@ public class AutoGamepadUtils {
                 break;
             case CurveLeft:
             case CurveRight:
-                gamepad.left_stick_y = -1 * power;
+                if(gamepad.backCurving) {
+                    gamepad.left_stick_y = power;
+                } else {
+                    gamepad.left_stick_y = -1 * power;
+                }
                 gamepad.distanceInInches = distanceInInchesOrTurnRadian;
                 gamepad.curving = true;
                 break;

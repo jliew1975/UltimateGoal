@@ -254,6 +254,11 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
         telemetry.update();
     }
 
+    @Override
+    public void flipLastAngleForErrorCorrection(LastAngleMode lastAngleMode) {
+        throw new UnsupportedOperationException();
+    }
+
     private boolean isOnTarget(AutoGamepad gamepad) {
         if(gamepad.isStrafing()) {
             return strafeController.onTarget();

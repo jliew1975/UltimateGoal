@@ -24,10 +24,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import static org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils.opModeIsActive;
 import static org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils.sleep;
 
 public class MecanumDrive implements TeleOpDrive {
+    public enum LastAngleMode { AudienceDirection, StoneDirection }
     public enum AutoDirection {Forward, Backward, TurnLeft, TurnRight, StrafeLeft, StrafeRight, CurveLeft, CurveRight}
 
     protected final double WHEEL_COUNTS_PER_REV = 537.6;
@@ -64,7 +68,12 @@ public class MecanumDrive implements TeleOpDrive {
 
     protected double worldAngle = 0d; // accumulated angle init angle
     protected double globalAngle = 0d;
+
+    @Getter @Setter
     protected Orientation lastAngles = new Orientation();
+
+    protected Orientation angleFacingStone;
+    protected Orientation angleFacingAudience;
 
     protected Telemetry telemetry;
     protected ElapsedTime runtime = new ElapsedTime();
@@ -114,7 +123,12 @@ public class MecanumDrive implements TeleOpDrive {
             ThreadUtils.idle();
         }
 
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+        angleFacingStone = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+        angleFacingAudience = new Orientation();
+        angleFacingAudience.firstAngle -= (float) (Math.PI/2);
+
         telemetry.addData("imu", "finish imu calabration");
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         telemetry.update();

@@ -17,7 +17,7 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
     protected AutoGamepad gamepad = null;
     protected SkyStoneAutoRobot robot = null;
 
-
+    protected int numSkystone = 3;
 
     protected ElapsedTime runtime = new ElapsedTime();
 
@@ -35,7 +35,7 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
         robot = new SkyStoneAutoRobot();
         robot.init();
 
-        OpenCvDetector detector = new OpenCvDetector();
+        OpenCvDetector detector = new OpenCvDetector(numSkystone);
         detector.init();
         detector.activate();
 

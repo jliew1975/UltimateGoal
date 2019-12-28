@@ -98,9 +98,18 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
             }
         } else if(gamepad.isCurving()) {
             if(gamepad.isCurvingRight()) {
-                targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                if(gamepad.backCurving) {
+                    targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                } else {
+                    targetPositions[1] = directionalEncoderMotors.get(1).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                }
             } else {
-                targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                if(gamepad.backCurving) {
+                    targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() + (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                } else {
+                    targetPositions[0] = directionalEncoderMotors.get(0).getCurrentPosition() - (int) (gamepad.distanceInInches * DEAD_WHEEL_ENCODER_TICKS_PER_INCH);
+                }
+
             }
         } else if (gamepad.isTurning()) {
             rotateController.setTarget(getAngle() + gamepad.turnRadian);
@@ -118,9 +127,13 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
             if (gamepad.isCurvingLeft()) {
                 rightRear.setPower(rightRearPower * scaleFactor);
                 rightFront.setPower(rightFrontPower * scaleFactor);
+                leftFront.setPower(0d);
+                leftRear.setPower(0d);
             } else {
                 leftFront.setPower(leftFrontPower * scaleFactor);
                 leftRear.setPower(leftRearPower * scaleFactor);
+                rightFront.setPower(0d);
+                rightRear.setPower(0d);
             }
         } else {
             leftFront.setPower(Math.signum(leftFrontPower) * scaleFactor);
@@ -153,9 +166,16 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
                         break;
                     }
                 } else if(gamepad.isCurving()) {
-                    if ((gamepad.isCurvingRight() && directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1]) ||
-                            (gamepad.isCurvingLeft() && directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0])) {
-                        break;
+                    if(gamepad.backCurving) {
+                        if ((gamepad.isCurvingRight() && directionalEncoderMotors.get(1).getCurrentPosition() >= targetPositions[1]) ||
+                                (gamepad.isCurvingLeft() && directionalEncoderMotors.get(0).getCurrentPosition() >= targetPositions[0])) {
+                            break;
+                        }
+                    } else {
+                        if ((gamepad.isCurvingRight() && directionalEncoderMotors.get(1).getCurrentPosition() <= targetPositions[1]) ||
+                                (gamepad.isCurvingLeft() && directionalEncoderMotors.get(0).getCurrentPosition() <= targetPositions[0])) {
+                            break;
+                        }
                     }
                 } else {
                     if(gamepad.left_stick_y >= 0 &&
@@ -169,7 +189,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
                 }
 
                 if(!gamepad.isCurving() && !gamepad.isTurning()) {
-                    gamepad.right_stick_x = getAngle() / 20;
+                    gamepad.right_stick_x = getAngle() / 15;
                     angularAdjustment(gamepad);
                 }
 
@@ -186,7 +206,9 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
             }
         }
 
-        stop();
+        if(gamepad.stopMotor) {
+            stop();
+        }
 
         if(gamepad.resetAngle) {
             resetAngle();
@@ -197,8 +219,13 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
         MotorUtils.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER, driveMotorList);
     }
 
-    private boolean isOntarget(AutoGamepad gamepad) {
-        return gamepad.right_stick_x == 0;
+    @Override
+    public void flipLastAngleForErrorCorrection(LastAngleMode lastAngleMode) {
+        if(lastAngleMode == LastAngleMode.AudienceDirection) {
+            this.lastAngles = angleFacingAudience;
+        } else {
+            this.lastAngles = angleFacingStone;
+        }
     }
 
     @Override
@@ -234,6 +261,10 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
         }
 
         telemetry.update();
+    }
+
+    private boolean isOntarget(AutoGamepad gamepad) {
+        return gamepad.right_stick_x == 0;
     }
 
     private void angularAdjustment(AutoGamepad gamepad) {

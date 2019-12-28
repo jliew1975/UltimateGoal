@@ -11,4 +11,5 @@ public interface AutoDrive {
 
     void stop();
     void autoNavigateWithGamepad(AutoGamepad gamepad);
+    void flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode lastAngleMode);
 }

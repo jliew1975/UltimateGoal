@@ -42,29 +42,29 @@ public class TeleOpTestRobotApp extends RobotApp {
             int stoneHeight = 1;
 
             Button btnX = new Button();
-            btnX.input(gamepad1.x);
+
 
             Button btnB = new Button();
-            btnB.input(gamepad1.b);
+
 
 
             while (!isStarted() && !isStopRequested()) {
                 robot.mecanumDrive.printTelemetry();
                 telemetry.update();
             }
-
             while(opModeIsActive()) {
-
                 if(gamepad1.x) {
                     // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 10d);
                     // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.3, Math.PI/2);
                     autoGamepad.resetAngle = true;
+                    autoGamepad.backCurving = true;
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveLeft, 0.6, 30d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if (gamepad1.b) {
                     // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 10d);
                     // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnRight, 0.3, Math.PI/2);
                     autoGamepad.resetAngle = true;
+                    autoGamepad.backCurving = true;
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveRight, 0.6, 30d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.y) {
@@ -75,6 +75,18 @@ public class TeleOpTestRobotApp extends RobotApp {
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 }
 
+
+                /*
+                btnB.input(gamepad1.b);
+                btnX.input(gamepad1.x);
+
+                if(btnB.onPress()) {
+                    robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+                }
+
+                if(btnX.onPress()) {
+                    robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
+                }
 
                 // robot.capstone.control(gamepad1);
 

@@ -167,20 +167,30 @@ public class OpenCvDetector implements TargetPositionalDetector {
             double[] pixRight = thresholdMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
             valRight = (int)pixRight[0];
 
-            if(valLeft == 0) {
-                skystonePosition = Position.Left;
-            } else if(valMid == 0) {
-                skystonePosition = Position.Center;
-            } else if(valRight == 0) {
-                skystonePosition = Position.Right;
+            if(numStoneVisible == 2) {
+                if(valLeft == 0) {
+                    skystonePosition = Position.Center;
+                } else if(valMid == 0) {
+                    skystonePosition = Position.Right;
+                } else {
+                    skystonePosition = Position.Left;
+                }
+            } else {
+                if (valLeft == 0) {
+                    skystonePosition = Position.Left;
+                } else if (valMid == 0) {
+                    skystonePosition = Position.Center;
+                } else if (valRight == 0) {
+                    skystonePosition = Position.Right;
+                }
             }
 
             telemetry.addData("Skystone Position", skystonePosition);
             telemetry.update();
 
             //create three points
-            Point pointMid = new Point((int)(input.cols()* midPos[0]), (int)(input.rows()* midPos[1]));
             Point pointLeft = new Point((int)(input.cols()* leftPos[0]), (int)(input.rows()* leftPos[1]));
+            Point pointMid = new Point((int)(input.cols()* midPos[0]), (int)(input.rows()* midPos[1]));
             Point pointRight = new Point((int)(input.cols()* rightPos[0]), (int)(input.rows()* rightPos[1]));
 
             //draw circles on those points

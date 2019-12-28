@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538.ext;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetector;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive.AutoDirection;
 
@@ -19,10 +20,14 @@ public class AutoGamepad {
     public boolean strafing = false;
     public boolean turning = false;
     public boolean curving = false;
+    public boolean backCurving = false;
     public boolean resetAngle = true;
+    public boolean stopMotor = true;
 
     public double power = 0d;
     public RobotDetector detector = null;
+
+    public Orientation offsetAngle = null;
 
     public void reset() {
         left_stick_x = 0d;
@@ -36,6 +41,7 @@ public class AutoGamepad {
         strafing = false;
         turning = false;
         curving = false;
+        backCurving = false;
         resetAngle = true;
     }
 
