@@ -32,7 +32,19 @@ import static org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils.sleep;
 
 public class MecanumDrive implements TeleOpDrive {
     public enum LastAngleMode { AudienceDirection, StoneDirection }
-    public enum AutoDirection {Forward, Backward, TurnLeft, TurnRight, StrafeLeft, StrafeRight, CurveLeft, CurveRight}
+
+    public enum AutoDirection {
+        Forward,
+        Backward,
+        TurnLeft,
+        TurnRight,
+        StrafeLeft,
+        StrafeRight,
+        CurveLeft,
+        CurveRight,
+        DiagonalLeft,
+        DiagonalRight
+    }
 
     protected final double WHEEL_COUNTS_PER_REV = 537.6;
     protected final double DEAD_WHEEL_COUNTS_PER_REV = 1600;

@@ -21,6 +21,8 @@ public class AutoGamepad {
     public boolean turning = false;
     public boolean curving = false;
     public boolean backCurving = false;
+    public boolean diagonal = false;
+
     public boolean resetAngle = true;
     public boolean stopMotor = true;
 
@@ -42,6 +44,7 @@ public class AutoGamepad {
         turning = false;
         curving = false;
         backCurving = false;
+        diagonal = false;
         resetAngle = true;
     }
 
@@ -57,6 +60,8 @@ public class AutoGamepad {
         return curving;
     }
 
+    public boolean isDiagonal() { return diagonal; }
+
     public boolean isCurvingLeft() {
         return direction == AutoDirection.CurveLeft;
     }
@@ -64,4 +69,8 @@ public class AutoGamepad {
     public boolean isCurvingRight() {
         return direction == AutoDirection.CurveRight;
     }
+
+    public boolean isDiagonalRight() { return direction == AutoDirection.DiagonalRight; }
+
+    public boolean isDiagonalLeft() { return direction == AutoDirection.DiagonalLeft; }
 }

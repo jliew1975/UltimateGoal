@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
-@Autonomous(name="Loading Red Swirl", group="Linear Opmode")
-public class AutoLoadingRedSwirlApp extends AutoLoadingZoneApp {
-    public AutoLoadingRedSwirlApp() {
+@Autonomous(name="Red Skystone And Foundation", group="Linear Opmode")
+public class AutoLoadingRedStoneAndFoundationApp extends AutoLoadingZoneApp {
+    public AutoLoadingRedStoneAndFoundationApp() {
         super();
         super.autoMode = AutonomousMode.RedLoading;
         super.autoColor = AutonomousColor.Red;
@@ -21,7 +21,7 @@ public class AutoLoadingRedSwirlApp extends AutoLoadingZoneApp {
     }
 
     @Override
-    protected void autoVuforiaLogic(TargetPositionalDetector detector) {
+    protected void autoVisionLogic(TargetPositionalDetector detector) {
         Position skystonePosition = detector.getPosition();
 
         switch (skystonePosition) {
@@ -45,7 +45,7 @@ public class AutoLoadingRedSwirlApp extends AutoLoadingZoneApp {
 
         moveFoundationToBuildingSite(Position.Left);
 
-        deploySkyStoneToFoundation();
+        // deploySkyStoneToFoundation();
 
         moveToParkUnderSkyBridge(Position.Left);
     }
@@ -57,7 +57,7 @@ public class AutoLoadingRedSwirlApp extends AutoLoadingZoneApp {
 
         moveFoundationToBuildingSite(Position.Center);
 
-        deploySkyStoneToFoundation();
+        // deploySkyStoneToFoundation();
 
         moveToParkUnderSkyBridge(Position.Center);
     }
@@ -69,7 +69,7 @@ public class AutoLoadingRedSwirlApp extends AutoLoadingZoneApp {
 
         moveFoundationToBuildingSite(Position.Right);
 
-        deploySkyStoneToFoundation();
+        // deploySkyStoneToFoundation();
 
         moveToParkUnderSkyBridge(Position.Right);
     }
@@ -115,7 +115,7 @@ public class AutoLoadingRedSwirlApp extends AutoLoadingZoneApp {
             case Left:
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.CurveLeft, 0.5, 30d);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.3, 14d);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 15d);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 gamepad.detector = robot.intakeSensor;
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
@@ -174,26 +174,17 @@ public class AutoLoadingRedSwirlApp extends AutoLoadingZoneApp {
 
         robot.foundationClaw.lowerClaw();
 
-        // At the same time have the stone out ready for deployment.
-        ThreadUtils.getExecutorService().submit(() -> robot.outtake.prepareForStoneDeployment());
+        // At the same time deploy stone to foundation to save time.
+        ThreadUtils.getExecutorService().submit(() -> {
+            robot.outtake.prepareForStoneDeployment();
+            sleep(800);
+            deploySkyStoneToFoundation();
+        });
 
         sleep(800);
 
-        switch (position) {
-            case Left:
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 2);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                break;
-            case Right:
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 2);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                break;
-            case Center:
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 2);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                break;
-        }
-
+        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 2);
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.CurveRight, 0.6, 30);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
@@ -234,21 +225,5 @@ public class AutoLoadingRedSwirlApp extends AutoLoadingZoneApp {
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 35);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-    }
-
-    private double getDistanceToBackoffForSkystone(Position position) {
-        if(position == Position.Center) {
-            return 10d;
-        }
-
-        return 5d;
-    }
-
-    private double getDistanceToFoundation(Position position) {
-        if(position == Position.Center) {
-            return 10d;
-        }
-
-        return 5d;
     }
 }

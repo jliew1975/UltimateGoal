@@ -67,7 +67,9 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
     }
 
     @Override
-    public void autoNavigateWithGamepad(AutoGamepad gamepad) {
+    public boolean autoNavigateWithGamepad(AutoGamepad gamepad) {
+        boolean navigated = true;
+
         // Set desired velocities
         double xVelocity = gamepad.left_stick_y;
         double yVelocity = gamepad.left_stick_x;
@@ -168,6 +170,8 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
         leftController.reset();
         rightController.reset();
         gamepad.reset();
+
+        return navigated;
     }
 
     public double[] calculateTarget(AutoGamepad gamepad) {

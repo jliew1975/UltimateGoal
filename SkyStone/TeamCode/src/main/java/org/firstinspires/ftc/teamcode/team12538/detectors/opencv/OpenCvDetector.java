@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.team12538.detectors.TargetPositionalDetector;
+import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -167,13 +168,14 @@ public class OpenCvDetector implements TargetPositionalDetector {
             double[] pixRight = thresholdMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
             valRight = (int)pixRight[0];
 
+            AutonomousColor autoColor = OpModeUtils.getGlobalStore().autoColor;
             if(numStoneVisible == 2) {
                 if(valLeft == 0) {
-                    skystonePosition = Position.Center;
+                    skystonePosition = autoColor == AutonomousColor.Red ? Position.Center : Position.Left;
                 } else if(valMid == 0) {
-                    skystonePosition = Position.Right;
+                    skystonePosition = autoColor == AutonomousColor.Red ? Position.Right : Position.Center;
                 } else {
-                    skystonePosition = Position.Left;
+                    skystonePosition = autoColor == AutonomousColor.Red ? Position.Left : Position.Right;
                 }
             } else {
                 if (valLeft == 0) {
@@ -185,6 +187,8 @@ public class OpenCvDetector implements TargetPositionalDetector {
                 }
             }
 
+            telemetry.addData("valLeft", valLeft);
+            telemetry.addData("valMid", valMid);
             telemetry.addData("Skystone Position", skystonePosition);
             telemetry.update();
 

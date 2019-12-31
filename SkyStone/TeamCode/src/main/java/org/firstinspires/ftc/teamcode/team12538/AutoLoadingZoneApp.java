@@ -26,6 +26,9 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
         // Tell global store that runMode is in Autonomous mode
         OpModeUtils.getGlobalStore().runMode = OpModeStore.RunMode.Autonomous;
 
+        // Tell global store the color of alliance
+        OpModeUtils.getGlobalStore().autoColor = autoColor;
+
         // Reset encoder
         OpModeUtils.setResetEncoder(true);
 
@@ -42,13 +45,14 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
         waitForStart();
 
         try {
-            autoVuforiaLogic(detector);
+            autoVisionLogic(detector);
         } finally {
             detector.deactivate();
+            robot.intakeSensor.stop();
         }
     }
 
-    protected abstract void autoVuforiaLogic(TargetPositionalDetector detector);
+    protected abstract void autoVisionLogic(TargetPositionalDetector detector);
 
     protected void pickupStoneNavigation() {
         pickupStoneNavigation(10d);

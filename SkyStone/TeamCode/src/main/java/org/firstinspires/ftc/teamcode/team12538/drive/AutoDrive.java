@@ -10,6 +10,6 @@ public interface AutoDrive {
     void resetEncoderValues();
 
     void stop();
-    void autoNavigateWithGamepad(AutoGamepad gamepad);
+    boolean autoNavigateWithGamepad(AutoGamepad gamepad);
     void flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode lastAngleMode);
 }

@@ -23,6 +23,9 @@ public class AutoBuildingZoneApp extends RobotApp {
         // Tell global store that runMode is in Autonomous mode
         OpModeUtils.getGlobalStore().runMode = OpModeStore.RunMode.Autonomous;
 
+        // Tell global store the alliance color
+        OpModeUtils.getGlobalStore().autoColor = autoColor;
+
         // reset encoder
         OpModeUtils.setResetEncoder(true);
 
