@@ -227,6 +227,9 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
         } else {
             this.lastAngles = angleFacingStone;
         }
+
+        // reset delta to 0;
+        globalAngle = 0;
     }
 
     @Override

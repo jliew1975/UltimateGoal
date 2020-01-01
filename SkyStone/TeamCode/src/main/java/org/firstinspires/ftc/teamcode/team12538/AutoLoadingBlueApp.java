@@ -150,7 +150,7 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         robot.intakeSensor.start();
 
         switch(position) {
-            case Right:
+            case Left:
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 23d);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 10d);
@@ -180,7 +180,7 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 break;
 
-            case Left:
+            case Right:
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 10d);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.CurveRight, 0.5, 30d);
