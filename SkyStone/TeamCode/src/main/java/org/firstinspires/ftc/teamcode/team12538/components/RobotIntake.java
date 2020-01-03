@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
-public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware {
+public class RobotIntake implements RobotComponent, ControlAware {
     private DcMotorWrapper leftRoller;
     private DcMotorWrapper rightRoller;
 
@@ -32,26 +32,17 @@ public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware
 
     @Override
     public void control(Gamepad gamepad) {
-        double power = 0.8;
+        double power = 1d;
 
         if(gamepad.right_bumper) {
             setPower(power);
-            // OpModeUtils.getGlobalStore().setLiftOuttake(true);
+            OpModeUtils.getGlobalStore().setLiftOuttake(true);
         } else if(gamepad.left_bumper) {
             setPower(-1 * power);
-            // OpModeUtils.getGlobalStore().setLiftOuttake(true);
+            OpModeUtils.getGlobalStore().setLiftOuttake(true);
         } else {
             setPower(0d);
         }
-    }
-
-    @Override
-    public void printTelemetry() {
-        /*
-        Telemetry telemetry = OpModeUtils.getTelemetry();
-        telemetry.addData("leftRoller", leftRoller.getMotor().getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-        telemetry.addData("rightRoller", rightRoller.getMotor().getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-        */
     }
 
     public void setPower(double power) {
@@ -81,17 +72,5 @@ public class RobotIntake implements RobotComponent, ControlAware, TelemetryAware
         } else {
             rightRoller.setPower(power);
         }
-    }
-
-    // Computes the current battery voltage
-    private double getBatteryVoltage() {
-        double result = Double.POSITIVE_INFINITY;
-        for (VoltageSensor sensor : OpModeUtils.getHardwareMap().voltageSensor) {
-            double voltage = sensor.getVoltage();
-            if (voltage > 0) {
-                result = Math.min(result, voltage);
-            }
-        }
-        return result;
     }
 }

@@ -7,9 +7,16 @@ import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneTeleOpRobot;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeStore;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
 
 @TeleOp(name="Robot Tele", group="Linear Opmode")
 public class TeleOpRobotApp extends RobotApp {
+    private int stoneLevel = 1;
+
+    Button dPadUp = new Button();
+    Button dPadDown = new Button();
+    Button btnX = new Button();
+
     @Override
     public void performRobotOperation() throws InterruptedException {
         try {
@@ -32,20 +39,29 @@ public class TeleOpRobotApp extends RobotApp {
                 robot.intake.control(gamepad1);
                 robot.outtake.control(gamepad1);
                 robot.foundationClaw.control(gamepad2);
-                robot.outtake.conttrolForCapstone(gamepad2);
 
-                if(gamepad2.x) {
-                    robot.stoneArm.setPosition(RobotStoneArm.UP);
-                } else if(gamepad2.b) {
-                    robot.stoneArm.setPosition(RobotStoneArm.DOWN);
+                dPadUp.input(gamepad2.dpad_up);
+                dPadDown.input(gamepad2.dpad_down);
+                btnX.input(gamepad2.x);
+
+                if(dPadUp.onPress()) {
+                    robot.outtake.stoneHeight += 1;
+                } else if(dPadDown.onPress()) {
+                    robot.outtake.stoneHeight -= 1;
+                } else if(btnX.onPress()) {
+                    robot.outtake.stoneHeight = 1;
                 }
+
+                robot.capstone.control(gamepad2);
 
 
                 // telemetry printing
                 // robot.mecanumDrive.printTelemetry();
-                // robot.outtake.printTelemetry();
+                // robot.outtakeSlides.printTelemetry();
                 // robot.intake.printTelemetry();
-                // telemetry.update();
+
+                telemetry.addData("Stone Level", robot.outtake.stoneHeight);
+                telemetry.update();
             }
         } finally {
             OpModeUtils.stop();

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.team12538.robot;
 
 import org.firstinspires.ftc.teamcode.team12538.drive.NewMecanumDrive;
+import org.firstinspires.ftc.teamcode.team12538.drive.PIDMecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.drive.TeleOpDrive;
 
 public class SkyStoneTeleOpRobot extends CommonRobotHardware implements Robot {
@@ -10,7 +11,7 @@ public class SkyStoneTeleOpRobot extends CommonRobotHardware implements Robot {
      * We can swap the drive logic with either
      * MecanumDrive or NewMecanumDrive implementation here
      */
-    public TeleOpDrive mecanumDrive = new NewMecanumDrive();
+    public TeleOpDrive mecanumDrive = new PIDMecanumDrive();
 
     @Override
     public void init() {

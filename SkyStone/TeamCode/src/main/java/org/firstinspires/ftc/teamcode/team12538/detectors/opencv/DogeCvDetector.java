@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team12538.detectors.dogecv;
+package org.firstinspires.ftc.teamcode.team12538.detectors.opencv;
 
 import com.disnodeteam.dogecv.detectors.skystone.SkystoneDetector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,8 +7,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetector;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 public class DogeCvDetector implements RobotDetector {
     enum DetectMode { Stone, SkyStone }
@@ -43,7 +43,8 @@ public class DogeCvDetector implements RobotDetector {
                 hardwareMap.appContext.getResources().getIdentifier(
                         "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        webcam = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), webCameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(
+                hardwareMap.get(WebcamName.class, "Webcam 1"), webCameraMonitorViewId);
 
         /*
          * Open the connection to the camera device

@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.team12538;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
-import org.firstinspires.ftc.teamcode.team12538.components.RobotDistanceSensor;
-import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetectorLimit;
-import org.firstinspires.ftc.teamcode.team12538.detectors.vuforia.VuforiaDetector;
+import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
+import org.firstinspires.ftc.teamcode.team12538.detectors.TargetPositionalDetector;
+import org.firstinspires.ftc.teamcode.team12538.detectors.opencv.OpenCvDetector;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive.AutoDirection;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
@@ -18,12 +17,17 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
     protected AutoGamepad gamepad = null;
     protected SkyStoneAutoRobot robot = null;
 
+    protected int numSkystone = 3;
+
     protected ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void performRobotOperation() throws InterruptedException {
         // Tell global store that runMode is in Autonomous mode
         OpModeUtils.getGlobalStore().runMode = OpModeStore.RunMode.Autonomous;
+
+        // Tell global store the color of alliance
+        OpModeUtils.getGlobalStore().autoColor = autoColor;
 
         // Reset encoder
         OpModeUtils.setResetEncoder(true);
@@ -34,21 +38,21 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
         robot = new SkyStoneAutoRobot();
         robot.init();
 
-        VuforiaDetector detector = new VuforiaDetector();
+        OpenCvDetector detector = new OpenCvDetector(numSkystone);
         detector.init();
-        // detector.activate();
-        detector.activate(VuforiaDetector.TargetMode.StoneDetection);
+        detector.activate();
 
         waitForStart();
 
         try {
-            autoVuforiaLogic(detector);
+            autoVisionLogic(detector);
         } finally {
             detector.deactivate();
+            robot.intakeSensor.stop();
         }
     }
 
-    protected abstract void autoVuforiaLogic(VuforiaDetector detector);
+    protected abstract void autoVisionLogic(TargetPositionalDetector detector);
 
     protected void pickupStoneNavigation() {
         pickupStoneNavigation(10d);

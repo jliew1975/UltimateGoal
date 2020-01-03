@@ -7,11 +7,15 @@ import org.firstinspires.ftc.teamcode.team12538.components.RobotComponent;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Data;
+
+@Data
 public class OpModeStore {
     public enum RunMode { Autonomous, TeleOp }
 
     private LinearOpMode opMode = null;
     public RunMode runMode = RunMode.TeleOp;
+    public AutonomousColor autoColor = AutonomousColor.Unknown;
 
     private volatile boolean resetEncoder = false;
     private volatile boolean foundationClawDown = false;
@@ -26,48 +30,8 @@ public class OpModeStore {
         foundationClawDown = false;
     }
 
-    public LinearOpMode getOpMode() {
-        return opMode;
-    }
-
-    public void setOpMode(LinearOpMode opMode) {
-        this.opMode = opMode;
-    }
-
     public void destroy() {
         this.opMode = null;
-    }
-
-    public boolean isResetEncoder() {
-        return resetEncoder;
-    }
-
-    public void setResetEncoder(boolean resetEncoder) {
-        this.resetEncoder = resetEncoder;
-    }
-
-    public boolean isFoundationClawDown() {
-        return foundationClawDown;
-    }
-
-    public void setFoundationClawDown(boolean foundationClawDown) {
-        this.foundationClawDown = foundationClawDown;
-    }
-
-    public boolean isDepositMode() {
-        return depositMode;
-    }
-
-    public void setDepositMode(boolean depositMode) {
-        this.depositMode = depositMode;
-    }
-
-    public boolean isLiftOuttake() {
-        return liftOuttake;
-    }
-
-    public void setLiftOuttake(boolean liftOuttake) {
-        this.liftOuttake = liftOuttake;
     }
 
     @SuppressWarnings("unchecked")

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538;
 
-import org.firstinspires.ftc.teamcode.team12538.components.AutoGamepad;
+import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotDistanceSensor;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotFoundationClaw;
 import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetectorLimit;
@@ -22,6 +22,9 @@ public class AutoBuildingZoneApp extends RobotApp {
     public void performRobotOperation() throws InterruptedException {
         // Tell global store that runMode is in Autonomous mode
         OpModeUtils.getGlobalStore().runMode = OpModeStore.RunMode.Autonomous;
+
+        // Tell global store the alliance color
+        OpModeUtils.getGlobalStore().autoColor = autoColor;
 
         // reset encoder
         OpModeUtils.setResetEncoder(true);
@@ -139,8 +142,8 @@ public class AutoBuildingZoneApp extends RobotApp {
                 case StrafeRight:
                 case TurnRight:
                 case TurnLeft:
-                case ConceringRight:
-                case ConceringLeft:
+                case CurveRight:
+                case CurveLeft:
                     return flipDirection(currentDirection);
             }
         }

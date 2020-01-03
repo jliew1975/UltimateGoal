@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.team12538;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
-import org.firstinspires.ftc.teamcode.team12538.detectors.vuforia.VuforiaDetector;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
+import org.firstinspires.ftc.teamcode.team12538.detectors.TargetPositionalDetector;
+import org.firstinspires.ftc.teamcode.team12538.detectors.TargetPositionalDetector.Position;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 @Autonomous(name="Loading Red", group="Linear Opmode")
 public class AutoLoadingRedApp extends AutoLoadingZoneApp {
@@ -15,323 +17,291 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
         super();
         super.autoMode = AutonomousMode.RedLoading;
         super.autoColor = AutonomousColor.Red;
+        super.numSkystone = 2;
     }
 
     @Override
-    protected void autoVuforiaLogic(VuforiaDetector detector) {
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 22);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+    protected void autoVisionLogic(TargetPositionalDetector detector) {
+        Position skystonePosition = detector.getPosition();
 
-        // Default to left
-        VuforiaDetector.TargetPosition targetPosition = VuforiaDetector.TargetPosition.Right;
-        detector.targetPosition = targetPosition;
-
-        // wait for 2 second for vuforia skystone detection.
-        runtime.reset();
-        detector.wait(2, runtime);
-
-        try {
-            if (!detector.isTargetVisible()) {
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 6);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-                // wait for 1 second for vuforia to pickup skystone position.
-                runtime.reset();
-                detector.wait(2, runtime);
-
-                if (detector.isTargetVisible()) {
-                    targetPosition = VuforiaDetector.TargetPosition.Center;
-                    detector.targetPosition = targetPosition;
-                } else {
-                    targetPosition = VuforiaDetector.TargetPosition.Left;
-                    detector.targetPosition = targetPosition;
-                }
-            }
-        } finally {
-            detector.deactivate();
-        }
-
-        switch (targetPosition) {
+        switch (skystonePosition) {
             case Left:
-                executeLeftLogic();
+                executeLeftLogic(Position.Left);
                 break;
             case Center:
-                executeCenterLogic();
+                executeCenterLogic(Position.Center);
                 break;
             default:
-                executeRightLogic();
+                executeRightLogic(Position.Right);
         }
 
         sleep(500);
     }
 
-    protected void executeLeftLogic() {
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 1d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+    protected void executeLeftLogic(Position position) {
+        if(opModeIsActive()) {
+            pickupFirstSkyStone(position);
+        }
 
-        sleep(500);
+        if(opModeIsActive()) {
+            crossSkyBridge(position, 1);
+        }
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 12d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        if(opModeIsActive()) {
+            deploySkyStoneToFoundation(20);
+        }
 
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
+        if(opModeIsActive()) {
+            pickupSecondSkyStone(position);
+        }
 
-        sleep(800);
+        if(opModeIsActive()) {
+            crossSkyBridge(position, 2);
+        }
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 15d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        if(opModeIsActive()) {
+            AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.3, 5);
+            robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+            robot.outtake.stoneHeight = 2;
+            deploySkyStoneToFoundation(60);
+        }
 
-        // Start of navigation to Building site logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 53d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        if(opModeIsActive()) {
+            moveToParkUnderSkyBridge(position);
+        }
+    }
 
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
+    protected void executeCenterLogic(Position position) {
+        if(opModeIsActive()) {
+            pickupFirstSkyStone(position);
+        }
 
-        // Start of navigation to Building site logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 10d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        if(opModeIsActive()) {
+            crossSkyBridge(position, 1);
+        }
 
-        sleep(500);
+        if(opModeIsActive()) {
+            deploySkyStoneToFoundation(20);
+        }
 
-        // Start of navigation to Building site logic
-        gamepad.timeout = 1d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 15d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        if(opModeIsActive()) {
+            pickupSecondSkyStone(position);
+        }
 
-        sleep(500);
+        if(opModeIsActive()) {
+            crossSkyBridge(position, 2);
+        }
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 2d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        if(opModeIsActive()) {
+            AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.3, 5);
+            robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+            robot.outtake.stoneHeight = 2;
+            deploySkyStoneToFoundation(60);
+        }
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.5, 30d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        if(opModeIsActive()) {
+            moveToParkUnderSkyBridge(position);
+        }
+    }
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.2, 20d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+    protected void executeRightLogic(Position position) {
+        if(opModeIsActive()) {
+            pickupFirstSkyStone(position);
+        }
 
-        robot.rightDistSensor.setLimit(4d);
-        gamepad.detector = robot.leftDistSensor;
-        gamepad.timeout = 2d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.2, 9d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        if(opModeIsActive()) {
+            crossSkyBridge(position, 1);
+        }
 
-        sleep(500);
+        if(opModeIsActive()) {
+            deploySkyStoneToFoundation(20);
+        }
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 4d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        if(opModeIsActive()) {
+            pickupSecondSkyStone(position);
+        }
 
-        sleep(500);
+        if(opModeIsActive()) {
+            crossSkyBridge(position, 2);
+        }
 
-        gamepad.timeout = 1d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 25d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        if(opModeIsActive()) {
+            if(position != Position.Right) {
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.3, 5);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+            }
+            robot.outtake.stoneHeight = 2;
+            deploySkyStoneToFoundation(60);
+        }
 
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
+        if(opModeIsActive()) {
+            moveToParkUnderSkyBridge(position);
+        }
+    }
 
-        sleep(500);
+    private void pickupFirstSkyStone(Position position) {
+        // lift slide for intake in a background thread
+        ThreadUtils.getExecutorService().submit(() -> robot.outtake.outtakeSlides.runToPosition(50));
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 15d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        // enable intake
+        robot.intake.setPower(1);
 
-        sleep(500);
+        // start the distance sensor for stone detection
+        robot.intakeSensor.start();
 
-        // Start of Parking under the Skybridge logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 10d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        switch(position) {
+            case Right:
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 23d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 10d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                gamepad.detector = robot.intakeSensor;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 15d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 12d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.TurnLeft, 0.3, Math.PI/2);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                break;
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 20d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+            case Center:
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 25);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.TurnLeft, 0.3, Math.PI/2);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 3d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 12d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                gamepad.detector = robot.intakeSensor;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 15d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                break;
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 45d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+            case Left:
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 10d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.CurveLeft, 0.5, 30d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 13d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                gamepad.detector = robot.intakeSensor;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 13d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                break;
+        }
 
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
+        ThreadUtils.getExecutorService().submit(() -> {
+            robot.outtake.lowerSlideForStonePickup();
+            robot.intake.setPower(0);
+            sleep(500);
+            robot.outtake.outtakeClaw.setArmPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+            sleep(500);
+            robot.outtake.outtakeClaw.setArmPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
+        });
+    }
 
-        // Start of Parking under the Skybridge logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.5, 8d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+    private void pickupSecondSkyStone(Position position) {
+        // enable intake
+        robot.intake.setPower(1);
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 5d);
+        switch(position) {
+            case Right:
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 1);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                gamepad.timeout = 3;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 54);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                gamepad.timeout = 2;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 11);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                gamepad.detector = robot.intakeSensor;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                break;
+
+            case Center:
+                gamepad.timeout = 3;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 65);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                gamepad.timeout = 2;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 11);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                gamepad.detector = robot.intakeSensor;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                break;
+
+            case Left:
+                gamepad.timeout = 3;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 61);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                gamepad.timeout = 2;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 11);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                gamepad.detector = robot.intakeSensor;
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                break;
+        }
+
+        ThreadUtils.getExecutorService().submit(() -> {
+            robot.outtake.lowerSlideForStonePickup();
+            robot.intake.setPower(0);
+            sleep(500);
+            robot.outtake.outtakeClaw.setArmPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+            sleep(500);
+            robot.outtake.outtakeClaw.setArmPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
+        });
+
+        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.3, 13d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }
 
-    protected void executeCenterLogic() {
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+    private void crossSkyBridge(Position position, int round) {
+        switch (position) {
+            case Right:
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, round == 1 ? 35d : 50d, false);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 14d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                break;
 
-        sleep(500);
+            case Center:
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, round == 1 ? 35d : 52d, false);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 15d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                break;
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 12d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-
-        sleep(800);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 15d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        // Start of navigation to Building site logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 45d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
-
-        // Start of navigation to Building site logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 10d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        // Start of navigation to Building site logic
-        gamepad.timeout = 1d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 15d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 2d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 30d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.5, 20d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.rightDistSensor.setLimit(4d);
-        gamepad.detector = robot.leftDistSensor;
-        gamepad.timeout = 2d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.2, 9d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 4d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        gamepad.timeout = 1d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 25d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-
-        sleep(500);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 15d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        // Start of Parking under the Skybridge logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 10d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 20d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 40d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
-
-        // Start of Parking under the Skybridge logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.5, 8d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 5d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+            case Left:
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, round == 1 ? 40d : 70d, false);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 15d);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                break;
+        }
     }
 
-    protected void executeRightLogic() {
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 6.2d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+    private void deploySkyStoneToFoundation(int height) {
+        robot.outtake.prepareForStoneDeployment();
+
+        robot.outtake.outtakeSlides.runToPosition(height, true);
+
+        robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
 
         sleep(500);
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 10d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
+        robot.outtake.performStoneIntakeOperation();
+    }
 
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-
-        sleep(500);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 15d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        // Start of navigation to Building site logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 45d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
-
-        // Start of navigation to Building site logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 8d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        // Start of navigation to Building site logic
-        gamepad.timeout = 1d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 15d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 2d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 30d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.5, 20d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.rightDistSensor.setLimit(4d);
-        gamepad.detector = robot.leftDistSensor;
-        gamepad.timeout = 3d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.2, 9d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 10d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        gamepad.timeout = 1d;
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 25d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.DOWN);
-
-        sleep(500);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 15d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(500);
-
-        // Start of Parking under the Skybridge logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 10d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 20d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 35d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        robot.stoneArm.setPosition(RobotStoneArm.UP);
-
-        // Start of Parking under the Skybridge logic
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.5, 5d);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 5d);
+    private void moveToParkUnderSkyBridge(Position position) {
+        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 15);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }
 }

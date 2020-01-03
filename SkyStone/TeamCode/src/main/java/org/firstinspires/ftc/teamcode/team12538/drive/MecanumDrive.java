@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
+import org.firstinspires.ftc.teamcode.team12538.ext.PIDControllerV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
@@ -23,8 +24,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import static org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils.opModeIsActive;
+import static org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils.sleep;
+
 public class MecanumDrive implements TeleOpDrive {
-    public enum AutoDirection {Forward, Backward, TurnLeft, TurnRight, StrafeLeft, StrafeRight, ConceringLeft, ConceringRight}
+    public enum LastAngleMode { AudienceDirection, StoneDirection }
+
+    public enum AutoDirection {
+        Forward,
+        Backward,
+        TurnLeft,
+        TurnRight,
+        StrafeLeft,
+        StrafeRight,
+        CurveLeft,
+        CurveRight,
+        DiagonalLeft,
+        DiagonalRight
+    }
 
     protected final double WHEEL_COUNTS_PER_REV = 537.6;
     protected final double DEAD_WHEEL_COUNTS_PER_REV = 1600;
@@ -58,11 +78,20 @@ public class MecanumDrive implements TeleOpDrive {
 
     protected BNO055IMUImpl imu = null;
 
+    protected double worldAngle = 0d; // accumulated angle init angle
     protected double globalAngle = 0d;
+
+    @Getter @Setter
     protected Orientation lastAngles = new Orientation();
+
+    protected Orientation angleFacingStone;
+    protected Orientation angleFacingAudience;
 
     protected Telemetry telemetry;
     protected ElapsedTime runtime = new ElapsedTime();
+
+    protected double rotation;
+    protected PIDControllerV1 pidRotate = new PIDControllerV1(0.05, 0, 0);
 
     @Override
     public void init() {
@@ -102,11 +131,16 @@ public class MecanumDrive implements TeleOpDrive {
         parameters.loggingEnabled = false;   //For debugging
         imu.initialize(parameters);
 
-        while (OpModeUtils.opModeIsActive() && !imu.isGyroCalibrated()) {
+        while (opModeIsActive() && !imu.isGyroCalibrated()) {
             ThreadUtils.idle();
         }
 
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+        angleFacingStone = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+        angleFacingAudience = new Orientation();
+        angleFacingAudience.firstAngle -= (float) (Math.PI/2);
+
         telemetry.addData("imu", "finish imu calabration");
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         telemetry.update();
@@ -149,6 +183,12 @@ public class MecanumDrive implements TeleOpDrive {
         rightRear.setPower(powerV4);
     }
 
+    public void stop() {
+        for(DcMotor motor : driveMotorList) {
+            motor.setPower(0d);
+        }
+    }
+
     @Override
     public void resetEncoderValues() {
         MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, driveMotorList);
@@ -166,19 +206,32 @@ public class MecanumDrive implements TeleOpDrive {
         telemetry.addData("Right Rear Motor", rightRear.getCurrentPosition());
     }
 
-    public double getAngle()
+    public void resetAngle() {
+        resetAngle(AngleUnit.RADIANS);
+    }
+
+    public void resetAngle(AngleUnit angleUnit) {
+        globalAngle = 0;
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, angleUnit);
+    }
+
+    public double getAngle() {
+        return getAngle(AngleUnit.RADIANS);
+    }
+
+    public double getAngle(AngleUnit angleUnit)
     {
         // We experimentally determined the Z axis is the axis we want to use for heading angle.
         // We have to process the angle because the imu works in euler angles so the Z axis is
         // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
         // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, angleUnit);
 
         double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
-        if (deltaAngle < -180) {
-            deltaAngle += 360;
-        } else if (deltaAngle > 180) {
-            deltaAngle -= 360;
+        if (deltaAngle < -Math.PI) {
+            deltaAngle += (2 * Math.PI);
+        } else if (deltaAngle > Math.PI) {
+            deltaAngle -= (2 * Math.PI);
         }
 
         globalAngle += deltaAngle;

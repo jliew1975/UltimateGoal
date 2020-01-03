@@ -10,12 +10,12 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 public class RobotFoundationClaw implements RobotComponent, ControlAware, TelemetryAware {
-    public static final double INIT_POSITION = 0.88;
-    public static final double A_POSITION = 0.9d;
-    public static final double RAISE_CLAW_POS = 0.4;
-    public static final double LOWER_CLAW_POS = 0d;
+    public static final double INIT_POSITION = 0d;
+    public static final double RAISE_CLAW_POS = 0d;
+    public static final double LOWER_CLAW_POS = 1d;
 
-    private Servo servoClaw;
+    private Servo leftClaw;
+    private Servo rightClaw;
     private volatile ClawMode servoClawMode;
 
     private Object lock = new Object();
@@ -24,13 +24,12 @@ public class RobotFoundationClaw implements RobotComponent, ControlAware, Teleme
     @Override
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getHardwareMap();
-        servoClaw = hardwareMap.get(Servo.class, "foundationClaw");
+        leftClaw = hardwareMap.get(Servo.class, "leftFoundationClaw");
+        rightClaw = hardwareMap.get(Servo.class, "rightFoundationClaw");
+        rightClaw.setDirection(Servo.Direction.REVERSE);
 
-        if(OpModeUtils.getGlobalStore().runMode == OpModeStore.RunMode.Autonomous) {
-            servoClaw.setPosition(INIT_POSITION);
-        } else {
-            servoClaw.setPosition(LOWER_CLAW_POS);
-        }
+        leftClaw.setPosition(INIT_POSITION);
+        rightClaw.setPosition(INIT_POSITION);
 
         servoClawMode = ClawMode.Open;
     }
@@ -47,11 +46,13 @@ public class RobotFoundationClaw implements RobotComponent, ControlAware, Teleme
     @Override
     public void printTelemetry() {
         Telemetry telemetry = OpModeUtils.getTelemetry();
-        telemetry.addData("foundationClaw", servoClaw.getPosition());
+        telemetry.addData("leftfoundationClaw", leftClaw.getPosition());
+        telemetry.addData("rightfoundationClaw", rightClaw.getPosition());
     }
 
     public void setClawPosition(double position) {
-        servoClaw.setPosition(position);
+        leftClaw.setPosition(position);
+        rightClaw.setPosition(position);
         if(position > 0) {
             servoClawMode = ClawMode.Open;
         } else {
@@ -59,18 +60,16 @@ public class RobotFoundationClaw implements RobotComponent, ControlAware, Teleme
         }
     }
 
-    private void raiseClaw() {
+    public void raiseClaw() {
         OpModeUtils.getGlobalStore().setFoundationClawDown(false);
-        servoClaw.setPosition(RAISE_CLAW_POS);
+        leftClaw.setPosition(RAISE_CLAW_POS);
+        rightClaw.setPosition(RAISE_CLAW_POS);
         servoClawMode = ClawMode.Open;
     }
 
-    private void lowerClaw() {
-        if(OpModeUtils.getGlobalStore().runMode == OpModeStore.RunMode.TeleOp) {
-            OpModeUtils.getGlobalStore().setFoundationClawDown(true);
-        }
-
-        servoClaw.setPosition(LOWER_CLAW_POS);
+    public void lowerClaw() {
+        leftClaw.setPosition(LOWER_CLAW_POS);
+        rightClaw.setPosition(LOWER_CLAW_POS);
         servoClawMode = ClawMode.Close;
     }
 }

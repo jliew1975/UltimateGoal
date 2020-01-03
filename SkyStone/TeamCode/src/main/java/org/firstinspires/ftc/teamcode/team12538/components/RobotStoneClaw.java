@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public class RobotStoneClaw implements RobotComponent, TelemetryAware {
     public static final double CLAW_CLOSE_POSITION = 0.8;
-    public static final double CLAW_CLOSE_CAPSTONE_POSITION = 1d;
     public static final double CLAW_OPEN_POSITION = 0.5;
     public static final double CLAW_INTAKE_POSITION = 0d;
 
@@ -29,7 +28,7 @@ public class RobotStoneClaw implements RobotComponent, TelemetryAware {
         rightArm.setDirection(Servo.Direction.REVERSE);
 
         stoneClaw = hardwareMap.get(Servo.class, "stoneClaw");
-        stoneClaw.setPosition(CLAW_OPEN_POSITION);
+        stoneClaw.setPosition(CLAW_INTAKE_POSITION);
 
         setArmPosition(0);
     }
