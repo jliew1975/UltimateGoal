@@ -171,7 +171,7 @@ public class OpenCvDetector implements TargetPositionalDetector {
             AutonomousColor autoColor = OpModeUtils.getGlobalStore().autoColor;
             if(numStoneVisible == 2) {
                 if(valLeft == 0) {
-                    skystonePosition = autoColor == AutonomousColor.Red ? Position.Center : Position.Left;
+                    skystonePosition = autoColor == AutonomousColor.Red ? Position.Center : Position.Center;
                 } else if(valMid == 0) {
                     skystonePosition = autoColor == AutonomousColor.Red ? Position.Right : Position.Center;
                 } else {
@@ -189,6 +189,7 @@ public class OpenCvDetector implements TargetPositionalDetector {
 
             telemetry.addData("valLeft", valLeft);
             telemetry.addData("valMid", valMid);
+            telemetry.addData("valRight", valRight);
             telemetry.addData("Skystone Position", skystonePosition);
             telemetry.update();
 

@@ -54,18 +54,18 @@ public class TeleOpTestRobotApp extends RobotApp {
             }
             while(opModeIsActive()) {
                 if(gamepad1.x) {
-                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 10d);
-                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.3, Math.PI/2);
-                    autoGamepad.resetAngle = true;
-                    autoGamepad.backCurving = true;
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveLeft, 0.6, 30d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 10d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.3, Math.PI/2);
+                    // autoGamepad.resetAngle = true;
+                    // autoGamepad.backCurving = true;
+                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveLeft, 0.6, 30d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if (gamepad1.b) {
-                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 10d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 10d);
                     // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnRight, 0.3, Math.PI/2);
-                    autoGamepad.resetAngle = true;
-                    autoGamepad.backCurving = true;
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveRight, 0.6, 30d);
+                    // autoGamepad.resetAngle = true;
+                    // autoGamepad.backCurving = true;
+                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveRight, 0.6, 30d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.y) {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 0.6, 16d);

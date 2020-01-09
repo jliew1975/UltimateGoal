@@ -153,7 +153,7 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
             case Right:
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 23d);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 10d);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 8d);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 gamepad.detector = robot.intakeSensor;
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 15d);
@@ -214,7 +214,7 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 1);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 gamepad.timeout = 3;
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 54);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 51);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 gamepad.timeout = 2;
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.5, 11);
@@ -265,7 +265,7 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
     private void crossSkyBridge(Position position, int round) {
         switch (position) {
             case Right:
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, round == 1 ? 35d : 50d, false);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, round == 1 ? 30d : 50d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 14d);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);

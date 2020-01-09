@@ -118,10 +118,10 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
                 rightRear.setPower(leftFrontPower * scaleFactor);
             }
         } else {
-            leftFront.setPower(Math.signum(leftFrontPower) * scaleFactor);
-            leftRear.setPower(Math.signum(leftRearPower) * scaleFactor);
-            rightRear.setPower(Math.signum(rightRearPower) * scaleFactor);
-            rightFront.setPower(Math.signum(rightFrontPower)  * scaleFactor);
+            leftFront.setPower(leftFrontPower * scaleFactor);
+            leftRear.setPower(leftRearPower * scaleFactor);
+            rightRear.setPower(rightRearPower * scaleFactor);
+            rightFront.setPower(rightFrontPower  * scaleFactor);
         }
 
         runtime.reset();
@@ -133,7 +133,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
 
         if(gamepad.isTurning()) {
             do {
-                gamepad.right_stick_x = -rotateController.performPID(getAngle());
+                gamepad.right_stick_x = gamepad.isCurving() ? rotateController.performPID(getAngle()) : -rotateController.performPID(getAngle());
                 angularAdjustment(gamepad);
             } while(!isOntarget(gamepad) && runtime.seconds() < gamepad.timeout);
 
