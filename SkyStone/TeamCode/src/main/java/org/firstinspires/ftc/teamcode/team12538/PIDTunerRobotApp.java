@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp(name="Robot PID Tuner", group="Linear Opmode")
+@Disabled
 public class PIDTunerRobotApp extends RobotApp {
     private double power = 0.3;
     private double kP = 0.0, kI = 0.0, kD = 0.0;

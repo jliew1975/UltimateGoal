@@ -31,7 +31,7 @@ import static org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils.opModeI
 import static org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils.sleep;
 
 public class MecanumDrive implements TeleOpDrive {
-    public enum LastAngleMode { AudienceDirection, StoneDirection }
+    public enum LastAngleMode { AudienceDirectionRedAlliance, AudienceDirectionBlueAlliance, StoneDirection }
 
     public enum AutoDirection {
         Forward,
@@ -85,7 +85,9 @@ public class MecanumDrive implements TeleOpDrive {
     protected Orientation lastAngles = new Orientation();
 
     protected Orientation angleFacingStone;
-    protected Orientation angleFacingAudience;
+    protected Orientation angleFacingAudienceRedAlliance;
+    protected Orientation angleFacingAudienceBlueAlliance;
+
 
     protected Telemetry telemetry;
     protected ElapsedTime runtime = new ElapsedTime();
@@ -138,8 +140,11 @@ public class MecanumDrive implements TeleOpDrive {
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         angleFacingStone = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
 
-        angleFacingAudience = new Orientation();
-        angleFacingAudience.firstAngle -= (float) (Math.PI/2);
+        angleFacingAudienceBlueAlliance = new Orientation();
+        angleFacingAudienceBlueAlliance.firstAngle -= (float) (Math.PI/2);
+
+        angleFacingAudienceRedAlliance = new Orientation();
+        angleFacingAudienceRedAlliance.firstAngle += (float) (Math.PI/2);
 
         telemetry.addData("imu", "finish imu calabration");
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());

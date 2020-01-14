@@ -6,11 +6,13 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotFoundationClaw;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneAligner;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
 import org.firstinspires.ftc.teamcode.team12538.detectors.opencv.OpenCvDetector;
 import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.team12538.robot.Robot;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
@@ -53,6 +55,12 @@ public class TeleOpTestRobotApp extends RobotApp {
                 telemetry.update();
             }
             while(opModeIsActive()) {
+                if(gamepad1.right_trigger > 0d) {
+                    robot.outtake.aligner.setPosition(RobotStoneAligner.ALIGN);
+                } else {
+                    robot.outtake.aligner.setPosition(RobotStoneAligner.INTAKE);
+                }
+
                 if(gamepad1.x) {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 10d);
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.3, Math.PI/2);

@@ -222,10 +222,16 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
 
     @Override
     public void flipLastAngleForErrorCorrection(LastAngleMode lastAngleMode) {
-        if(lastAngleMode == LastAngleMode.AudienceDirection) {
-            this.lastAngles = angleFacingAudience;
-        } else {
-            this.lastAngles = angleFacingStone;
+        switch(lastAngleMode) {
+            case AudienceDirectionBlueAlliance:
+                this.lastAngles = angleFacingAudienceBlueAlliance;
+                break;
+            case AudienceDirectionRedAlliance:
+                this.lastAngles = angleFacingAudienceRedAlliance;
+                break;
+            default:
+                this.lastAngles = angleFacingStone;
+                break;
         }
 
         // reset delta to 0;

@@ -2,15 +2,19 @@ package org.firstinspires.ftc.teamcode.team12538.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.team12538.robot.Robot;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.OpModeStore;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
 
 public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAware {
     public RobotStoneClaw outtakeClaw = new RobotStoneClaw();
     public RobotOuttakeSlides outtakeSlides = new RobotOuttakeSlides();
+    public RobotStoneAligner aligner = new RobotStoneAligner();
 
     private Object outtakeLock = new Object();
 
@@ -20,10 +24,13 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
     public volatile int stoneHeight = 1;
 
+    Button rightTriggerBtn = new Button();
+
     @Override
     public void init() {
         outtakeClaw.init();
         outtakeSlides.init();
+        aligner.init();
     }
 
     @Override
@@ -52,7 +59,8 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         }
 
         // outtake claw controls
-        if(gamepad.right_trigger > 0) {
+        rightTriggerBtn.input(gamepad.right_trigger > 0);
+        if(rightTriggerBtn.onPress()) {
             if(!busy) {
                 synchronized (outtakeLock) {
                     if(!busy) {
@@ -62,6 +70,18 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                 }
             }
         }
+
+        /*
+        if(gamepad.right_trigger > 0) {
+            if(!busy) {
+                synchronized (outtakeLock) {
+                    if(!busy) {
+                        busy = true;
+                        performOuttakeClawOperation();
+                    }
+                }
+            }
+        }*/
 
         // stone pickup operation
         if(gamepad.a) {
@@ -181,6 +201,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
         clawMode = ClawMode.Close;
+
         ThreadUtils.sleep(500);
 
         // raise outtake slide
@@ -201,6 +222,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     }
 
     public void lowerSlideForStonePickup() {
+        aligner.setPosition(RobotStoneAligner.ALIGN);
         if(outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_STONE_PICKUP_POSITION) {
             outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
         }
@@ -210,6 +232,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         // clam the stone for pickup
         clawMode = ClawMode.Close;
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
+        aligner.setPosition(RobotStoneAligner.INTAKE);
     }
 
     public void performOuttakeClawOperation() {

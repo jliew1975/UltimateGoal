@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.team12538;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
+import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
@@ -10,6 +13,11 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 public abstract class RobotApp extends LinearOpMode {
     public AutonomousMode autoMode = AutonomousMode.Unknown;
     public AutonomousColor autoColor = AutonomousColor.Unknown;
+
+    protected SkyStoneAutoRobot robot = null;
+    protected AutoGamepad gamepad = null;
+
+    protected int numSkystone = 3;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -52,5 +60,15 @@ public abstract class RobotApp extends LinearOpMode {
             default:
                 return MecanumDrive.AutoDirection.StrafeLeft;
         }
+    }
+
+    protected void deployStone(int height) {
+        robot.outtake.prepareForStoneDeployment();
+        robot.outtake.outtakeSlides.runToPosition(height, true);
+
+        robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+        sleep(200);
+        robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
+        robot.outtake.performStoneIntakeOperation();
     }
 }

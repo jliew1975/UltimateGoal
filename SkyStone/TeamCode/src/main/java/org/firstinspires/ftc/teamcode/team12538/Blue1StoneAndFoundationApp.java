@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
-@Autonomous(name="Blue Skystone And Foundation", group="Linear Opmode")
-public class AutoLoadingBlueStoneAndFoundationApp extends AutoLoadingZoneApp {
-    public AutoLoadingBlueStoneAndFoundationApp() {
+@Autonomous(name="Blue 1 Stone And Foundation", group="Linear Opmode")
+public class Blue1StoneAndFoundationApp extends AutoLoadingZoneApp {
+    public Blue1StoneAndFoundationApp() {
         super();
         super.autoMode = AutonomousMode.BlueLoading;
         super.autoColor = AutonomousColor.Blue;
@@ -32,8 +32,6 @@ public class AutoLoadingBlueStoneAndFoundationApp extends AutoLoadingZoneApp {
             default:
                 executeRightLogic();
         }
-
-        sleep(500);
     }
 
     protected void executeLeftLogic() {
@@ -106,7 +104,7 @@ public class AutoLoadingBlueStoneAndFoundationApp extends AutoLoadingZoneApp {
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.TurnRight, 0.5, Math.PI/2);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirection);
+                robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionBlueAlliance);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 15d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 gamepad.detector = robot.intakeSensor;
@@ -121,7 +119,7 @@ public class AutoLoadingBlueStoneAndFoundationApp extends AutoLoadingZoneApp {
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.TurnRight, 0.6, Math.PI/2);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirection);
+                robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionBlueAlliance);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 17d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 gamepad.detector = robot.intakeSensor;
@@ -136,7 +134,7 @@ public class AutoLoadingBlueStoneAndFoundationApp extends AutoLoadingZoneApp {
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.TurnRight, 0.3, Math.PI/2);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirection);
+                robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionBlueAlliance);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 18.5d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 gamepad.detector = robot.intakeSensor;
@@ -149,8 +147,9 @@ public class AutoLoadingBlueStoneAndFoundationApp extends AutoLoadingZoneApp {
 
         ThreadUtils.getExecutorService().submit(() -> {
             robot.outtake.lowerSlideForStonePickup();
-            robot.intake.setPower(0);
+            robot.intake.setPower(-1);
             sleep(500);
+            robot.intake.setPower(0);
             robot.outtake.outtakeClaw.setArmPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
             sleep(500);
             robot.outtake.outtakeClaw.setArmPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
@@ -158,20 +157,24 @@ public class AutoLoadingBlueStoneAndFoundationApp extends AutoLoadingZoneApp {
     }
 
     private void crossSkyBridge(TargetPositionalDetector.Position position) {
+        double distanceToFoundation = 0d;
+
+        robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionBlueAlliance);
+
         switch (position) {
             case Left:
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, 75d, false);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                distanceToFoundation = 75d;
                 break;
             case Center:
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, 58d, false);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                distanceToFoundation = 58d;
                 break;
             case Right:
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, 68d, false);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                distanceToFoundation = 68d;
                 break;
         }
+
+        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, distanceToFoundation, false);
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }
 
     private void moveFoundationToBuildingSite(TargetPositionalDetector.Position position) {
@@ -185,9 +188,7 @@ public class AutoLoadingBlueStoneAndFoundationApp extends AutoLoadingZoneApp {
 
         // At the same time deploy stone to foundation to save time.
         ThreadUtils.getExecutorService().submit(() -> {
-            robot.outtake.prepareForStoneDeployment();
-            sleep(800);
-            deploySkyStoneToFoundation();
+            deployStone(20);
         });
 
         sleep(800);
@@ -210,28 +211,10 @@ public class AutoLoadingBlueStoneAndFoundationApp extends AutoLoadingZoneApp {
         robot.foundationClaw.raiseClaw();
     }
 
-    private void deploySkyStoneToFoundation() {
-        // lower slide for stone deployment
-        ThreadUtils.getExecutorService().submit(() -> robot.outtake.outtakeSlides.runToPosition(20, true));
-        sleep(500);
-
-        robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
-
-        sleep(500);
-
-        robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
-
-        sleep(500);
-
-        ThreadUtils.getExecutorService().submit(() -> robot.outtake.performStoneIntakeOperation());
-    }
-
     private void moveToParkUnderSkyBridge(TargetPositionalDetector.Position position) {
-        robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirection);
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 7d, false);
+        robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionBlueAlliance);
+        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.5, 5d, false);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        sleep(200);
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5, 35, false);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);

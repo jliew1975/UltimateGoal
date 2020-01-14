@@ -14,11 +14,6 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeStore;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public abstract class AutoLoadingZoneApp extends RobotApp {
-    protected AutoGamepad gamepad = null;
-    protected SkyStoneAutoRobot robot = null;
-
-    protected int numSkystone = 3;
-
     protected ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -53,29 +48,4 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
     }
 
     protected abstract void autoVisionLogic(TargetPositionalDetector detector);
-
-    protected void pickupStoneNavigation() {
-        pickupStoneNavigation(10d);
-    }
-
-    protected void pickupStoneNavigation(double distance) {
-        gamepad.detector = robot.intakeSensor;
-        AutoGamepadUtils.move(gamepad, resolveDirectionForVuforia(AutoDirection.Forward), 0.2, distance);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-    }
-
-    protected MecanumDrive.AutoDirection resolveDirectionForVuforia(MecanumDrive.AutoDirection currentDirection) {
-        if (autoColor == AutonomousColor.Blue) {
-            switch (currentDirection) {
-                case StrafeLeft:
-                case StrafeRight:
-                    return flipDirection(currentDirection);
-                case TurnRight:
-                case TurnLeft:
-                    return flipDirection(currentDirection);
-            }
-        }
-
-        return currentDirection;
-    }
 }

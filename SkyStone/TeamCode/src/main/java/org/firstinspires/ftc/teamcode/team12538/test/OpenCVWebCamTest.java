@@ -16,6 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 @TeleOp(name = "OpenCV WebCam Test", group = "Test")
+@Disabled
 public class OpenCVWebCamTest extends LinearOpMode {
     enum DetectMode { Stone, SkyStone }
 
