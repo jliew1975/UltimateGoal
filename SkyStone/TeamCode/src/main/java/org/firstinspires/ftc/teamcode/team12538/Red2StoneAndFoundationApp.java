@@ -144,8 +144,9 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
         // enable intake
         robot.intake.setPower(1);
 
-        // start the distance sensor for stone detection
-        robot.intakeSensor.start();
+        while(robot.outtake.outtakeSlides.getCurrentPosition() > 50) {
+            robot.outtake.outtakeSlides.runToPosition(50);
+        }
 
         switch (position) {
             case Right:
@@ -234,14 +235,14 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
 
         robot.foundationClaw.lowerClaw();
 
-        sleep(800);
-
         // At the same time deploy stone to foundation to save time.
         if(robot.intakeSensor.isDetected()) {
             ThreadUtils.getExecutorService().submit(() -> {
                 deployStone(20);
             });
         }
+
+        sleep(800);
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 2);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
@@ -273,6 +274,10 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
     private void moveToParkUnderSkyBridge(Position position) {
         robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionRedAlliance);
         double parkDistance = 25d;
+
+        while(robot.outtake.outtakeSlides.getCurrentPosition() > 60) {
+            robot.outtake.outtakeSlides.runToPosition(50);
+        }
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, parkDistance, false);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);

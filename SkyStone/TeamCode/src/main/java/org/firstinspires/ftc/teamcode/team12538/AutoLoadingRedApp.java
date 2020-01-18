@@ -137,6 +137,10 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
         // enable intake
         robot.intake.setPower(1);
 
+        while(robot.outtake.outtakeSlides.getCurrentPosition() > 60) {
+            robot.outtake.outtakeSlides.runToPosition(50);
+        }
+
         switch(position) {
             case Right:
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 50, false);
@@ -223,6 +227,11 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
             AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 5d, false);
             robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
         }
+
+        while(robot.outtake.outtakeSlides.getCurrentPosition() > 60) {
+            robot.outtake.outtakeSlides.runToPosition(50);
+        }
+
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 15);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.team12538.components.RobotFoundationClaw;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotOuttake;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotOuttakeSlides;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotIntake;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotOuttakeSlidesSensor;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
@@ -20,6 +21,7 @@ public abstract class CommonRobotHardware {
     public RobotFoundationClaw foundationClaw = new RobotFoundationClaw();
     public RobotOuttake outtake = new RobotOuttake();
     public RobotCapstone capstone = new RobotCapstone();
+    public RobotOuttakeSlidesSensor slidesSensor = new RobotOuttakeSlidesSensor();
 
     public RobotColorProximitySensor intakeSensor = new RobotColorProximitySensor();
     public RobotDistanceSensor leftDistSensor = new RobotDistanceSensor("left",0.040, 0.52);
@@ -29,12 +31,13 @@ public abstract class CommonRobotHardware {
         intake.init();
         foundationClaw.init();
         outtake.init();
+        slidesSensor.init();
 
         leftDistSensor.init();
         rightDistSensor.init();
         intakeSensor.init();
         capstone.init();
 
-        OpModeUtils.getGlobalStore().addComponent("outtakeSlides", outtake.outtakeSlides);
+        OpModeUtils.getGlobalStore().addComponent("outtake", outtake);
     }
 }

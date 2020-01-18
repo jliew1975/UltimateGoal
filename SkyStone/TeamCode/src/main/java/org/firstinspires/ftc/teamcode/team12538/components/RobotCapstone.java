@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.team12538.robot.Robot;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.states.ToggleBoolean;
 
 public class RobotCapstone implements RobotComponent, ControlAware, TelemetryAware {
@@ -44,12 +45,15 @@ public class RobotCapstone implements RobotComponent, ControlAware, TelemetryAwa
         servoToggle.input(gamepad.b);
 
         if(servoToggle.output()) {
+            RobotOuttake outtake = OpModeUtils.getGlobalStore().getComponent("outtake");
+
             if(isLiftSlides) {
-                RobotOuttakeSlides outtakeSlides = OpModeUtils.getGlobalStore().getComponent("outtakeSlides");
-                outtakeSlides.runToPosition(200);
+                outtake.outtakeSlides.runToPosition(200);
                 isLiftSlides = false;
             }
             stoneArm.setPosition(UP);
+            ThreadUtils.sleep(500);
+            outtake.outtakeSlides.runToPosition(0);
         } else {
             stoneArm.setPosition(DOWN);
             isLiftSlides = true;

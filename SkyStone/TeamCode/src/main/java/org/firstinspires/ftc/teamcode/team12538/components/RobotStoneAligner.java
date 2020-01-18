@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.states.ToggleBoolean;
 
-public class RobotStoneAligner implements RobotComponent {
+public class RobotStoneAligner implements RobotComponent, ControlAware {
     public static final double INTAKE = 0.45;
     public static final double ALIGN = 0d;
 
@@ -30,5 +30,14 @@ public class RobotStoneAligner implements RobotComponent {
 
     public void setPosition(double position) {
         stoneAligner.setPosition(position);
+    }
+
+    @Override
+    public void control(Gamepad gamepad) {
+        if(gamepad.right_stick_button) {
+            setPosition(ALIGN);
+        } else {
+            setPosition(INTAKE);
+        }
     }
 }

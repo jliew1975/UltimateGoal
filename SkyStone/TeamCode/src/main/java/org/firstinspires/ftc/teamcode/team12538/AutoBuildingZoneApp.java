@@ -92,44 +92,6 @@ public class AutoBuildingZoneApp extends RobotApp {
 
             AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeRight), 0.3,18);
             robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-            if(pickupSkystone) {
-                AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeRight), 0.3,25);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-                AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Forward), 0.3,10);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-                detector.targetPosition = VuforiaDetector.TargetPosition.Left;
-                if(!detector.isTargetVisible()) {
-                    AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeLeft), 0.3, 7);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-                    // wait for 1 second for vuforia to pickup skystone position.
-                    sleep(1000);
-                    if(detector.isTargetVisible()) {
-                        detector.targetPosition = VuforiaDetector.TargetPosition.Center;
-                    } else {
-                        detector.targetPosition = VuforiaDetector.TargetPosition.Right;
-                    }
-                }
-
-                robot.outtake.liftSlideForStoneIntake();
-
-                // enable intake rollers
-                robot.intake.setPower(0.6);
-
-                switch (detector.targetPosition) {
-                    case Left:
-                        // executeLeftLogic();
-                        break;
-                    case Center:
-                        // executeCenterLogic();
-                        break;
-                    default:
-                        // executeRightLogic();
-                }
-            }
         }
 
         sleep(500);

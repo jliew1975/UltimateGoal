@@ -41,6 +41,7 @@ public class RobotIntake implements RobotComponent, ControlAware {
             setPower(-1 * power);
             OpModeUtils.getGlobalStore().setLiftOuttake(true);
         } else {
+            OpModeUtils.getGlobalStore().setLiftOuttake(false);
             setPower(0d);
         }
     }

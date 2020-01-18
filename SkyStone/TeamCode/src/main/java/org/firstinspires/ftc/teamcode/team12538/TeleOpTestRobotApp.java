@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
 import java.util.Locale;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
+@Disabled
 public class TeleOpTestRobotApp extends RobotApp {
     @Override
     public void performRobotOperation() throws InterruptedException {
@@ -44,16 +46,11 @@ public class TeleOpTestRobotApp extends RobotApp {
             int stoneHeight = 1;
 
             Button btnX = new Button();
-
-
             Button btnB = new Button();
 
 
+            waitForStart();
 
-            while (!isStarted() && !isStopRequested()) {
-                robot.mecanumDrive.printTelemetry();
-                telemetry.update();
-            }
             while(opModeIsActive()) {
                 if(gamepad1.right_trigger > 0d) {
                     robot.outtake.aligner.setPosition(RobotStoneAligner.ALIGN);
@@ -61,6 +58,7 @@ public class TeleOpTestRobotApp extends RobotApp {
                     robot.outtake.aligner.setPosition(RobotStoneAligner.INTAKE);
                 }
 
+                /*
                 if(gamepad1.x) {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 10d);
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.3, Math.PI/2);
@@ -82,33 +80,22 @@ public class TeleOpTestRobotApp extends RobotApp {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.6, 16d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 }
+                */
 
 
-                /*
                 btnB.input(gamepad1.b);
                 btnX.input(gamepad1.x);
 
                 if(btnB.onPress()) {
-                    robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+                    robot.outtake.prepareForStoneDeployment();
                 }
 
                 if(btnX.onPress()) {
-                    robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
+                    robot.outtake.performStoneIntakeOperation();
                 }
 
-                // robot.capstone.control(gamepad1);
-
-                /*
-                if(gamepad1.dpad_up) {
-                    robot.capstone.setPosition(robot.capstone.getPosition() + 0.001);
-                } else if(gamepad1.dpad_down) {
-                    robot.capstone.setPosition(robot.capstone.getPosition() - 0.001);
-                }
-                */
-
-                // telemetry.addData("Capstone Position", robot.capstone.getPosition());
-                // telemetry.update();
-
+                robot.slidesSensor.printTelemetry();
+                telemetry.update();
             }
         } finally {
             OpModeUtils.stop();

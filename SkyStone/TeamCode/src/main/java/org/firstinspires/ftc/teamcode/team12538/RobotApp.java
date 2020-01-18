@@ -69,6 +69,7 @@ public abstract class RobotApp extends LinearOpMode {
         robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
         sleep(200);
         robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
+        sleep(200);
         robot.outtake.performStoneIntakeOperation();
     }
 }

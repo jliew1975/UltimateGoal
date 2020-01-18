@@ -38,6 +38,7 @@ public class TeleOpRobotApp extends RobotApp {
                 robot.intake.control(gamepad1);
                 robot.outtake.control(gamepad1);
                 robot.foundationClaw.control(gamepad2);
+                robot.outtake.aligner.control(gamepad1);
 
                 dPadUp.input(gamepad2.dpad_up);
                 dPadDown.input(gamepad2.dpad_down);
@@ -60,6 +61,7 @@ public class TeleOpRobotApp extends RobotApp {
                 // robot.intake.printTelemetry();
 
                 telemetry.addData("Stone Level", robot.outtake.stoneHeight);
+                telemetry.addData("Slide Is Down", robot.slidesSensor.getState());
                 telemetry.update();
             }
         } finally {

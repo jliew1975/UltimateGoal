@@ -101,6 +101,10 @@ public class Red1StoneAndFoundationApp extends AutoLoadingZoneApp {
         // start the distance sensor for stone detection
         robot.intakeSensor.start();
 
+        while(robot.outtake.outtakeSlides.getCurrentPosition() > 60) {
+            robot.outtake.outtakeSlides.runToPosition(50);
+        }
+
         switch(position) {
             case Right:
                 AutoGamepadUtils.move(gamepad, 0.8, 15d, -0.3, 0.28,false);
@@ -209,9 +213,11 @@ public class Red1StoneAndFoundationApp extends AutoLoadingZoneApp {
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 3d);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
-        sleep(200);
+        while(robot.outtake.outtakeSlides.getCurrentPosition() > 60) {
+            robot.outtake.outtakeSlides.runToPosition(50);
+        }
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 35);
+        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 25);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }
 }

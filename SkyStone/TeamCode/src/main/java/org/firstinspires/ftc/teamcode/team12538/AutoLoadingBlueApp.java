@@ -82,6 +82,10 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
         // start the distance sensor for stone detection
         robot.intakeSensor.start();
 
+        while(robot.outtake.outtakeSlides.getCurrentPosition() > 60) {
+            robot.outtake.outtakeSlides.runToPosition(50);
+        }
+
         switch(position) {
             case Right:
                 AutoGamepadUtils.move(gamepad, 0.5, 20d, -0.3, -0.31,false);

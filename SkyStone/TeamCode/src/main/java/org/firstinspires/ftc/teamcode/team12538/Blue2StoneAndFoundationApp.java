@@ -79,17 +79,14 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
 
         switch(position) {
             case Left:
-                AutoGamepadUtils.move(gamepad, 0.8, 15d, -0.3, -0.2,false);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.TurnRight, 0.5, Math.PI/2);
-                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionBlueAlliance);
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 15d, false);
+                AutoGamepadUtils.move(gamepad, 0.8, 20d, -0.3, -0.25,false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 gamepad.detector = robot.intakeSensor;
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d, false);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 15d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 10d, false);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, 8d, false);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.TurnRight, 0.5, Math.PI/2);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 break;
 
@@ -135,7 +132,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
     }
 
     private void pickupSecondStone(Position position) {
-        robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionRedAlliance);
+        robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionBlueAlliance);
 
         // lift slide for intake in a background thread
         ThreadUtils.getExecutorService().submit(() -> robot.outtake.outtakeSlides.runToPosition(50));
@@ -143,37 +140,45 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
         // enable intake
         robot.intake.setPower(1);
 
-        // start the distance sensor for stone detection
-        robot.intakeSensor.start();
+        while(robot.outtake.outtakeSlides.getCurrentPosition() > 60) {
+            // waiting for slide to come down
+            robot.outtake.outtakeSlides.runToPosition(50);
+        }
 
         switch (position) {
             case Left:
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 73d, false);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 5d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 14.5d, false);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 62d, false);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 14d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 gamepad.timeout = 2;
                 gamepad.detector = robot.intakeSensor;
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 6d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 13, false);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 13, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 break;
 
             case Center:
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 70d, false);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 5d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 14d, false);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 68d, false);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 14.5d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 gamepad.timeout = 2;
                 gamepad.detector = robot.intakeSensor;
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 14d, false);
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 14d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 break;
 
             case Right:
+                AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 5d, false);
+                robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 63d, false);
                 robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
                 AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 13d, false);
@@ -204,17 +209,17 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
 
         switch (position) {
             case Left:
-                distanceToFoundation = (round == 1) ? 75d : 85d;
+                distanceToFoundation = (round == 1) ? 62d : 83d;
                 break;
             case Center:
-                distanceToFoundation = (round == 1) ? 58d : 68d;
+                distanceToFoundation = (round == 1) ? 64d : 85d;
                 break;
             case Right:
                 distanceToFoundation = (round == 1) ? 75d : 85d;
                 break;
         }
 
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, 75d, false);
+        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.8, distanceToFoundation, false);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }
 
@@ -234,14 +239,14 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
 
         robot.foundationClaw.lowerClaw();
 
-        sleep(800);
-
         // At the same time deploy stone to foundation to save time.
         if(robot.intakeSensor.isDetected()) {
             ThreadUtils.getExecutorService().submit(() -> {
                 deployStone(20);
             });
         }
+
+        sleep(800);
 
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 2);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
@@ -262,6 +267,10 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
     }
 
     private void moveToParkUnderSkyBridge(Position position) {
+        while(robot.outtake.outtakeSlides.getCurrentPosition() > 60) {
+            robot.outtake.outtakeSlides.runToStoneHeight(40);
+        }
+
         AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 25, false);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }
