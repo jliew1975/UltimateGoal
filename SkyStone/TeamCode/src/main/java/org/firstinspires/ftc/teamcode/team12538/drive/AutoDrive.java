@@ -9,6 +9,8 @@ public interface AutoDrive {
     void printTelemetry();
     void resetEncoderValues();
 
+    double getAngle();
+
     void stop();
     boolean autoNavigateWithGamepad(AutoGamepad gamepad);
     void flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode lastAngleMode);

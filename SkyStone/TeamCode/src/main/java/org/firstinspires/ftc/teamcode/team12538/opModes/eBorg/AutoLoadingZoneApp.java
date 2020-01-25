@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team12538;
+package org.firstinspires.ftc.teamcode.team12538.opModes.eBorg;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeStore;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.openftc.revextensions2.ExpansionHubEx;
 
 public abstract class AutoLoadingZoneApp extends RobotApp {
     protected ElapsedTime runtime = new ElapsedTime();
@@ -39,10 +40,12 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
 
         waitForStart();
 
+        detector.deactivate();
+
         try {
             autoVisionLogic(detector);
         } finally {
-            detector.deactivate();
+            // detector.deactivate();
             robot.intakeSensor.stop();
         }
     }

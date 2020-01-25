@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team12538;
+package org.firstinspires.ftc.teamcode.team12538.opModes.eBorg;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -65,11 +65,10 @@ public abstract class RobotApp extends LinearOpMode {
     protected void deployStone(int height) {
         robot.outtake.prepareForStoneDeployment();
         robot.outtake.outtakeSlides.runToPosition(height, true);
-
         robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
         sleep(200);
         robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
-        sleep(200);
+        sleep(500);
         robot.outtake.performStoneIntakeOperation();
     }
 }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.team12538.components;
 
+import android.graphics.Path;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -52,8 +54,7 @@ public class RobotCapstone implements RobotComponent, ControlAware, TelemetryAwa
                 isLiftSlides = false;
             }
             stoneArm.setPosition(UP);
-            ThreadUtils.sleep(500);
-            outtake.outtakeSlides.runToPosition(0);
+            OpModeUtils.getGlobalStore().setCap(true);
         } else {
             stoneArm.setPosition(DOWN);
             isLiftSlides = true;

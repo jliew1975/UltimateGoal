@@ -195,7 +195,11 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         ThreadUtils.sleep(500);
 
         // raise outtake slide
-        ThreadUtils.getExecutorService().submit(() -> liftSlide());
+        if(OpModeUtils.getGlobalStore().isCap()) {
+            outtakeSlides.runToPosition(RobotOuttakeSlides.ENCODER_TICKS_FOR_DEPLOY + 50);
+        } else {
+            ThreadUtils.getExecutorService().submit(() -> liftSlide());
+        }
         ThreadUtils.sleep(300);
 
         // swing outtake arm out for stone deployment

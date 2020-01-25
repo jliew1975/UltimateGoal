@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.openftc.revextensions2.ExpansionHubEx;
 
 public class OpModeUtils {
     private static ElapsedTime ELAPSED_TIME = new ElapsedTime();
@@ -19,6 +20,8 @@ public class OpModeUtils {
         ThreadUtils.init();
         getGlobalStore().init();
         getGlobalStore().setOpMode(opMode);
+
+        getGlobalStore().setExpansionHubEx(opMode.hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2"));
     }
 
     public static boolean isResetEncoder() {

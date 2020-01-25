@@ -21,7 +21,6 @@ public abstract class CommonRobotHardware {
     public RobotFoundationClaw foundationClaw = new RobotFoundationClaw();
     public RobotOuttake outtake = new RobotOuttake();
     public RobotCapstone capstone = new RobotCapstone();
-    public RobotOuttakeSlidesSensor slidesSensor = new RobotOuttakeSlidesSensor();
 
     public RobotColorProximitySensor intakeSensor = new RobotColorProximitySensor();
     public RobotDistanceSensor leftDistSensor = new RobotDistanceSensor("left",0.040, 0.52);
@@ -31,8 +30,6 @@ public abstract class CommonRobotHardware {
         intake.init();
         foundationClaw.init();
         outtake.init();
-        slidesSensor.init();
-
         leftDistSensor.init();
         rightDistSensor.init();
         intakeSensor.init();

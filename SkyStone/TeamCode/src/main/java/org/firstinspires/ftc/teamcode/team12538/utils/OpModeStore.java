@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.team12538.utils;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.team12538.components.RobotComponent;
+import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,9 @@ public class OpModeStore {
     private volatile boolean resetEncoder = false;
     private volatile boolean foundationClawDown = false;
     private volatile boolean depositMode = false;
+
+    private volatile boolean isCap = false;
+    private ExpansionHubEx expansionHubEx;
 
     private Map<String, RobotComponent> componentMap = new HashMap<>();
 

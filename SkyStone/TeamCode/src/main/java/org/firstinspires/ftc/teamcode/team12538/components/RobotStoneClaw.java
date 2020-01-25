@@ -11,7 +11,7 @@ public class RobotStoneClaw implements RobotComponent, TelemetryAware {
     public static final double CLAW_OPEN_POSITION = 0.5;
     public static final double CLAW_INTAKE_POSITION = 0d;
 
-    public static final double ARM_DEPLOYMENT_POSITION = 0.9d;
+    public static double ARM_DEPLOYMENT_POSITION = 1d;
     public static final double ARM_STONE_PICKUP_POSITION = 0d;
 
     private Servo leftArm;

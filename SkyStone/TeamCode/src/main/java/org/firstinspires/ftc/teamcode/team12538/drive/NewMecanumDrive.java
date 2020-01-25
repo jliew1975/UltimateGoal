@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.team12538.drive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.team12538.components.TelemetryAware;
 import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetectorLimit;
@@ -55,7 +59,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
         double scaleFactor = 1 / maxPower;
 
         if(gamepad.left_trigger > 0) {
-            scaleFactor *= 0.3;
+            scaleFactor *= 0.5;
         }
 
         // Due to uneven weight distribution on the robot,
@@ -93,35 +97,39 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
         // Calculate the destination encoder tick values for the given distance
         List<Integer> targetPositions = calculateTargetPositions(gamepad);
 
-        if(gamepad.isCurving()) {
-            if (gamepad.isCurvingLeft()) {
-                leftFront.setPower(0d);
-                leftRear.setPower(0d);
-                rightRear.setPower(rightRearPower * scaleFactor);
-                rightFront.setPower(rightFrontPower * scaleFactor);
+        if(OpModeUtils.opModeIsActive()) {
+            if (gamepad.isCurving()) {
+                if (gamepad.isCurvingLeft()) {
+                    leftFront.setPower(0d);
+                    leftRear.setPower(0d);
+                    rightRear.setPower(rightRearPower * scaleFactor);
+                    rightFront.setPower(rightFrontPower * scaleFactor);
+                } else {
+                    leftFront.setPower(leftFrontPower * scaleFactor);
+                    leftRear.setPower(leftRearPower * scaleFactor);
+                    rightFront.setPower(0d);
+                    rightRear.setPower(0d);
+                }
+            } else if (gamepad.isDiagonal()) {
+                if (gamepad.isDiagonalLeft()) {
+                    leftFront.setPower(0d);
+                    leftRear.setPower(leftFrontPower * scaleFactor);
+                    rightFront.setPower(rightRearPower * scaleFactor);
+                    rightRear.setPower(0d);
+                } else {
+                    leftFront.setPower(rightRearPower * scaleFactor);
+                    leftRear.setPower(0d);
+                    rightFront.setPower(0d);
+                    rightRear.setPower(leftFrontPower * scaleFactor);
+                }
             } else {
                 leftFront.setPower(leftFrontPower * scaleFactor);
                 leftRear.setPower(leftRearPower * scaleFactor);
-                rightFront.setPower(0d);
-                rightRear.setPower(0d);
-            }
-        } else if(gamepad.isDiagonal()) {
-            if(gamepad.isDiagonalLeft()) {
-                leftFront.setPower(0d);
-                leftRear.setPower(leftFrontPower * scaleFactor);
-                rightFront.setPower(rightRearPower * scaleFactor);
-                rightRear.setPower(0d);
-            } else {
-                leftFront.setPower(rightRearPower * scaleFactor);
-                leftRear.setPower(0d);
-                rightFront.setPower(0d);
-                rightRear.setPower(leftFrontPower * scaleFactor);
+                rightRear.setPower(rightRearPower * scaleFactor);
+                rightFront.setPower(rightFrontPower * scaleFactor);
             }
         } else {
-            leftFront.setPower(leftFrontPower * scaleFactor);
-            leftRear.setPower(leftRearPower * scaleFactor);
-            rightRear.setPower(rightRearPower * scaleFactor);
-            rightFront.setPower(rightFrontPower  * scaleFactor);
+            stop();
         }
 
         runtime.reset();
@@ -133,13 +141,17 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
 
         if(gamepad.isTurning()) {
             do {
-                gamepad.right_stick_x = gamepad.isCurving() ? rotateController.performPID(getAngle()) : -rotateController.performPID(getAngle());
+                gamepad.right_stick_x = -rotateController.performPID(getAngle());
                 angularAdjustment(gamepad);
-            } while(!isOntarget(gamepad) && runtime.seconds() < gamepad.timeout);
+            } while(OpModeUtils.opModeIsActive() && !isOntarget(gamepad) && runtime.seconds() < gamepad.timeout);
 
             if(isOntarget(gamepad)) {
                 navigated = true;
             }
+
+            telemetry.addData("Target", rotateController.getTarget());
+            telemetry.addData("Current", getAngle());
+            telemetry.update();
         } else {
             while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout) {
                 if(gamepad.isStrafing()) {
@@ -240,9 +252,10 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
 
     @Override
     public void printTelemetry() {
-        telemetry.addData("strafe", leftRear.getCurrentPosition());
-        telemetry.addData("leftFront", leftFront.getCurrentPosition());
-        telemetry.addData("rightFront", rightFront.getCurrentPosition());
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+        telemetry.addData("Target", rotateController.getTarget());
+        telemetry.addData("Current", angles.firstAngle);
+        telemetry.update();
     }
 
     private void printTelemetry(AutoGamepad gamepad, List<Integer> targetPositions) {

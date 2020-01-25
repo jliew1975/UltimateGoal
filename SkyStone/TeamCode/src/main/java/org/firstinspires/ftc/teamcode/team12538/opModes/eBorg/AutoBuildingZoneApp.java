@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team12538;
+package org.firstinspires.ftc.teamcode.team12538.opModes.eBorg;
 
 import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotDistanceSensor;

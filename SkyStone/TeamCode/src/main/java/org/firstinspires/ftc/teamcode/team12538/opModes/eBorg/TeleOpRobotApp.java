@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.team12538;
+package org.firstinspires.ftc.teamcode.team12538.opModes.eBorg;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneArm;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneTeleOpRobot;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeStore;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
@@ -24,6 +24,8 @@ public class TeleOpRobotApp extends RobotApp {
 
             SkyStoneTeleOpRobot robot = new SkyStoneTeleOpRobot();
             robot.init();
+
+            RobotStoneClaw.ARM_DEPLOYMENT_POSITION = 0.7;
 
             waitForStart();
 
@@ -61,7 +63,6 @@ public class TeleOpRobotApp extends RobotApp {
                 // robot.intake.printTelemetry();
 
                 telemetry.addData("Stone Level", robot.outtake.stoneHeight);
-                telemetry.addData("Slide Is Down", robot.slidesSensor.getState());
                 telemetry.update();
             }
         } finally {
