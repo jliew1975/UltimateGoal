@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotFoundationClaw;
 import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
@@ -64,7 +65,9 @@ public class TeleOpTestRobotApp extends RobotApp {
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 }
 
-                robot.mecanumDrive.printTelemetry();
+                Position position = robot.mecanumDrive.getPosition();
+                telemetry.addData("Current", "(%.3f %.3f %.3f)%s", position.x, position.y, position.z, position.unit);
+                telemetry.update();
             }
         } finally {
             OpModeUtils.stop();

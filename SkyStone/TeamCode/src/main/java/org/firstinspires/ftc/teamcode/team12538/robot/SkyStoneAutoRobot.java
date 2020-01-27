@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.team12538.robot;
 import org.firstinspires.ftc.teamcode.team12538.drive.AutoDrive;
 import org.firstinspires.ftc.teamcode.team12538.drive.NewMecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.drive.PIDMecanumDrive;
+import org.firstinspires.ftc.teamcode.team12538.drive.mecanum.SampleMecanumDriveBase;
+import org.firstinspires.ftc.teamcode.team12538.drive.mecanum.SampleMecanumDriveREVOptimized;
+import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public class SkyStoneAutoRobot extends CommonRobotHardware implements Robot {
     /**
@@ -10,6 +13,8 @@ public class SkyStoneAutoRobot extends CommonRobotHardware implements Robot {
      * MecanumDrive or NewMecanumDrive implementation here
      */
     public AutoDrive mecanumDrive = new NewMecanumDrive();
+
+    //SampleMecanumDriveBase mecanumDrive = new SampleMecanumDriveREVOptimized(OpModeUtils.getHardwareMap());
 
     public void init() {
         super.init();

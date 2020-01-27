@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.ext.PIDControllerV1;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
@@ -129,6 +131,7 @@ public class MecanumDrive implements TeleOpDrive {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         parameters.mode = BNO055IMU.SensorMode.IMU;
         parameters.loggingEnabled = false;   //For debugging
         imu.initialize(parameters);
@@ -136,6 +139,8 @@ public class MecanumDrive implements TeleOpDrive {
         while (opModeIsActive() && !imu.isGyroCalibrated()) {
             ThreadUtils.idle();
         }
+
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 500);
 
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         angleFacingStone = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
@@ -149,6 +154,10 @@ public class MecanumDrive implements TeleOpDrive {
         telemetry.addData("imu", "finish imu calabration");
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         telemetry.update();
+    }
+
+    public Position getPosition() {
+        return imu.getPosition();
     }
 
     // TeleOp Drive APIs

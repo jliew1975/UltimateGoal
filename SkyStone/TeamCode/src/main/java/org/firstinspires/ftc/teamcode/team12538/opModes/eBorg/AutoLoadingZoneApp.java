@@ -47,6 +47,8 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
         } finally {
             // detector.deactivate();
             robot.intakeSensor.stop();
+            robot.mecanumDrive.stop();
+            OpModeUtils.stop();
         }
     }
 
