@@ -252,10 +252,9 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
 
     @Override
     public void printTelemetry() {
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-        telemetry.addData("Target", rotateController.getTarget());
-        telemetry.addData("Current", angles.firstAngle);
-        telemetry.update();
+        telemetry.addData("leftFront", leftFront.getCurrentPosition());
+        telemetry.addData("rightFront", rightFront.getCurrentPosition());
+        telemetry.addData("strafe", leftRear.getCurrentPosition());
     }
 
     private void printTelemetry(AutoGamepad gamepad, List<Integer> targetPositions) {

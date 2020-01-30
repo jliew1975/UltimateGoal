@@ -39,6 +39,10 @@ public class TeleOpTestRobotApp extends RobotApp {
             Button btnX = new Button();
             Button btnB = new Button();
 
+            while(!isStopRequested() && !isStarted()) {
+                robot.mecanumDrive.printTelemetry();
+                telemetry.update();
+            }
 
             waitForStart();
 
