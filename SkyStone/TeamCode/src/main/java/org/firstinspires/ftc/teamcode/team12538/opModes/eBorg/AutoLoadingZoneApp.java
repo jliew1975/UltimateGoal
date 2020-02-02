@@ -43,11 +43,11 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
         detector.deactivate();
 
         try {
-            autoVisionLogic(detector);
+            if(!isStopRequested()) {
+                autoVisionLogic(detector);
+            }
         } finally {
-            // detector.deactivate();
             robot.intakeSensor.stop();
-            robot.mecanumDrive.stop();
             OpModeUtils.stop();
         }
     }

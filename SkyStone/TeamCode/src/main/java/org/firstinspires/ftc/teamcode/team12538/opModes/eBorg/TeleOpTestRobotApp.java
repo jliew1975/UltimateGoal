@@ -62,7 +62,7 @@ public class TeleOpTestRobotApp extends RobotApp {
                     // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveRight, 0.6, 30d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.y) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 0.3, 60d);
+                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 1.0, 100d);
                     robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
                 } else if(gamepad1.a) {
                     AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.3, 60d);

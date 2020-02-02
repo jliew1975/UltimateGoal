@@ -3,7 +3,10 @@ package org.firstinspires.ftc.teamcode.team12538.opModes.roadrunner;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.path.heading.ConstantInterpolator;
+import com.acmerobotics.roadrunner.path.heading.SplineInterpolator;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -12,6 +15,8 @@ import org.firstinspires.ftc.teamcode.team12538.drive.mecanum.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.team12538.utils.AssetsTrajectoryLoader;
 
 import java.io.IOException;
+
+import kotlin.Unit;
 
 /*
  * This is a simple routine to test turning capabilities.
@@ -26,32 +31,75 @@ public class RoadRunnerTest extends LinearOpMode {
 
         if (isStopRequested()) return;
 
+        drive.followTrajectorySync(
+                drive.trajectoryBuilder()
+                        .splineTo(new Pose2d(25, 35, Math.toRadians(90)))
+                        .build()
+        );
+
+        sleep(1000);
+
+        drive.followTrajectorySync(
+                drive.trajectoryBuilder()
+                        .splineTo(new Pose2d(18, 86, Math.toRadians(180)))
+                .build()
+        );
+
+        sleep(1000);
+
+        drive.followTrajectorySync(
+                drive.trajectoryBuilder()
+                        .back(20)
+                        .build()
+        );
+
+        drive.followTrajectorySync(
+                drive.trajectoryBuilder()
+                        .forward(15)
+                        .build()
+        );
+
+        drive.turnSync(Math.toRadians(90));
+
+        drive.followTrajectorySync(
+                drive.trajectoryBuilder()
+                        .splineTo(new Pose2d(20, 35, Math.toRadians(-90)))
+                        .build()
+        );
+
+        /*
+        sleep(1000);
+
+        drive.followTrajectorySync(
+                drive.trajectoryBuilder()
+                        .back(13)
+                        .build()
+        );
+
+        drive.followTrajectorySync(
+                drive.trajectoryBuilder()
+                        .lineTo(new Vector2d(10, 86), new SplineInterpolator(Math.toRadians(180), Math.toRadians(-90)))
+                        .build()
+        );
+
         /*
         drive.followTrajectorySync(
                 drive.trajectoryBuilder()
-                        .splineTo(new Pose2d(30, 5, 0))
+                        .forward(30)
                         .build()
         );
+
+        drive.turnSync(Math.toRadians(90));
+
+        sleep(1000);
 
         drive.followTrajectorySync(
                 drive.trajectoryBuilder()
-                        .splineTo(new Pose2d(60, -5, 0))
+                        .splineTo(new Pose2d(25, 20, Math.toRadians(-90)))
                         .build()
         );
 
-drive.followTrajectorySync(
-                drive.trajectoryBuilder()
-                        .lineTo(new Vector2d(40, 15))
-                        .build()
-        );
-         */
 
-
-        drive.followTrajectorySync(
-                drive.trajectoryBuilder()
-                        .splineTo(new Pose2d(34, 5, Math.toRadians(45)))
-                        .build()
-        );
 
         /*
         try {

@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.team12538.opModes.eBorg;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.path.heading.ConstantInterpolator;
+import com.acmerobotics.roadrunner.path.heading.LinearInterpolator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
@@ -39,18 +43,11 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
     }
 
     protected void executeLogic(Position position) {
-        if(opModeIsActive()) {
-            pickupFirstStone(position);
-        }
+        pickupFirstStone(position);
 
-        if(opModeIsActive()) {
-            crossSkyBridge(position, 1);
-        }
+        crossSkyBridge(position, 1);
 
-        if(opModeIsActive()) {
-            moveFoundationToBuildingSite(position);
-        }
-
+        /*
         if(!robot.intakeSensor.isDetected()) {
             if (opModeIsActive()) {
                 pickupSecondStone(position);
@@ -68,6 +65,7 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
         if(opModeIsActive()) {
             moveToParkUnderSkyBridge(position);
         }
+        */
     }
 
     private void pickupFirstStone(Position position) {
@@ -82,82 +80,32 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
 
         switch(position) {
             case Right:
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, 0.8, 15d, -0.3, 0.29, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
+                robot.drive.followTrajectorySync(
+                        robot.drive.trajectoryBuilder()
+                                .splineTo(new Pose2d(20, 30))
+                                .forward(10)
+                                .build()
+                );
 
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 20d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Backward, 0.3, 15d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.TurnLeft, 0.5, Math.PI / 2);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
                 break;
             case Center:
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, 0.8, 20d, -0.3, 0.31, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
+                robot.drive.followTrajectorySync(
+                        robot.drive.trajectoryBuilder()
+                                .splineTo(new Pose2d(20, 30, Math.toRadians(90)))
+                                .strafeTo(new Vector2d(30, 10))
+                                .build()
+                );
 
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.TurnLeft, 0.5, Math.PI / 2);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionRedAlliance);
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 15, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    gamepad.detector = robot.intakeSensor;
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 15, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
                 break;
 
             case Left:
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, 0.8, 17d, -0.3, 0.24, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
+                robot.drive.followTrajectorySync(
+                        robot.drive.trajectoryBuilder()
+                                .splineTo(new Pose2d(20, 10, Math.toRadians(90)))
+                                .strafeTo(new Vector2d(30, 10))
+                                .build()
+                );
 
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.TurnLeft, 0.5, Math.PI / 2);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionRedAlliance);
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 15.5, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    gamepad.detector = robot.intakeSensor;
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 14.5, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
                 break;
         }
 

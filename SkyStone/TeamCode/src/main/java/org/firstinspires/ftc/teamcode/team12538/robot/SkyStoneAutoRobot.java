@@ -14,11 +14,11 @@ public class SkyStoneAutoRobot extends CommonRobotHardware implements Robot {
      */
     public AutoDrive mecanumDrive = new NewMecanumDrive();
 
-    //SampleMecanumDriveBase mecanumDrive = new SampleMecanumDriveREVOptimized(OpModeUtils.getHardwareMap());
+    public SampleMecanumDriveBase drive = new SampleMecanumDriveREVOptimized(OpModeUtils.getHardwareMap());
 
     public void init() {
         super.init();
-        mecanumDrive.init();
-        mecanumDrive.init_imu();
+        // mecanumDrive.init();
+        // mecanumDrive.init_imu();
     }
 }

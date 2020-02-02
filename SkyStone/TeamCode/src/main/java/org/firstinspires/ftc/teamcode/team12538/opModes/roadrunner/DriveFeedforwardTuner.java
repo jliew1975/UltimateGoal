@@ -34,7 +34,7 @@ import static org.firstinspires.ftc.teamcode.team12538.drive.DriveConstants.rpmT
 @Config
 @Autonomous(group = "drive")
 public class DriveFeedforwardTuner extends LinearOpMode {
-    public static final double MAX_POWER = 0.7;
+    public static final double MAX_POWER = 0.8;
     public static final double DISTANCE = 100;
 
     @Override
