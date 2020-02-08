@@ -21,8 +21,8 @@ public class DashboardUtil {
         for (int i = 0; i < samples; i++) {
             double displacement = i * dx;
             Pose2d pose = path.get(displacement);
-            xPoints[i] = pose.getX();
-            yPoints[i] = pose.getY();
+            xPoints[i] = -72 + pose.getX();
+            yPoints[i] = -36 + pose.getY();
         }
         canvas.strokePolyline(xPoints, yPoints);
     }
@@ -32,10 +32,10 @@ public class DashboardUtil {
     }
 
     public static void drawRobot(Canvas canvas, Pose2d pose) {
-        canvas.strokeCircle(pose.getX(), pose.getY(), ROBOT_RADIUS);
+        canvas.strokeCircle(-72 + pose.getX(), -36 + pose.getY(), ROBOT_RADIUS);
         Vector2d v = pose.headingVec().times(ROBOT_RADIUS);
         double x1 = pose.getX() + v.getX() / 2, y1 = pose.getY() + v.getY() / 2;
         double x2 = pose.getX() + v.getX(), y2 = pose.getY() + v.getY();
-        canvas.strokeLine(x1, y1, x2, y2);
+        canvas.strokeLine(-72 + x1, -36 + y1, -72 + x2, -36 + y2);
     }
 }

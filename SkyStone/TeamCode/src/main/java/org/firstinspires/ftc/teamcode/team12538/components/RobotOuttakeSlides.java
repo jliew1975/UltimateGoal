@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RobotOuttakeSlides implements RobotComponent, TelemetryAware {
-    public static final int ENCODER_TICKS_FOR_INTAKE = 50;
+    public static final int ENCODER_TICKS_FOR_INTAKE = 40;
     // public static final int ENCODER_TICKS_FOR_DEPLOY = 350;
     public static final int ENCODER_TICKS_FOR_DEPLOY = 400;
     public static final int ENCODER_TICKS_FOR_MAX_HEIGHT = 580;

@@ -26,7 +26,10 @@ import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.utils.DashboardUtil;
+import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +43,7 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
     // public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(1.0, 0.5, 0.2);
     // public static PIDCoefficients HEADING_PID = new PIDCoefficients(5.0, 0, 0);
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0.14, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0.165);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(5.0, 0, 0.01);
 
 
@@ -79,7 +82,7 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
         turnController.setInputBounds(0, 2 * Math.PI);
 
         constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID);
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID, new Pose2d(0.5, 0.5));
     }
 
     public TrajectoryBuilder trajectoryBuilder() {
@@ -149,6 +152,15 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
 
+        Telemetry telemetry = OpModeUtils.getTelemetry();
+        telemetry.addData("mode", mode);
+        telemetry.addData("x", currentPose.getX());
+        telemetry.addData("y", currentPose.getY());
+        telemetry.addData("heading", currentPose.getHeading());
+        telemetry.addData("xError", lastError.getX());
+        telemetry.addData("yError", lastError.getY());
+        telemetry.addData("headingError", lastError.getHeading());
+
         switch (mode) {
             case IDLE:
                 // do nothing
@@ -203,6 +215,7 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
         }
 
         dashboard.sendTelemetryPacket(packet);
+        telemetry.update();
     }
 
     public void waitForIdle() {

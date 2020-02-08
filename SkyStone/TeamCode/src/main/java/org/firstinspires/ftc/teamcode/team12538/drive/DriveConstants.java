@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
+import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
+import com.qualcomm.robotcore.hardware.configuration.annotations.MotorType;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 /*
@@ -18,6 +20,8 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
  * and op modes themselves.
  */
 @Config
+@MotorType(maxRPM = 19.2, ticksPerRev = 537.6, gearing = 19.2)
+@DeviceProperties(xmlTag="NeveRest20GearmotorExt", name="NeveRest 20 Gearmotor Extension", builtIn = false)
 public class DriveConstants {
 
     /*
@@ -60,9 +64,7 @@ public class DriveConstants {
     public static double kStatic = 0.08431;
 
     static {
-        MOTOR_CONFIG.setMaxRPM(340);
-        MOTOR_CONFIG.setTicksPerRev(537.6);
-        MOTOR_CONFIG.setGearing(19.2);
+        MOTOR_CONFIG.processAnnotation(DriveConstants.class.getAnnotationsByType(MotorType.class));
     }
 
     /*

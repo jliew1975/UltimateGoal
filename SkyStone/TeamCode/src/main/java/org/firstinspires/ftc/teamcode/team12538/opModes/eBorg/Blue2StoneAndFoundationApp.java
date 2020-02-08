@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
+import kotlin.Unit;
+
 @Autonomous(name="Blue 2 Stones And Foundation", group="Linear Opmode")
 public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
     public Blue2StoneAndFoundationApp() {
@@ -87,21 +89,27 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
                                 .splineTo(new Pose2d(40, 12, Math.toRadians(45)))
                                 .forward(2)
                                 .back(30)
+                                .addMarker(() -> {
+                                    robot.intake.setPower(0);
+                                    return Unit.INSTANCE;
+                                })
                                 .splineTo(new Pose2d(25, 40, Math.toRadians(90)))
                                 .lineTo(new Vector2d(25, 86), new SplineInterpolator(Math.toRadians(90), Math.toRadians(180)))
                                 .build()
                 );
 
-                robot.intake.setPower(0);
-
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
                                 .back(13)
+                                .addMarker(() -> {
+                                    robot.foundationClaw.lowerClaw();
+                                    sleep(800);
+                                    return Unit.INSTANCE;
+                                })
                                 .build()
                 );
 
-                robot.foundationClaw.lowerClaw();
-                sleep(800);
+
 
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()

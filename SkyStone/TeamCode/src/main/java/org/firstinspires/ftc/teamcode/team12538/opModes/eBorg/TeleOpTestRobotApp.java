@@ -36,41 +36,16 @@ public class TeleOpTestRobotApp extends RobotApp {
             // distanceSensor.init();
             int stoneHeight = 1;
 
-            Button btnX = new Button();
-            Button btnB = new Button();
-
-            while(!isStopRequested() && !isStarted()) {
-                robot.mecanumDrive.printTelemetry();
-                telemetry.update();
-            }
-
             waitForStart();
 
             while(opModeIsActive()) {
                 if(gamepad1.x) {
-                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 10d);
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnLeft, 0.3, Math.PI/2);
-                    // autoGamepad.resetAngle = true;
-                    // autoGamepad.backCurving = true;
-                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveLeft, 0.6, 30d);
-                    robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
-                } else if (gamepad1.b) {
-                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 10d);
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.TurnRight, 0.3, Math.PI/2);
-                    // autoGamepad.resetAngle = true;
-                    // autoGamepad.backCurving = true;
-                    // AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.CurveRight, 0.6, 30d);
-                    robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
-                } else if(gamepad1.y) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Forward, 1.0, 100d);
-                    robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
-                } else if(gamepad1.a) {
-                    AutoGamepadUtils.move(autoGamepad, MecanumDrive.AutoDirection.Backward, 0.3, 60d);
-                    robot.mecanumDrive.autoNavigateWithGamepad(autoGamepad);
+                    robot.outtake.performStoneIntakeOperation();
+                } else if(gamepad1.b) {
+                    robot.outtake.prepareForStoneDeployment();
                 }
 
-                Position position = robot.mecanumDrive.getPosition();
-                telemetry.addData("Current", "(%.3f %.3f %.3f)%s", position.x, position.y, position.z, position.unit);
+                telemetry.addData("Outtake Aem", robot.outtake.outtakeClaw.getArmPosition());
                 telemetry.update();
             }
         } finally {

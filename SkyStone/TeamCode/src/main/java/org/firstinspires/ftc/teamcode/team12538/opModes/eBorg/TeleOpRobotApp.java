@@ -25,8 +25,6 @@ public class TeleOpRobotApp extends RobotApp {
             SkyStoneTeleOpRobot robot = new SkyStoneTeleOpRobot();
             robot.init();
 
-            RobotStoneClaw.ARM_DEPLOYMENT_POSITION = 0.7;
-
             waitForStart();
 
             if(isStopRequested()) {
@@ -55,6 +53,7 @@ public class TeleOpRobotApp extends RobotApp {
                 }
 
                 robot.capstone.control(gamepad2);
+                robot.parkingServo.control(gamepad2);
 
 
                 // telemetry printing
@@ -63,6 +62,7 @@ public class TeleOpRobotApp extends RobotApp {
                 // robot.intake.printTelemetry();
 
                 telemetry.addData("Stone Level", robot.outtake.stoneHeight);
+                telemetry.addData("Slide Position", robot.outtake.outtakeSlides.getCurrentPosition());
                 telemetry.update();
             }
         } finally {

@@ -27,6 +27,8 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     Button dpadUpBtn = new Button();
     Button dpadDownBtn = new Button();
 
+    Button buttonB = new Button();
+
     @Override
     public void init() {
         outtakeClaw.init();
@@ -93,19 +95,18 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         }
 
         // stone deployment operation
-        if(gamepad.b) {
+        buttonB.input(gamepad.b);
+        if(buttonB.onPress()) {
             if(!busy) {
                 synchronized (outtakeLock) {
                     if(!busy) {
                         busy = true;
-                        ThreadUtils.getExecutorService().submit(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    prepareForStoneDeployment();
-                                } finally {
-                                    busy = false;
-                                }
+                        ThreadUtils.getExecutorService().submit(() -> {
+                            try {
+                                outtakeSlides.runToPosition(RobotOuttakeSlides.ENCODER_TICKS_FOR_STONE_PICKUP);
+                                prepareForStoneDeployment();
+                            } finally {
+                                busy = false;
                             }
                         });
                     }
@@ -138,7 +139,6 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                 }
             }
         }
-
     }
 
     @Override
@@ -168,7 +168,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         OpModeUtils.getGlobalStore().setDepositMode(false);
 
         if (outtakeSlides.getCurrentPosition() < RobotOuttakeSlides.ENCODER_TICKS_FOR_DEPLOY &&
-                outtakeClaw.getArmPosition() > RobotStoneClaw.ARM_STONE_PICKUP_POSITION)
+                outtakeClaw.getArmPosition() != RobotStoneClaw.ARM_STONE_PICKUP_POSITION)
         {
             ThreadUtils.getExecutorService().submit(() -> liftSlide());
         }
@@ -186,9 +186,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     public void prepareForStoneDeployment() {
         OpModeUtils.getGlobalStore().setDepositMode(true);
 
-        ThreadUtils.getExecutorService().submit(() -> outtakeSlides.runToPosition(0, true));
-        ThreadUtils.sleep(100);
-
+        outtakeSlides.runToPosition(0, true);
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
         clawMode = ClawMode.Close;
 
