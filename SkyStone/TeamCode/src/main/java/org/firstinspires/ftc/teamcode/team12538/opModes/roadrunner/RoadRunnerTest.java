@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.heading.ConstantInterpolator;
+import com.acmerobotics.roadrunner.path.heading.LinearInterpolator;
 import com.acmerobotics.roadrunner.path.heading.SplineInterpolator;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
@@ -35,22 +36,8 @@ public class RoadRunnerTest extends LinearOpMode {
 
         drive.followTrajectorySync(
                 drive.trajectoryBuilder()
-                        .lineTo(new Vector2d(60, 0))
-                        .build()
-        );
-
-        drive.followTrajectorySync(
-                drive.trajectoryBuilder()
-                        .lineTo(new Vector2d(60, 0))
-                        .build()
-        );
-
-        /*
-        drive.followTrajectorySync(
-                drive.trajectoryBuilder()
                         .lineTo(new Vector2d(72 + drive.getLastError().getX(), 0))
                         .build()
         );
-        */
     }
 }

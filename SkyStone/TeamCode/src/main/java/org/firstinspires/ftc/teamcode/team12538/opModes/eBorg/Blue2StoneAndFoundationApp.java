@@ -89,27 +89,25 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
                                 .splineTo(new Pose2d(40, 12, Math.toRadians(45)))
                                 .forward(2)
                                 .back(30)
+                                .splineTo(new Pose2d(25, 40, Math.toRadians(90)))
                                 .addMarker(() -> {
                                     robot.intake.setPower(0);
                                     return Unit.INSTANCE;
                                 })
-                                .splineTo(new Pose2d(25, 40, Math.toRadians(90)))
-                                .lineTo(new Vector2d(25, 86), new SplineInterpolator(Math.toRadians(90), Math.toRadians(180)))
+                                .lineTo(new Vector2d(25, 86))
                                 .build()
                 );
+
+                robot.drive.turnSync(Math.PI/2);
 
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
                                 .back(13)
-                                .addMarker(() -> {
-                                    robot.foundationClaw.lowerClaw();
-                                    sleep(800);
-                                    return Unit.INSTANCE;
-                                })
                                 .build()
                 );
 
-
+                robot.foundationClaw.lowerClaw();
+                sleep(800);
 
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
@@ -124,7 +122,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
 
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
-                            .splineTo(new Pose2d(1, 20, Math.toRadians(-90)))
+                            .splineTo(new Pose2d(25, 40, Math.toRadians(-90)))
                             .build()
                 );
 
