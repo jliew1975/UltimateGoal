@@ -29,7 +29,7 @@ public class RoadRunnerTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         OpModeUtils.init(this);
         SampleMecanumDriveBase drive = new SampleMecanumDriveREVOptimized(hardwareMap);
-
+        drive.setPoseEstimate(new Pose2d(-72, -36));
         waitForStart();
 
         if (isStopRequested()) return;
