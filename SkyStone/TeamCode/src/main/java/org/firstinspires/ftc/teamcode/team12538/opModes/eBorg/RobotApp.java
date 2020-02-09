@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 public abstract class RobotApp extends LinearOpMode {
     public AutonomousMode autoMode = AutonomousMode.Unknown;
@@ -68,7 +69,6 @@ public abstract class RobotApp extends LinearOpMode {
         robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
         sleep(200);
         robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
-        sleep(500);
         robot.outtake.performStoneIntakeOperation();
     }
 }

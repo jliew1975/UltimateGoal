@@ -36,6 +36,10 @@ public class RobotStoneClaw implements RobotComponent, TelemetryAware {
         telemetry.addData("outtakeArm", outtakeArm.getPosition());
     }
 
+    public double getClawPosition() {
+        return stoneClaw.getPosition();
+    }
+
     public void setClawPosition(double position) {
         stoneClaw.setPosition(position);
     }

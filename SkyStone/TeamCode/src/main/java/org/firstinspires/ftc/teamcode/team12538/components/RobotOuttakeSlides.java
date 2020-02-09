@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RobotOuttakeSlides implements RobotComponent, TelemetryAware {
-    public static final int ENCODER_TICKS_FOR_INTAKE = 40;
+    public static final int ENCODER_TICKS_FOR_INTAKE = 10;
     // public static final int ENCODER_TICKS_FOR_DEPLOY = 350;
     public static final int ENCODER_TICKS_FOR_DEPLOY = 400;
     public static final int ENCODER_TICKS_FOR_MAX_HEIGHT = 580;
@@ -78,24 +78,7 @@ public class RobotOuttakeSlides implements RobotComponent, TelemetryAware {
             targetPosition = ENCODER_TICKS_FOR_MAX_HEIGHT;
         }
 
-        for(DcMotorWrapper motor : motors) {
-            motor.setTargetPosition(targetPosition);
-        }
-
-        MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, motors);
-        setPower(1d);
-
-
-        Telemetry telemetry = OpModeUtils.getTelemetry();
-        while(OpModeUtils.opModeIsActive() && MotorUtils.motorIsBusy(motors)) {
-
-            telemetry.addData("Path1", "Running to %7d : %7d",
-                    motors.get(0).getTargetPosition(), motors.get(0).getTargetPosition());
-
-            telemetry.addData("Path2", "Running at %7d : %7d",
-                    motors.get(1).getCurrentPosition(), motors.get(1).getCurrentPosition());
-            telemetry.update();
-        }
+        runToPosition(targetPosition);
     }
 
     public void runToPosition(int position) {
@@ -117,7 +100,7 @@ public class RobotOuttakeSlides implements RobotComponent, TelemetryAware {
         }
 
         MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, motors);
-        setPower(slowDown ? 0.3 : 1d);
+        setPower(slowDown ? 0.5 : 1d);
 
         runtime.reset();
         Telemetry telemetry = OpModeUtils.getTelemetry();

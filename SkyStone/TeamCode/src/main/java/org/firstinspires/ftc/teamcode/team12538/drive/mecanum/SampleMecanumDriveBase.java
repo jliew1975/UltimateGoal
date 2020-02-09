@@ -28,6 +28,7 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.team12538.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.team12538.utils.DashboardUtil;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
@@ -82,15 +83,16 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
         turnController.setInputBounds(0, 2 * Math.PI);
 
         constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID, new Pose2d(0.5, 0.5));
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID);
     }
 
     public TrajectoryBuilder trajectoryBuilder() {
         return new TrajectoryBuilder(getPoseEstimate(), constraints);
     }
 
-    public TrajectoryBuilder trajectoryBuilder(Pose2d pose) {
-        return new TrajectoryBuilder(pose, constraints);
+    public TrajectoryBuilder trajectoryBuilder(DriveConstraints constraints) {
+        DriveConstraints customConstraints = new MecanumConstraints(constraints, TRACK_WIDTH);
+        return new TrajectoryBuilder(getPoseEstimate(), customConstraints);
     }
 
     public void turn(double angle) {

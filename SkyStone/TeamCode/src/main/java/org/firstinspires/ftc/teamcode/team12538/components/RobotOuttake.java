@@ -103,7 +103,6 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                         busy = true;
                         ThreadUtils.getExecutorService().submit(() -> {
                             try {
-                                outtakeSlides.runToPosition(RobotOuttakeSlides.ENCODER_TICKS_FOR_STONE_PICKUP);
                                 prepareForStoneDeployment();
                             } finally {
                                 busy = false;
@@ -130,7 +129,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                         OpModeUtils.getGlobalStore().setLiftOuttake(false);
                         ThreadUtils.getExecutorService().submit(() -> {
                             try {
-                                liftSlideForStoneIntake();
+                                // liftSlideForStoneIntake();
                             } finally {
                                 busy = false;
                             }
@@ -158,9 +157,6 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         outtakeClaw.setArmPosition(RobotStoneClaw.ARM_STONE_PICKUP_POSITION);
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
 
-        // Wait for servo to complete its rotation before lowering down the slides
-        ThreadUtils.sleep(500);
-
         lowerSlideForStonePickup();
     }
 
@@ -168,17 +164,19 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         OpModeUtils.getGlobalStore().setDepositMode(false);
 
         if (outtakeSlides.getCurrentPosition() < RobotOuttakeSlides.ENCODER_TICKS_FOR_DEPLOY &&
-                outtakeClaw.getArmPosition() != RobotStoneClaw.ARM_STONE_PICKUP_POSITION)
+                outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION)
         {
             ThreadUtils.getExecutorService().submit(() -> liftSlide());
+        }
+
+        // wait for slide to go to safe height to move arm in
+        while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 250) {
+            ThreadUtils.idle();
         }
 
         // make sure arm and claw position is correct
         outtakeClaw.setArmPosition(RobotStoneClaw.ARM_STONE_PICKUP_POSITION);
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
-
-        // Wait for servo to complete its rotation before lowering down the slides
-        ThreadUtils.sleep(500);
 
         liftSlideForStoneIntake();
     }
@@ -186,7 +184,12 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     public void prepareForStoneDeployment() {
         OpModeUtils.getGlobalStore().setDepositMode(true);
 
-        outtakeSlides.runToPosition(0, true);
+        ThreadUtils.getExecutorService().submit(() -> {
+            if(OpModeUtils.opModeIsActive()) {
+                outtakeSlides.runToPosition(0);
+            }
+        });
+
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
         clawMode = ClawMode.Close;
 
@@ -198,7 +201,10 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         } else {
             ThreadUtils.getExecutorService().submit(() -> liftSlide());
         }
-        ThreadUtils.sleep(300);
+
+        while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 200) {
+            ThreadUtils.idle();
+        }
 
         // swing outtake arm out for stone deployment
         outtakeClaw.setArmPosition(RobotStoneClaw.ARM_DEPLOYMENT_POSITION);
@@ -234,10 +240,9 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                 try {
                     if(clawMode == ClawMode.Open) {
                         outtakeSlides.runToPosition(RobotOuttakeSlides.ENCODER_TICKS_FOR_STONE_PICKUP);
-                        ThreadUtils.sleep(500);
                         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
                     } else {
-                        if (outtakeClaw.getArmPosition() > RobotStoneClaw.ARM_STONE_PICKUP_POSITION) {
+                        if (outtakeClaw.getArmPosition() < RobotStoneClaw.ARM_STONE_PICKUP_POSITION) {
                             outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
                         } else {
                             outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
@@ -245,7 +250,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                     }
                     ThreadUtils.sleep(500);
 
-                    if(outtakeClaw.getArmPosition() > RobotStoneClaw.ARM_STONE_PICKUP_POSITION) {
+                    if(outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION) {
                         ThreadUtils.getExecutorService().submit(() -> outtakeSlides.runToStoneHeight(stoneHeight));
                     }
                 } finally {
