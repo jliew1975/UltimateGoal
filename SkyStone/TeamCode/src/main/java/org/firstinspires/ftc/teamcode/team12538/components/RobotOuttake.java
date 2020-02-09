@@ -129,7 +129,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                         OpModeUtils.getGlobalStore().setLiftOuttake(false);
                         ThreadUtils.getExecutorService().submit(() -> {
                             try {
-                                // liftSlideForStoneIntake();
+                                liftSlideForStoneIntake();
                             } finally {
                                 busy = false;
                             }
@@ -153,6 +153,10 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
             ThreadUtils.getExecutorService().submit(() -> liftSlide());
         }
 
+        while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 350) {
+            ThreadUtils.idle();
+        }
+
         // make sure arm and claw position is correct
         outtakeClaw.setArmPosition(RobotStoneClaw.ARM_STONE_PICKUP_POSITION);
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
@@ -170,13 +174,15 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         }
 
         // wait for slide to go to safe height to move arm in
-        while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 250) {
+        while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 350) {
             ThreadUtils.idle();
         }
 
         // make sure arm and claw position is correct
         outtakeClaw.setArmPosition(RobotStoneClaw.ARM_STONE_PICKUP_POSITION);
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
+
+        ThreadUtils.sleep(500);
 
         liftSlideForStoneIntake();
     }

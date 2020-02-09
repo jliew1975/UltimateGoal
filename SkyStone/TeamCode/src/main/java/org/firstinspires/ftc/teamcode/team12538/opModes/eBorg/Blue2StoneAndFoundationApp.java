@@ -67,24 +67,24 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
 
         if(!robot.intakeSensor.isDetected()) {
             if (!isStopRequested()) {
-                pickupSecondStone(position);
+                // pickupSecondStone(position);
             }
 
             if (!isStopRequested()) {
-                crossSkyBridge(position, 2);
+                // crossSkyBridge(position, 2);
             }
 
             if (!isStopRequested()) {
-                deploySecondStone(position);
+                // deploySecondStone(position);
             }
         } else {
             if(!isStopRequested()) {
-                deployStone(20);
+                // deployStone(20);
             }
         }
 
         if(opModeIsActive()) {
-            moveToParkUnderSkyBridge(position);
+            // moveToParkUnderSkyBridge(position);
         }
     }
 
