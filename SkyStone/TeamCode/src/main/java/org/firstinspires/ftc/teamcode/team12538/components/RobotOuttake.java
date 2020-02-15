@@ -24,9 +24,6 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
     public volatile int stoneHeight = 1;
 
-    Button dpadUpBtn = new Button();
-    Button dpadDownBtn = new Button();
-
     Button buttonB = new Button();
 
     @Override
@@ -113,16 +110,12 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
             }
         }
 
-        // outtake slides controls
-        dpadUpBtn.input(gamepad.dpad_up);
-        dpadDownBtn.input(gamepad.dpad_down);
-
-        if(dpadUpBtn.onPress() && !busy) {
-            outtakeSlides.runToPosition(outtakeSlides.getCurrentPosition() + 100);
-        } else if(dpadDownBtn.onPress() && !busy) {
-            outtakeSlides.runToPosition(outtakeSlides.getCurrentPosition() - 100);
+        if(gamepad.dpad_up && !busy) {
+            outtakeSlides.setPower(1d);
+        } else if(gamepad.dpad_down && !busy) {
+            outtakeSlides.setPower(-1d);
         } else if (OpModeUtils.getGlobalStore().isLiftOuttake()) {
-            if (!busy) {
+            if(!busy) {
                 synchronized (outtakeLock) {
                     if (!busy) {
                         busy = true;
@@ -137,6 +130,8 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                     }
                 }
             }
+        } else if(!busy) {
+            outtakeSlides.setPower(0);
         }
     }
 

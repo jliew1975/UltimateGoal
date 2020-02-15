@@ -65,26 +65,26 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
             moveFoundationToBuildingSite(position);
         }
 
-        if(!robot.intakeSensor.isDetected()) {
+        // if(!robot.intakeSensor.isDetected()) {
             if (!isStopRequested()) {
-                // pickupSecondStone(position);
+                pickupSecondStone(position);
             }
 
             if (!isStopRequested()) {
-                // crossSkyBridge(position, 2);
+                crossSkyBridge(position, 2);
             }
 
             if (!isStopRequested()) {
                 // deploySecondStone(position);
             }
-        } else {
+        // } else {
             if(!isStopRequested()) {
                 // deployStone(20);
             }
-        }
+        //}
 
         if(opModeIsActive()) {
-            // moveToParkUnderSkyBridge(position);
+            moveToParkUnderSkyBridge(position);
         }
     }
 
@@ -97,7 +97,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
             case Left:
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
-                                .splineTo(new Pose2d(35, 5, Math.toRadians(30)))
+                                .splineTo(new Pose2d(30, 5, Math.toRadians(30)))
                                 .forward(10)
                                 .back(30)
                                 .build()
@@ -110,7 +110,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
                         robot.drive.trajectoryBuilder()
                                 .splineTo(new Pose2d(20, 10, Math.toRadians(-90)))
                                 .strafeTo(new Vector2d(40, 10))
-                                .forward(5d)
+                                .forward(10d)
                                 .strafeTo(new Vector2d(30, 15))
                                 .back(80)
                                 .build()
@@ -132,36 +132,44 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
                 robot.outtake.lowerSlideForStonePickup();
                 robot.intake.setPower(0);
                 sleep(500);
-                robot.outtake.outtakeClaw.setArmPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+                robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
                 sleep(500);
-                robot.outtake.outtakeClaw.setArmPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
+                robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
             }
         });
     }
 
     private void pickupSecondStone(Position position) {
+        robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
+
         while(robot.outtake.outtakeSlides.getCurrentPosition() > 60) {
             robot.outtake.liftSlideForStoneIntake();
         }
 
         switch (position) {
             case Left:
-                Pose2d error = robot.drive.getLastError();
+                Pose2d error1 = robot.drive.getLastError();
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
-                                .splineTo(new Pose2d(20 + error.getX(), 30 + error.getY(), Math.toRadians(-90)))
+                                .splineTo(new Pose2d(25 + error1.getX(), 25 + error1.getY(), Math.toRadians(-90)))
                                 .build()
                 );
 
                 // enable intake
                 robot.intake.setPower(1);
 
+                Pose2d error2 = robot.drive.getLastError();
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
-                                .lineTo(new Vector2d(20, 20))
-                                .strafeTo(new Vector2d(48, 20))
-                                .forward(5)
-                                .strafeTo(new Vector2d(25, 20))
+                                .lineTo(new Vector2d(20 + error2.getX(), 12 + error2.getY()))
+                                .strafeTo(new Vector2d(60 + error2.getX(), 12 + error2.getY()))
+                                .build()
+                );
+
+                robot.drive.followTrajectorySync(
+                        robot.drive.trajectoryBuilder()
+                                .forward(8)
+                                .strafeTo(new Vector2d(25, 12 + error2.getY()))
                                 .build()
                 );
 
@@ -231,27 +239,38 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
                 robot.outtake.lowerSlideForStonePickup();
                 robot.intake.setPower(0);
                 sleep(500);
-                robot.outtake.outtakeClaw.setArmPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+                robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
                 sleep(500);
-                robot.outtake.outtakeClaw.setArmPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
+                robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
             }
         });
     }
 
     private void crossSkyBridge(Position position, int round) {
+        Pose2d error = robot.drive.getLastError();
+
         switch(position) {
             case Left:
-                robot.drive.followTrajectorySync(
-                        robot.drive.trajectoryBuilder()
-                                .splineTo(new Pose2d(28, 40, Math.toRadians(90)))
-                                .build()
-                );
+                if(round == 1) {
+                    robot.drive.followTrajectorySync(
+                            robot.drive.trajectoryBuilder()
+                                    .splineTo(new Pose2d(28, 40, Math.toRadians(90)))
+                                    .build()
+                    );
 
-                robot.drive.followTrajectorySync(
-                        robot.drive.trajectoryBuilder()
-                                .lineTo(new Vector2d(28, 86))
-                                .build()
-                );
+                    robot.drive.followTrajectorySync(
+                            robot.drive.trajectoryBuilder()
+                                    .lineTo(new Vector2d(28, 83))
+                                    .build()
+                    );
+                } else {
+                    robot.drive.followTrajectorySync(
+                            robot.drive.trajectoryBuilder()
+                                    .splineTo(new Pose2d(25 + error.getX(), 40 + error.getY(), Math.toRadians(90)))
+                                    .lineTo(new Vector2d(40, 90), new SplineInterpolator(Math.toRadians(90), Math.toRadians(-90)))
+                                    .build()
+                    );
+                }
                 break;
             case Center:
                 break;
@@ -261,7 +280,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
     }
 
     private void deploySecondStone(Position position) {
-        if(robot.intakeSensor.isDetected() && opModeIsActive()) {
+        if(opModeIsActive()) {
             deployStone(20);
         }
     }
@@ -276,7 +295,11 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
         );
 
         if(robot.intakeSensor.isDetected()) {
-            ThreadUtils.getExecutorService().submit(() -> deployStone(10));
+            ThreadUtils.getExecutorService().submit(() -> {
+                if(robot.intakeSensor.isDetected()) {
+                    // deployStone(10);
+                }
+            });
         }
 
         robot.foundationClaw.lowerClaw();
@@ -288,7 +311,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
                         .build()
         );
 
-        robot.drive.turnSync(Math.toRadians(90));
+        robot.drive.turnSync(Math.toRadians(100));
 
         robot.foundationClaw.raiseClaw();
         sleep(500);
@@ -297,7 +320,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
     private void moveToParkUnderSkyBridge(Position position) {
         robot.drive.followTrajectorySync(
                 robot.drive.trajectoryBuilder()
-                        .splineTo(new Pose2d(30, 30, Math.toRadians(90)))
+                        .splineTo(new Pose2d(25, 30, Math.toRadians(-90)))
                         .build()
         );
     }

@@ -64,11 +64,13 @@ public abstract class RobotApp extends LinearOpMode {
     }
 
     protected void deployStone(int height) {
-        robot.outtake.prepareForStoneDeployment();
-        robot.outtake.outtakeSlides.runToPosition(height, true);
-        robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
-        sleep(200);
-        robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
-        robot.outtake.performStoneIntakeOperation();
+        if(robot.intakeSensor.isDetected()) {
+            robot.outtake.prepareForStoneDeployment();
+            robot.outtake.outtakeSlides.runToPosition(height, true);
+            robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+            sleep(200);
+            robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
+            robot.outtake.performStoneIntakeOperation();
+        }
     }
 }
