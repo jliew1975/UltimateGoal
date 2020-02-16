@@ -15,11 +15,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RobotOuttakeSlides implements RobotComponent, TelemetryAware {
-    public static final int ENCODER_TICKS_FOR_INTAKE = 40;
+    public static final int ENCODER_TICKS_FOR_INTAKE = 200;
     public static final int ENCODER_TICKS_FOR_DEPLOY = 1265;
     public static final int ENCODER_TICKS_FOR_MAX_HEIGHT = 2950;
     public static final int ENCODER_TICKS_FOR_STONE_PICKUP = 0;
-    public static final int ENCODER_TICKS_PER_STONE = 110;
+    public static final int ENCODER_TICKS_PER_STONE = 370; // 110;
     public static final int ENCODER_TICKS_FOR_STONE_DROP = 500;
 
     private DcMotorWrapper leftOuttakeSlide = null;
@@ -111,6 +111,9 @@ public class RobotOuttakeSlides implements RobotComponent, TelemetryAware {
                     motors.get(1).getCurrentPosition(), motors.get(1).getCurrentPosition());
             telemetry.update();
         }
+
+        setPower(0);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motors);
     }
 
     public int getCurrentPosition() {
