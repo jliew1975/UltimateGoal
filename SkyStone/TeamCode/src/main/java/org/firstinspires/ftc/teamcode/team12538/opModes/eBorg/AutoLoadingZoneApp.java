@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeStore;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 import org.openftc.revextensions2.ExpansionHubEx;
 
 public abstract class AutoLoadingZoneApp extends RobotApp {
@@ -40,11 +41,15 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
 
         waitForStart();
 
-        detector.deactivate();
+        ThreadUtils.getExecutorService().submit(() -> detector.deactivate());
 
         try {
             if(!isStopRequested()) {
                 autoVisionLogic(detector);
+
+                while(opModeIsActive()) {
+                    ThreadUtils.idle();
+                }
             }
         } finally {
             robot.intakeSensor.stop();

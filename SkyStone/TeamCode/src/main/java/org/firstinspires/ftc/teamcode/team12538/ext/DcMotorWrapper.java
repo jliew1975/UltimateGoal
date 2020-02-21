@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.team12538.ext;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -137,5 +138,9 @@ public class DcMotorWrapper implements DcMotor {
     @Override
     public void close() {
         this.dcMotor.close();
+    }
+
+    public DcMotorEx getMotorAsDcMotorEx() {
+        return (DcMotorEx) dcMotor;
     }
 }

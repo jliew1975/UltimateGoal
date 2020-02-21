@@ -123,6 +123,7 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
     }
 
     private void pickupSecondStone(Position position) {
+
         robot.mecanumDrive.flipLastAngleForErrorCorrection(MecanumDrive.LastAngleMode.AudienceDirectionRedAlliance);
 
         // lift slide for intake in a background thread

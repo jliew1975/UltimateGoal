@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.team12538.opModes.eBorg;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.heading.ConstantInterpolator;
+import com.acmerobotics.roadrunner.path.heading.HeadingInterpolator;
 import com.acmerobotics.roadrunner.path.heading.LinearInterpolator;
 import com.acmerobotics.roadrunner.path.heading.SplineInterpolator;
 import com.acmerobotics.roadrunner.path.heading.TangentInterpolator;
@@ -40,6 +41,9 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
     protected void autoVisionLogic(TargetPositionalDetector detector) {
         Position skystonePosition = detector.getPosition();
 
+        // set robot initial pose
+        robot.drive.setPoseEstimate(new Pose2d(-38, 62, Math.toRadians(-90)));
+
         switch (skystonePosition) {
             case Left:
                 executeLogic(Position.Left);
@@ -65,7 +69,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
             moveFoundationToBuildingSite(position);
         }
 
-        // if(!robot.intakeSensor.isDetected()) {
+        if(!robot.intakeSensor.isDetected()) {
             if (!isStopRequested()) {
                 pickupSecondStone(position);
             }
@@ -75,21 +79,18 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
             }
 
             if (!isStopRequested()) {
-                // deploySecondStone(position);
+                deploySecondStone(position);
             }
-        // } else {
-            if(!isStopRequested()) {
-                // deployStone(20);
-            }
-        //}
+        }
 
-        if(opModeIsActive()) {
-            moveToParkUnderSkyBridge(position);
+        if(!isStopRequested()) {
+           moveToParkUnderSkyBridge(position);
         }
     }
 
     private void pickupFirstStone(Position position) {
         // enable intake
+        ThreadUtils.getExecutorService().submit(() -> robot.outtake.outtakeSlides.runToPosition(200));
         robot.intake.setPower(1);
         robot.intakeSensor.start();
 
@@ -97,9 +98,9 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
             case Left:
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
-                                .splineTo(new Pose2d(30, 5, Math.toRadians(30)))
-                                .forward(10)
-                                .back(30)
+                                .splineTo(new Pose2d(-30, 25, Math.toRadians(-45)))
+                                .forward(5)
+                                .back(25)
                                 .build()
                 );
 
@@ -133,104 +134,43 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
                 robot.intake.setPower(0);
                 sleep(500);
                 robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
-                sleep(500);
+                sleep(200);
                 robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
             }
         });
     }
 
     private void pickupSecondStone(Position position) {
+        ThreadUtils.getExecutorService().submit(() -> robot.outtake.outtakeSlides.runToPosition(200));
         robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
 
-        while(robot.outtake.outtakeSlides.getCurrentPosition() > 60) {
-            robot.outtake.liftSlideForStoneIntake();
-        }
+        waitForStoneDeployment();
 
         switch (position) {
             case Left:
-                Pose2d error1 = robot.drive.getLastError();
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
-                                .splineTo(new Pose2d(25 + error1.getX(), 25 + error1.getY(), Math.toRadians(-90)))
+                                .splineTo(new Pose2d(0, 40, Math.toRadians(180)))
                                 .build()
                 );
 
                 // enable intake
                 robot.intake.setPower(1);
 
-                Pose2d error2 = robot.drive.getLastError();
                 robot.drive.followTrajectorySync(
-                        robot.drive.trajectoryBuilder()
-                                .lineTo(new Vector2d(20 + error2.getX(), 12 + error2.getY()))
-                                .strafeTo(new Vector2d(60 + error2.getX(), 12 + error2.getY()))
-                                .build()
-                );
-
-                robot.drive.followTrajectorySync(
-                        robot.drive.trajectoryBuilder()
-                                .forward(8)
-                                .strafeTo(new Vector2d(25, 12 + error2.getY()))
+                        robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
+                                .lineTo(new Vector2d(-45, 25), new ConstantInterpolator(Math.toRadians(-160)))
                                 .build()
                 );
 
                 break;
 
             case Center:
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 5d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
 
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 68d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 14.5d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    gamepad.timeout = 2;
-                    gamepad.detector = robot.intakeSensor;
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 14d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
                 break;
 
             case Right:
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 5d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
 
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.8, 75d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeLeft, 0.6, 15d, false);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    gamepad.timeout = 2;
-                    gamepad.detector = robot.intakeSensor;
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.3, 5d);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
-
-                if(opModeIsActive()) {
-                    AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.StrafeRight, 0.6, 13d);
-                    robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-                }
                 break;
         }
 
@@ -240,34 +180,49 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
                 robot.intake.setPower(0);
                 sleep(500);
                 robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
-                sleep(500);
+                sleep(200);
                 robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
             }
         });
     }
 
     private void crossSkyBridge(Position position, int round) {
-        Pose2d error = robot.drive.getLastError();
-
         switch(position) {
             case Left:
                 if(round == 1) {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
-                                    .splineTo(new Pose2d(28, 40, Math.toRadians(90)))
-                                    .build()
-                    );
-
-                    robot.drive.followTrajectorySync(
-                            robot.drive.trajectoryBuilder()
-                                    .lineTo(new Vector2d(28, 83))
+                                    .splineTo(new Pose2d(0, 35, 0))
+                                    .addMarker(new Vector2d(20, 35), () -> {
+                                        ThreadUtils.getExecutorService().submit(() -> {
+                                            if (robot.intakeSensor.isDetected()) {
+                                                deployStone(10);
+                                            }
+                                        });
+                                        return Unit.INSTANCE;
+                                    })
+                                    .lineTo(new Vector2d(45, 35), new SplineInterpolator(Math.toRadians(0), Math.toRadians(90)))
                                     .build()
                     );
                 } else {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
-                                    .splineTo(new Pose2d(25 + error.getX(), 40 + error.getY(), Math.toRadians(90)))
-                                    .lineTo(new Vector2d(40, 90), new SplineInterpolator(Math.toRadians(90), Math.toRadians(-90)))
+                                    .reverse()
+                                    .splineTo(new Pose2d(0, 35, Math.toRadians(180)))
+                                    .build()
+                    );
+
+                    robot.drive.followTrajectorySync(
+                            robot.drive.trajectoryBuilder()
+                                    .addMarker(new Vector2d(20, 35), () -> {
+                                        ThreadUtils.getExecutorService().submit(() -> {
+                                            if (robot.intakeSensor.isDetected()) {
+                                                deployStone(100);
+                                            }
+                                        });
+                                        return Unit.INSTANCE;
+                                    })
+                                    .back(32)
                                     .build()
                     );
                 }
@@ -275,53 +230,55 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
             case Center:
                 break;
             case Right:
-
+                break;
         }
     }
 
     private void deploySecondStone(Position position) {
         if(opModeIsActive()) {
-            deployStone(20);
+            // deployStone(100);
         }
     }
 
     private void moveFoundationToBuildingSite(Position position) {
-        robot.drive.turnSync(Math.PI/2);
-
         robot.drive.followTrajectorySync(
                 robot.drive.trajectoryBuilder()
                         .back(10)
                         .build()
         );
 
-        if(robot.intakeSensor.isDetected()) {
-            ThreadUtils.getExecutorService().submit(() -> {
-                if(robot.intakeSensor.isDetected()) {
-                    // deployStone(10);
-                }
-            });
-        }
-
         robot.foundationClaw.lowerClaw();
         sleep(800);
 
         robot.drive.followTrajectorySync(
                 robot.drive.trajectoryBuilder()
-                        .forward(30)
+                        .forward(15)
                         .build()
         );
 
-        robot.drive.turnSync(Math.toRadians(100));
+        robot.drive.turnSync(Math.toRadians(120));
 
         robot.foundationClaw.raiseClaw();
-        sleep(500);
+        sleep(200);
     }
 
     private void moveToParkUnderSkyBridge(Position position) {
+        waitForStoneDeployment();
+
+
         robot.drive.followTrajectorySync(
                 robot.drive.trajectoryBuilder()
-                        .splineTo(new Pose2d(25, 30, Math.toRadians(-90)))
+                        .splineTo(new Pose2d(30, 35, Math.toRadians(-175)))
                         .build()
         );
+
+
+        robot.parkingServo.parkingMode();
+    }
+
+    private void waitForStoneDeployment() {
+        while(opModeIsActive() && !stoneDeployDone) {
+            ThreadUtils.idle();
+        }
     }
 }

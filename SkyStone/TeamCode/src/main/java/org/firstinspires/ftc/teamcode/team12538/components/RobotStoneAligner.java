@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.states.ToggleBoolean;
 
 public class RobotStoneAligner implements RobotComponent, ControlAware {
-    public static final double INTAKE = 0.45;
-    public static final double ALIGN = 0d;
+    public static final double INTAKE = 0;
+    public static final double ALIGN = 1d;
 
     private Servo stoneAligner;
 

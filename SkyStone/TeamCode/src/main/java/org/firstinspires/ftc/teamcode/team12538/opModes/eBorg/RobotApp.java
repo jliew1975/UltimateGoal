@@ -20,6 +20,8 @@ public abstract class RobotApp extends LinearOpMode {
 
     protected int numSkystone = 3;
 
+    protected volatile boolean stoneDeployDone = true;
+
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtils.init(this);
@@ -64,13 +66,26 @@ public abstract class RobotApp extends LinearOpMode {
     }
 
     protected void deployStone(int height) {
-        if(robot.intakeSensor.isDetected()) {
-            robot.outtake.prepareForStoneDeployment();
-            robot.outtake.outtakeSlides.runToPosition(height, true);
-            robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
-            sleep(200);
-            robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
-            robot.outtake.performStoneIntakeOperation();
+        deployStone(height, false);
+    }
+
+    protected void deployStone(int height, boolean skipPrepare) {
+        stoneDeployDone = false;
+
+        try {
+            if (robot.intakeSensor.isDetected()) {
+                if(!skipPrepare) {
+                    robot.outtake.prepareForStoneDeployment();
+                    robot.outtake.outtakeSlides.runToPosition(height);
+                }
+
+                robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+                sleep(200);
+                robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
+                robot.outtake.performStoneIntakeOperation();
+            }
+        } finally {
+            stoneDeployDone = true;
         }
     }
 }

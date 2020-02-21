@@ -14,7 +14,7 @@ public class RobotDistanceSensor implements RobotComponent, RobotDetectorLimit {
     private double sideView;
     private double forntView;
 
-    public double limit = 0d;
+    public double limit = 0.5d;
     public Servo distanceSensorServo;
     public DistanceSensor distanceSensor;
 

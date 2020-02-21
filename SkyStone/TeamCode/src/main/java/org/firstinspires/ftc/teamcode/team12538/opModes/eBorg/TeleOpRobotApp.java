@@ -53,7 +53,7 @@ public class TeleOpRobotApp extends RobotApp {
                 }
 
                 robot.capstone.control(gamepad2);
-                robot.parkingServo.control(gamepad2);
+                robot.parkingServo.control(gamepad1);
 
 
                 // telemetry printing

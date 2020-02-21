@@ -13,7 +13,6 @@ public class RobotParkingServo implements RobotComponent, ControlAware, Telemetr
 
 
     private Servo parkingServo;
-    private volatile ClawMode servoClawMode;
 
     private Object lock = new Object();
     private volatile boolean busy = false;
@@ -27,9 +26,12 @@ public class RobotParkingServo implements RobotComponent, ControlAware, Telemetr
 
     @Override
     public void control(Gamepad gamepad) {
-        if(gamepad.right_bumper) {
-            parkingMode();
-        } else if(gamepad.left_bumper) {
+        if(gamepad.dpad_left) {
+            if(parkingServo.getPosition() < PARKING_POSITION) {
+                parkingServo.setPosition(parkingServo.getPosition() + 0.05);
+            }
+            // parkingMode();
+        } else if(gamepad.dpad_right) {
             teleOpMode();
         }
     }

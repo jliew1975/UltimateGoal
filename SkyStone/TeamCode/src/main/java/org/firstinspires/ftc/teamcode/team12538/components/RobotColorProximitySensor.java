@@ -23,9 +23,9 @@ public class RobotColorProximitySensor implements RobotDetector {
         ThreadUtils.getExecutorService().submit(() -> {
             while(!isStopRequested) {
                 if(sensorDistance.getDistance(DistanceUnit.CM) != Double.NaN) {
-                    if(sensorDistance.getDistance(DistanceUnit.CM) < 6.55d) {
+                    if(sensorDistance.getDistance(DistanceUnit.CM) < 7d) {
                         ThreadUtils.sleep(500);
-                        if(sensorDistance.getDistance(DistanceUnit.CM) < 6.55d) {
+                        if(sensorDistance.getDistance(DistanceUnit.CM) < 7d) {
                             isDetected = true;
                         }
                     } else {

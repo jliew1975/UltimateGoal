@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.team12538.components.RobotFoundationClaw;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneAligner;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
 import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.team12538.robot.SkyStoneAutoRobot;
@@ -40,9 +42,13 @@ public class TeleOpTestRobotApp extends RobotApp {
 
             while(opModeIsActive()) {
                 if(gamepad1.x) {
-                    robot.outtake.performStoneIntakeOperation();
+                    robot.outtake.lowerSlideForStonePickup();
                 } else if(gamepad1.b) {
-                    robot.outtake.prepareForStoneDeployment();
+                    robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
+                } else if(gamepad1.a) {
+                    robot.stoneAligner.setPosition(RobotStoneAligner.ALIGN);
+                } else if(gamepad1.y) {
+                    robot.stoneAligner.setPosition(RobotStoneAligner.INTAKE);
                 }
 
                 telemetry.addData("Outtake Aem", robot.outtake.outtakeClaw.getArmPosition());
