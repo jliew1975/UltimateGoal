@@ -27,7 +27,10 @@ public class AutoParkingOnlyApp extends RobotApp {
         waitForStart();
 
         // Navigate halfway to foundation
-        AutoGamepadUtils.move(gamepad, MecanumDrive.AutoDirection.Forward, 0.5,10);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        robot.drive.followTrajectorySync(
+                robot.drive.trajectoryBuilder()
+                    .forward(10)
+                    .build()
+        );
     }
 }

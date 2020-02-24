@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 public class RobotParkingServo implements RobotComponent, ControlAware, TelemetryAware {
     public static final double INIT_POSITION = 0d;
@@ -44,6 +45,7 @@ public class RobotParkingServo implements RobotComponent, ControlAware, Telemetr
 
     public void parkingMode() {
         parkingServo.setPosition(PARKING_POSITION);
+        ThreadUtils.sleep(200);
     }
 
     public void teleOpMode() {

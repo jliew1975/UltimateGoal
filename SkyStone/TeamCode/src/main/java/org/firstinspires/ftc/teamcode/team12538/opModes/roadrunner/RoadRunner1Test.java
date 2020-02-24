@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.path.heading.HeadingInterpolator;
 import com.acmerobotics.roadrunner.path.heading.LinearInterpolator;
 import com.acmerobotics.roadrunner.path.heading.SplineInterpolator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.team12538.drive.mecanum.SampleMecanumDriveBase;
@@ -21,6 +22,7 @@ import kotlin.Unit;
  */
 @Config
 @Autonomous(name="A RR Test 1", group = "Test")
+@Disabled
 public class RoadRunner1Test extends LinearOpMode {
     public static int MODE = 0;
     public static double X = 40;

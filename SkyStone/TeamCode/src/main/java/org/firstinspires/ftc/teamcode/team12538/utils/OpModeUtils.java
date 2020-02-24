@@ -45,7 +45,7 @@ public class OpModeUtils {
     }
 
     public static boolean opModeIsActive() {
-        return getOpMode().opModeIsActive();
+        return !getOpMode().isStopRequested();
     }
 
     public static void stop() {

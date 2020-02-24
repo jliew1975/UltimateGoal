@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538.opModes.eBorg;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
+@Disabled
 public class TeleOpTestRobotApp extends RobotApp {
     @Override
     public void performRobotOperation() throws InterruptedException {
@@ -40,18 +42,20 @@ public class TeleOpTestRobotApp extends RobotApp {
 
             waitForStart();
 
+            Button dPadUp = new Button();
+            Button dPadDown = new Button();
+
             while(opModeIsActive()) {
-                if(gamepad1.x) {
-                    robot.outtake.lowerSlideForStonePickup();
-                } else if(gamepad1.b) {
-                    robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
-                } else if(gamepad1.a) {
-                    robot.stoneAligner.setPosition(RobotStoneAligner.ALIGN);
-                } else if(gamepad1.y) {
-                    robot.stoneAligner.setPosition(RobotStoneAligner.INTAKE);
+                dPadUp.input(gamepad1.dpad_up);
+                dPadDown.input(gamepad1.dpad_down);
+
+                if(dPadUp.onPress()) {
+                    robot.capstone.setPosition(robot.capstone.getPosition() + 0.05);
+                } else if(dPadDown.onPress()) {
+                    robot.capstone.setPosition(robot.capstone.getPosition() - 0.05);
                 }
 
-                telemetry.addData("Outtake Aem", robot.outtake.outtakeClaw.getArmPosition());
+                telemetry.addData("Capstone", robot.capstone.getPosition());
                 telemetry.update();
             }
         } finally {

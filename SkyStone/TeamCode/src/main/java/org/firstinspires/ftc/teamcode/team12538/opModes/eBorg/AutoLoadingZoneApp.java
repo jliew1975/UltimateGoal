@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.team12538.opModes.eBorg;
 
+import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneAligner;
+import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
 import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.detectors.TargetPositionalDetector;
 import org.firstinspires.ftc.teamcode.team12538.detectors.opencv.OpenCvDetector;
@@ -17,6 +20,11 @@ import org.openftc.revextensions2.ExpansionHubEx;
 
 public abstract class AutoLoadingZoneApp extends RobotApp {
     protected ElapsedTime runtime = new ElapsedTime();
+
+    public static DriveConstraints SLOW_CONSTRAINTS = new DriveConstraints(
+            30.0, 30.0, 0.0,
+            Math.toRadians(180.0), Math.toRadians(180.0), 0.0
+    );
 
     @Override
     public void performRobotOperation() throws InterruptedException {
@@ -46,10 +54,7 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
         try {
             if(!isStopRequested()) {
                 autoVisionLogic(detector);
-
-                while(opModeIsActive()) {
-                    ThreadUtils.idle();
-                }
+                sleep(1000);
             }
         } finally {
             robot.intakeSensor.stop();
@@ -58,4 +63,34 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
     }
 
     protected abstract void autoVisionLogic(TargetPositionalDetector detector);
+
+    protected void waitForStoneDeployment() {
+        while(!isStopRequested() && !stoneDeployDone) {
+            // wait for stone deployment to complete
+        }
+    }
+
+    protected void waitForStoneIsDetected() {
+        while (!robot.intakeSensor.isDetected()) {
+            // wait for stone to be detected before lowering down slide
+        }
+    }
+
+    protected void prepareStoneForDeployment() {
+        ThreadUtils.getExecutorService().submit(() -> {
+            if(opModeIsActive()) {
+                if(robot.stoneAligner.getPosition() > 0.5) {
+                    robot.stoneAligner.setPosition(RobotStoneAligner.ALIGN);
+                    sleep(300);
+                    robot.stoneAligner.setPosition(RobotStoneAligner.INTAKE);
+                }
+
+                robot.outtake.lowerSlideForStonePickup();
+                robot.intake.setPower(0);
+                robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
+                sleep(300);
+                robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_CLOSE_POSITION);
+            }
+        });
+    }
 }

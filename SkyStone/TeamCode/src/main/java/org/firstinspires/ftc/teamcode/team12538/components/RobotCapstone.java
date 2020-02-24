@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.states.ToggleBoolean;
 
 public class RobotCapstone implements RobotComponent, ControlAware, TelemetryAware {
-    public static final double UP = 0.70;
-    public static final double DOWN = 0d;
+    public static final double UP = 0.69;
+    public static final double DOWN = 0.45;
 
     private Servo stoneArm;
 
@@ -50,7 +50,7 @@ public class RobotCapstone implements RobotComponent, ControlAware, TelemetryAwa
             RobotOuttake outtake = OpModeUtils.getGlobalStore().getComponent("outtake");
 
             if(isLiftSlides) {
-                outtake.outtakeSlides.runToPosition(200);
+                outtake.outtakeSlides.runToPosition(800);
                 isLiftSlides = false;
             }
             stoneArm.setPosition(UP);

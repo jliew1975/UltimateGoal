@@ -7,13 +7,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public class RobotStoneClaw implements RobotComponent, TelemetryAware {
-    public static final double CLAW_CLOSE_POSITION = 0.8;
+    public static final double CLAW_CLOSE_POSITION = 1.0;
     public static final double CLAW_HOLD_POSITION = 0.6;
     public static final double CLAW_OPEN_POSITION = 0.5;
     public static final double CLAW_INTAKE_POSITION = 0d;
 
     public static final double ARM_DEPLOYMENT_POSITION = 0;
-    public static final double ARM_STONE_PICKUP_POSITION = 1;
+    public static final double ARM_STONE_INTAKE_POSITION = 1.0;
+    public static final double ARM_STONE_PICKUP_POSITION = 0.9;
 
     private Servo outtakeArm;
     private Servo stoneClaw;
@@ -27,7 +28,7 @@ public class RobotStoneClaw implements RobotComponent, TelemetryAware {
         stoneClaw = hardwareMap.get(Servo.class, "stoneClaw");
         stoneClaw.setPosition(CLAW_INTAKE_POSITION);
 
-        setArmPosition(ARM_STONE_PICKUP_POSITION);
+        setArmPosition(ARM_STONE_INTAKE_POSITION);
     }
 
     @Override
