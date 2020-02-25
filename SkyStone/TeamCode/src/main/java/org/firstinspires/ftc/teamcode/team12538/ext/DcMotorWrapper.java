@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.ExpansionHubMotor;
+
 public class DcMotorWrapper implements DcMotor {
     private String name;
     private DcMotor dcMotor;
@@ -142,5 +145,9 @@ public class DcMotorWrapper implements DcMotor {
 
     public DcMotorEx getMotorAsDcMotorEx() {
         return (DcMotorEx) dcMotor;
+    }
+
+    public double getCurrentPowerDraw() {
+        return ((ExpansionHubMotor)dcMotor).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS);
     }
 }

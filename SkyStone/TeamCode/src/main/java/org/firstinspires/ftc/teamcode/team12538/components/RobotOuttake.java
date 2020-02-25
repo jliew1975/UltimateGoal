@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.team12538.components;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.team12538.robot.CommonRobotHardware;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
@@ -202,7 +203,10 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
     }
 
     public void lowerSlideForStonePickup() {
-        if(aligner.getPosition() > 0.5) {
+        RobotColorProximitySensor intakeSensor =
+                OpModeUtils.getGlobalStore().getComponent(CommonRobotHardware.HardwareName.intakeSensor.name());
+
+        if(intakeSensor.hasStoneButNotCompletelyIn()) {
             aligner.setPosition(RobotStoneAligner.ALIGN);
         }
 
@@ -214,7 +218,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
         outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_HOLD_POSITION);
         aligner.setPosition(RobotStoneAligner.INTAKE);
-        ThreadUtils.sleep(200);
+        ThreadUtils.sleep(300);
 
         // clam the stone for pickup
         clawMode = ClawMode.Close;

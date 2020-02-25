@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
  * Define all robot components this class for easy maintenance
  */
 public abstract class CommonRobotHardware {
+    public enum HardwareName { outtake, intakeSensor }
+
     public RobotIntake intake = new RobotIntake();
     public RobotFoundationClaw foundationClaw = new RobotFoundationClaw();
     public RobotOuttake outtake = new RobotOuttake();
@@ -41,6 +43,7 @@ public abstract class CommonRobotHardware {
         stoneAligner.init();
         parkingServo.init();
 
-        OpModeUtils.getGlobalStore().addComponent("outtake", outtake);
+        OpModeUtils.getGlobalStore().addComponent(HardwareName.outtake.name(), outtake);
+        OpModeUtils.getGlobalStore().addComponent(HardwareName.intakeSensor.name(), intakeSensor);
     }
 }

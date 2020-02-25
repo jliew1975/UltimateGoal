@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetector;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
-public class RobotColorProximitySensor implements RobotDetector {
+public class RobotColorProximitySensor implements RobotDetector, RobotComponent {
     public DistanceSensor sensorDistance;
 
     private boolean isDetected = false;
@@ -34,6 +34,21 @@ public class RobotColorProximitySensor implements RobotDetector {
                 }
             }
         });
+    }
+
+    public double getSensorValue() {
+        if(sensorDistance.getDistance(DistanceUnit.CM) == Double.NaN)
+            return  -1d;
+
+        return sensorDistance.getDistance(DistanceUnit.CM);
+    }
+
+    public boolean hasStoneButNotCompletelyIn() {
+        if(sensorDistance.getDistance(DistanceUnit.CM) == Double.NaN) {
+            return getSensorValue() > 7d;
+        }
+
+        return false;
     }
 
     public void stop() {

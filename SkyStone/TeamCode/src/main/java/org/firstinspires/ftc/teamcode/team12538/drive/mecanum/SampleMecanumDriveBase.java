@@ -72,8 +72,10 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
     public SampleMecanumDriveBase() {
         super(kV, kA, kStatic, TRACK_WIDTH);
 
-        dashboard = FtcDashboard.getInstance();
-        dashboard.setTelemetryTransmissionInterval(25);
+        if(FtcDashboard.getInstance() != null) {
+            dashboard = FtcDashboard.getInstance();
+            dashboard.setTelemetryTransmissionInterval(25);
+        }
 
         clock = NanoClock.system();
 
@@ -216,7 +218,10 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
             }
         }
 
-        dashboard.sendTelemetryPacket(packet);
+        if(dashboard != null) {
+            dashboard.sendTelemetryPacket(packet);
+        }
+
         telemetry.update();
     }
 

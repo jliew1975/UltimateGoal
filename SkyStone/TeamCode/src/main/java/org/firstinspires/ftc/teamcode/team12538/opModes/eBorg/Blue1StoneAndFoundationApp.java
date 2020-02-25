@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
 import kotlin.Unit;
 
-@Autonomous(name="Blue 1 Stone And Foundation", group="OneStoneAuto")
+@Autonomous(name="Blue (1 Stone And Foundation)", group="Group 2")
 public class Blue1StoneAndFoundationApp extends AutoLoadingZoneApp {
     public Blue1StoneAndFoundationApp() {
         super();

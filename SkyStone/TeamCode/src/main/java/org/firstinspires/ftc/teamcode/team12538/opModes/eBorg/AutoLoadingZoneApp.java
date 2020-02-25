@@ -79,7 +79,7 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
     protected void prepareStoneForDeployment() {
         ThreadUtils.getExecutorService().submit(() -> {
             if(opModeIsActive()) {
-                if(robot.stoneAligner.getPosition() > 0.5) {
+                if(robot.intakeSensor.hasStoneButNotCompletelyIn()) {
                     robot.stoneAligner.setPosition(RobotStoneAligner.ALIGN);
                     sleep(300);
                     robot.stoneAligner.setPosition(RobotStoneAligner.INTAKE);

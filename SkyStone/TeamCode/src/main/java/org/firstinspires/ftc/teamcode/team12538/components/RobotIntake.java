@@ -11,12 +11,18 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.OpModeStore;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
+import lombok.Data;
+
+@Data
 public class RobotIntake implements RobotComponent, ControlAware {
     private DcMotorWrapper leftRoller;
     private DcMotorWrapper rightRoller;
+
+    private volatile boolean isStuck = false;
 
     @Override
     public void init() {
@@ -72,6 +78,17 @@ public class RobotIntake implements RobotComponent, ControlAware {
             rightRoller.setPower(0d);
         } else {
             rightRoller.setPower(power);
+        }
+
+        if(power > 0 && OpModeUtils.getGlobalStore().runMode == OpModeStore.RunMode.Autonomous) {
+            ThreadUtils.getExecutorService().submit(() -> {
+                while (OpModeUtils.opModeIsActive() && leftRoller.getPower() > 0 && rightRoller.getPower() > 0) {
+                    double currentDraw =
+                            Math.min(leftRoller.getCurrentPowerDraw(), rightRoller.getCurrentPowerDraw());
+
+                    // isStuck = currentDraw > <<stone stuck power draw value>>;
+                }
+            });
         }
     }
 }

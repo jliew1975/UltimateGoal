@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
 
-@Autonomous(name="Parking Only", group="Linear Opmode")
+@Autonomous(name="Parking Only", group="Group 5")
 public class AutoParkingOnlyApp extends RobotApp {
     public AutoParkingOnlyApp() {
         super();
