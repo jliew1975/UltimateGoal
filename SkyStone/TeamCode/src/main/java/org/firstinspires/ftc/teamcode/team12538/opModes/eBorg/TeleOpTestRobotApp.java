@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
+@Disabled
 public class TeleOpTestRobotApp extends RobotApp {
     @Override
     public void performRobotOperation() throws InterruptedException {
