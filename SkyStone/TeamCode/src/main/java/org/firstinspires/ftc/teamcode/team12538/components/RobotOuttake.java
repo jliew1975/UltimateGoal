@@ -127,7 +127,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
             ThreadUtils.getExecutorService().submit(() -> liftSlide());
         }
 
-        while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 1200) {
+        while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 1400) {
             ThreadUtils.idle();
         }
 
@@ -147,7 +147,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
             ThreadUtils.getExecutorService().submit(() -> liftSlide());
 
             // wait for slide to go to safe height to move arm in
-            while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 1200) {
+            while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 1400) {
                 ThreadUtils.idle();
             }
         }
@@ -172,7 +172,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
             clawMode = ClawMode.Close;
         }
 
-        ThreadUtils.sleep(200);
+        ThreadUtils.sleep(300);
 
         // raise outtake slide
         if(OpModeUtils.getGlobalStore().isCap()) {
@@ -181,13 +181,15 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
             ThreadUtils.getExecutorService().submit(() -> liftSlide());
         }
 
-        while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 1200) {
+        while(OpModeUtils.opModeIsActive() && outtakeSlides.getCurrentPosition() < 1300) {
             ThreadUtils.idle();
         }
 
         if(OpModeUtils.opModeIsActive()) {
             // swing outtake arm out for stone deployment
-            outtakeClaw.setArmPosition(RobotStoneClaw.ARM_DEPLOYMENT_POSITION);
+            if(outtakeSlides.getCurrentPosition() > 1300) {
+                outtakeClaw.setArmPosition(RobotStoneClaw.ARM_DEPLOYMENT_POSITION);
+            }
             ThreadUtils.sleep(500);
         }
 
@@ -243,8 +245,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
 
                     ThreadUtils.sleep(250);
 
-                    if (outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION &&
-                            outtakeClaw.getArmPosition() == RobotStoneClaw.ARM_DEPLOYMENT_POSITION) {
+                    if (outtakeClaw.getArmPosition() != RobotStoneClaw.ARM_STONE_PICKUP_POSITION) {
                         outtakeSlides.runToStoneHeight(stoneHeight);
                     }
                 }

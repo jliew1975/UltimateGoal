@@ -15,8 +15,6 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public class AutoBuildingZoneApp extends RobotApp {
     protected boolean pickupSkystone = false;
-    protected VuforiaDetector detector = null;
-
 
     @Override
     public void performRobotOperation() throws InterruptedException {
@@ -34,12 +32,6 @@ public class AutoBuildingZoneApp extends RobotApp {
 
         SkyStoneAutoRobot robot = new SkyStoneAutoRobot();
         robot.init();
-
-        if(pickupSkystone) {
-            detector = new VuforiaDetector();
-            detector.init();
-            detector.activate(VuforiaDetector.TargetMode.StoneDetection);
-        }
 
         RobotDistanceSensor leftDistanceSensor = robot.leftDistSensor;
         RobotDistanceSensor rightDistanceSensor = robot.rightDistSensor;

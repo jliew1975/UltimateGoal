@@ -29,6 +29,9 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
     protected void autoVisionLogic(TargetPositionalDetector detector) {
         Position skystonePosition = detector.getPosition();
 
+        // set robot initial pose
+        robot.drive.setPoseEstimate(new Pose2d(-35, -60, Math.toRadians(90)));
+
         switch (skystonePosition) {
             case Left:
                 executeLogic(Position.Left);
@@ -83,7 +86,7 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
             case Left:
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
-                                .lineTo(new Vector2d(-31, -17.5), new ConstantInterpolator(Math.toRadians(165)))
+                                .lineTo(new Vector2d(-32, -17.5), new ConstantInterpolator(Math.toRadians(165)))
                                 .build()
                 );
 
@@ -107,16 +110,18 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                                 .forward(8)
                                 .build()
                 );
+
                 break;
 
             case Right:
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
-                                .splineTo(new Pose2d(-33, -28, Math.toRadians(45)))
-                                .forward(5)
+                                .splineTo(new Pose2d(-34, -27, Math.toRadians(50)))
+                                .forward(10)
                                 .back(27)
                                 .build()
                 );
+
                 break;
         }
 
@@ -129,22 +134,22 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
 
         waitForStoneDeployment();
 
-        // enable intake
-        robot.intake.setPower(1);
-
         switch (position) {
             case Left:
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
                                 .splineTo(new Pose2d(0, -38, Math.toRadians(180)))
-                                .lineTo(new Vector2d(-40, -38), new ConstantInterpolator(Math.toRadians(180)))
-                                .lineTo(new Vector2d(-48, -10), new ConstantInterpolator(Math.toRadians(160)))
+                                .lineTo(new Vector2d(-40, -36), new ConstantInterpolator(Math.toRadians(180)))
+                                .lineTo(new Vector2d(-36, -8), new ConstantInterpolator(Math.toRadians(150)))
                                 .build()
                 );
 
+                // enable intake
+                robot.intake.setPower(1);
+
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
-                                .forward(5)
+                                .forward(8)
                                 .build()
                 );
 
@@ -153,17 +158,21 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
             case Center:
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
-                                .splineTo(new Pose2d(0, -35, Math.toRadians(180)))
-                                .lineTo(new Vector2d(-35, -35), new ConstantInterpolator(Math.toRadians(180)))
-                                .lineTo(new Vector2d(-38, -10), new ConstantInterpolator(Math.toRadians(160)))
+                                .splineTo(new Pose2d(0, -40, Math.toRadians(180)))
+                                .lineTo(new Vector2d(-30, -40), new ConstantInterpolator(Math.toRadians(180)))
+                                .lineTo(new Vector2d(-30, -10), new ConstantInterpolator(Math.toRadians(160)))
                                 .build()
                 );
 
+                // enable intake
+                robot.intake.setPower(1);
+
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
-                                .forward(5)
+                                .forward(10)
                                 .build()
                 );
+
                 break;
 
             case Right:
@@ -171,15 +180,19 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                         robot.drive.trajectoryBuilder()
                                 .splineTo(new Pose2d(0, -38, Math.toRadians(180)))
                                 .lineTo(new Vector2d(-25, -38), new ConstantInterpolator(Math.toRadians(180)))
-                                .lineTo(new Vector2d(-28, -10), new ConstantInterpolator(Math.toRadians(150)))
+                                .lineTo(new Vector2d(-28, -12), new ConstantInterpolator(Math.toRadians(150)))
                                 .build()
                 );
+
+                // enable intake
+                robot.intake.setPower(1);
 
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
                                 .forward(8)
                                 .build()
                 );
+
                 break;
         }
 
@@ -192,8 +205,8 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                 if(round == 1) {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
-                                    .splineTo(new Pose2d(0, -35, 0))
-                                    .addMarker(new Vector2d(10, -35), () -> {
+                                    .splineTo(new Pose2d(0, -40, 0))
+                                    .addMarker(new Vector2d(10, -40), () -> {
                                         ThreadUtils.getExecutorService().submit(() -> {
                                             deployStone(100);
                                         });
@@ -206,10 +219,10 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
                                     .reverse()
-                                    .splineTo(new Pose2d(0, -35, Math.toRadians(180)))
-                                    .addMarker(new Vector2d(10, -35), () -> {
+                                    .splineTo(new Pose2d(0, -40, Math.toRadians(180)))
+                                    .addMarker(new Vector2d(10, -40), () -> {
                                         ThreadUtils.getExecutorService().submit(() -> {
-                                            deployStone(100);
+                                            deployStone(500);
                                         });
                                         return Unit.INSTANCE;
                                     })
@@ -224,15 +237,15 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
                                     .reverse()
-                                    .lineTo(new Vector2d(0, -43), new SplineInterpolator(Math.toRadians(180), Math.toRadians(90)))
-                                    .reverse()
-                                    .lineTo(new Vector2d(20, -40), new SplineInterpolator(Math.toRadians(180), Math.toRadians(-90)))
+                                    .lineTo(new Vector2d(0, -40), new SplineInterpolator(Math.toRadians(180), Math.toRadians(90)))
                                     .addMarker(new Vector2d(10, -40), () -> {
                                         ThreadUtils.getExecutorService().submit(() -> {
                                             deployStone(100);
                                         });
                                         return Unit.INSTANCE;
                                     })
+                                    .reverse()
+                                    .lineTo(new Vector2d(20, -40), new SplineInterpolator(Math.toRadians(180), Math.toRadians(-90)))
                                     .build()
                     );
                 } else {
@@ -240,14 +253,14 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                             robot.drive.trajectoryBuilder()
                                     .reverse()
                                     .splineTo(new Pose2d(0, -38, Math.toRadians(180)))
-                                    .addMarker(new Vector2d(20, -38), () -> {
+                                    .addMarker(() -> {
                                         ThreadUtils.getExecutorService().submit(() -> {
-                                            deployStone(100);
+                                            deployStone(500);
                                         });
                                         return Unit.INSTANCE;
                                     })
                                     .reverse()
-                                    .lineTo(new Vector2d(32, -38), new ConstantInterpolator(Math.toRadians(165)))
+                                    .lineTo(new Vector2d(32, -40), new ConstantInterpolator(Math.toRadians(165)))
                                     .build()
                     );
                 }
@@ -256,55 +269,49 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                 if(round == 1) {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
-                                    .reverse()
-                                    .lineTo(new Vector2d(0, -40), new SplineInterpolator(Math.toRadians(180), Math.toRadians(90)))
-                                    .lineTo(new Vector2d(20, -40), new SplineInterpolator(Math.toRadians(90), Math.toRadians(180)))
+                                    .splineTo(new Pose2d(0, -40, Math.toRadians(0)))
                                     .addMarker(new Vector2d(10, -40), () -> {
                                         ThreadUtils.getExecutorService().submit(() -> {
                                             deployStone(100);
                                         });
                                         return Unit.INSTANCE;
                                     })
+                                    .lineTo(new Vector2d(20, -40), new SplineInterpolator(Math.toRadians(0), Math.toRadians(-90)))
                                     .build()
                     );
                 } else {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
                                     .reverse()
-                                    .splineTo(new Pose2d(0, -30, Math.toRadians(180)))
-                                    .addMarker(new Vector2d(10, -38), () -> {
+                                    .splineTo(new Pose2d(0, -40, Math.toRadians(180)))
+                                    .addMarker(new Vector2d(10, -40), () -> {
                                         ThreadUtils.getExecutorService().submit(() -> {
-                                            deployStone(100);
+                                            deployStone(500);
                                         });
                                         return Unit.INSTANCE;
                                     })
                                     .reverse()
-                                    .lineTo(new Vector2d(32, -38), new ConstantInterpolator(Math.toRadians(165)))
+                                    .lineTo(new Vector2d(28, -45), new ConstantInterpolator(Math.toRadians(165)))
                                     .build()
                     );
                 }
                 break;
+        }
+
+        if(round == 2 && robot.intake.isStuck()) {
+            robot.drive.turnSync(Math.toRadians(-90));
+            splitOutStone();
+            robot.drive.turnSync(Math.toRadians(90));
         }
     }
 
     private void moveToParkUnderSkyBridge(Position position) {
         waitForStoneDeployment();
 
-        double x = 11;
-        double y = 35;
-
-        if(position == Position.Left) {
-            x = 10; y = 35;
-        } else if(position == Position.Right) {
-            x = 10; y = 33;
-        }
-
         robot.drive.followTrajectorySync(
                 robot.drive.trajectoryBuilder()
-                        .splineTo(new Pose2d(11, y, Math.toRadians(180)))
+                        .splineTo(new Pose2d(0, -38, Math.toRadians(180)))
                         .build()
         );
-
-        // robot.parkingServo.parkingMode();
     }
 }

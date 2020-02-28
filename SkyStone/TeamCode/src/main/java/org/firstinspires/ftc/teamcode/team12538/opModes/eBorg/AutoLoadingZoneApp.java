@@ -77,11 +77,20 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
     }
 
     protected void prepareStoneForDeployment() {
+        prepareStoneForDeployment(false);
+    }
+
+    protected void prepareStoneForDeployment(boolean isAlign) {
         ThreadUtils.getExecutorService().submit(() -> {
             if(opModeIsActive()) {
-                if(robot.intakeSensor.hasStoneButNotCompletelyIn()) {
+                // check if robot has 2 stones
+                if(robot.intakeSensor.isDetected() && robot.intake.isStuck()) {
+                    // spit out stone
+                    robot.intake.setPower(-1);
+                }
+                if(isAlign || robot.intakeSensor.hasStoneButNotCompletelyIn()) {
                     robot.stoneAligner.setPosition(RobotStoneAligner.ALIGN);
-                    sleep(300);
+                    sleep(500);
                     robot.stoneAligner.setPosition(RobotStoneAligner.INTAKE);
                 }
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.team12538.opModes.eBorg;
 
+import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
@@ -10,11 +11,17 @@ import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
 
 @TeleOp(name="Robot Tele", group="Linear Opmode")
 public class TeleOpRobotApp extends RobotApp {
+    public static DriveConstraints DRIVE_CONSTRAINTS = new DriveConstraints(
+            45.0, 30.0, 0.0,
+            Math.toRadians(180.0), Math.toRadians(180.0), 0.0
+    );
+
     private int stoneLevel = 1;
 
     Button dPadUp = new Button();
     Button dPadDown = new Button();
     Button btnX = new Button();
+    Button btnY = new Button();
 
     @Override
     public void performRobotOperation() throws InterruptedException {
@@ -42,7 +49,9 @@ public class TeleOpRobotApp extends RobotApp {
 
                 dPadUp.input(gamepad2.dpad_up);
                 dPadDown.input(gamepad2.dpad_down);
+
                 btnX.input(gamepad2.x);
+                btnY.input(gamepad1.y);
 
                 if(dPadUp.onPress()) {
                     robot.outtake.stoneHeight += 1;
@@ -50,6 +59,10 @@ public class TeleOpRobotApp extends RobotApp {
                     robot.outtake.stoneHeight -= 1;
                 } else if(btnX.onPress()) {
                     robot.outtake.stoneHeight = 1;
+                }
+
+                if(btnY.onPress()) {
+                    robot.drive.turnSync(Math.toRadians(180));
                 }
 
                 robot.capstone.control(gamepad2);

@@ -83,7 +83,7 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
             case Left:
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
-                                .splineTo(new Pose2d(-33, 28, Math.toRadians(-45)))
+                                .splineTo(new Pose2d(-29, 28, Math.toRadians(-45)))
                                 .forward(5)
                                 .back(27)
                                 .build()
@@ -139,7 +139,7 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
                         robot.drive.trajectoryBuilder()
                                 .splineTo(new Pose2d(0, 38, Math.toRadians(180)))
                                 .lineTo(new Vector2d(-32, 38), new ConstantInterpolator(Math.toRadians(180)))
-                                .lineTo(new Vector2d(-33.5, 19), new ConstantInterpolator(Math.toRadians(-150)))
+                                .lineTo(new Vector2d(-32, 19.5), new ConstantInterpolator(Math.toRadians(-150)))
                                 .build()
                 );
 
@@ -155,16 +155,17 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
                                 .splineTo(new Pose2d(0, 40, Math.toRadians(180)))
-                                .lineTo(new Vector2d(-35, 40), new ConstantInterpolator(Math.toRadians(180)))
-                                .lineTo(new Vector2d(-38, 18), new ConstantInterpolator(Math.toRadians(-160)))
+                                .lineTo(new Vector2d(-32, 40), new ConstantInterpolator(Math.toRadians(180)))
+                                .lineTo(new Vector2d(-33, 11.5), new ConstantInterpolator(Math.toRadians(-160)))
                                 .build()
                 );
 
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
-                                .forward(5)
+                                .forward(8)
                                 .build()
                 );
+
                 break;
 
             case Right:
@@ -203,7 +204,7 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
                                         });
                                         return Unit.INSTANCE;
                                     })
-                                    .lineTo(new Vector2d(20, 35), new SplineInterpolator(Math.toRadians(0), Math.toRadians(90)))
+                                    .lineTo(new Vector2d(20, 30), new SplineInterpolator(Math.toRadians(0), Math.toRadians(90)))
                                     .build()
                     );
                 } else {
@@ -220,7 +221,7 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
                                         return Unit.INSTANCE;
                                     })
                                     .reverse()
-                                    .lineTo(new Vector2d(32, 38), new ConstantInterpolator(Math.toRadians(-170)))
+                                    .lineTo(new Vector2d(32, 38), new ConstantInterpolator(Math.toRadians(-165)))
                                     .build()
                     );
                 }
@@ -257,7 +258,7 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
                                         return Unit.INSTANCE;
                                     })
                                     .reverse()
-                                    .lineTo(new Vector2d(32, 40), new ConstantInterpolator(Math.toRadians(-170)))
+                                    .lineTo(new Vector2d(32, 40), new ConstantInterpolator(Math.toRadians(-165)))
                                     .build()
                     );
                 }
@@ -284,7 +285,7 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
                             robot.drive.trajectoryBuilder()
                                     .reverse()
                                     .splineTo(new Pose2d(0, 30, Math.toRadians(180)))
-                                    .addMarker(new Vector2d(10, 40), () -> {
+                                    .addMarker(new Vector2d(10, 30), () -> {
                                         ThreadUtils.getExecutorService().submit(() -> {
                                             if (robot.intakeSensor.isDetected()) {
                                                 deployStone(500, true);
@@ -293,29 +294,30 @@ public class AutoLoadingBlueApp extends AutoLoadingZoneApp {
                                         return Unit.INSTANCE;
                                     })
                                     .reverse()
-                                    .lineTo(new Vector2d(32, 40), new ConstantInterpolator(Math.toRadians(-170)))
+                                    .lineTo(new Vector2d(32, 40), new ConstantInterpolator(Math.toRadians(-165)))
                                     .build()
                     );
                 }
                 break;
+        }
+
+        if(round == 2 && robot.intake.isStuck()) {
+            robot.drive.turnSync(Math.toRadians(-90));
+            ThreadUtils.getExecutorService().submit(() -> splitOutStone());
         }
     }
 
     private void moveToParkUnderSkyBridge(Position position) {
         waitForStoneDeployment();
 
-        double x = 11;
-        double y = 38;
-
-        if(position == Position.Left) {
-            x = 10; y = 35;
-        } else if(position == Position.Right) {
-            x = 10; y = 33;
+        double y = 33;
+        if(position == Position.Right || position == Position.Center) {
+            y = 30;
         }
 
         robot.drive.followTrajectorySync(
                 robot.drive.trajectoryBuilder()
-                        .splineTo(new Pose2d(11, y, Math.toRadians(180)))
+                        .splineTo(new Pose2d(8, y, Math.toRadians(180)))
                         .build()
         );
 

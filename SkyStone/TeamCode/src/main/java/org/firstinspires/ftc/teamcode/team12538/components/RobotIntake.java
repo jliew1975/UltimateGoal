@@ -53,32 +53,8 @@ public class RobotIntake implements RobotComponent, ControlAware {
     }
 
     public void setPower(double power) {
-        setPower(power, false, false);
-    }
-
-    public void setPower(final double power, final long timeout) {
-        ThreadUtils.getExecutorService().submit(new Runnable() {
-            @Override
-            public void run() {
-                setPower(power);
-                ThreadUtils.sleep(timeout);
-                setPower(0);
-            }
-        });
-    }
-
-    public void setPower(double power, boolean stopleft, boolean stopRight) {
-        if(stopleft) {
-            leftRoller.setPower(0d);
-        } else {
-            leftRoller.setPower(power);
-        }
-
-        if(stopRight) {
-            rightRoller.setPower(0d);
-        } else {
-            rightRoller.setPower(power);
-        }
+        leftRoller.setPower(power);
+        rightRoller.setPower(power);
 
         if(power > 0 && OpModeUtils.getGlobalStore().runMode == OpModeStore.RunMode.Autonomous) {
             ThreadUtils.getExecutorService().submit(() -> {
@@ -86,9 +62,11 @@ public class RobotIntake implements RobotComponent, ControlAware {
                     double currentDraw =
                             Math.min(leftRoller.getCurrentPowerDraw(), rightRoller.getCurrentPowerDraw());
 
-                    // isStuck = currentDraw > <<stone stuck power draw value>>;
+                    isStuck = currentDraw > 3.5;
                 }
             });
+        } else if(power < 0) {
+            isStuck = false;
         }
     }
 }

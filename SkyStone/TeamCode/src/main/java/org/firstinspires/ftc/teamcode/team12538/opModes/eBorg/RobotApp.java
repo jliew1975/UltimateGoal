@@ -81,7 +81,7 @@ public abstract class RobotApp extends LinearOpMode {
                 robot.outtake.prepareForStoneDeployment();
                 robot.outtake.outtakeSlides.runToPosition(height);
                 robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
-                sleep(200);
+                sleep(300);
 
                 if(skipWait) {
                     stoneDeployDone = true;
@@ -92,6 +92,17 @@ public abstract class RobotApp extends LinearOpMode {
             }
         } finally {
             stoneDeployDone = true;
+        }
+    }
+
+    protected void splitOutStone() {
+        // if stone stuck in intake split it out
+        if(robot.intake.isStuck()) {
+            robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
+            robot.outtake.liftSlideForStoneIntake();
+            robot.intake.setPower(-1);
+            sleep(800);
+            robot.intake.setPower(0);
         }
     }
 }

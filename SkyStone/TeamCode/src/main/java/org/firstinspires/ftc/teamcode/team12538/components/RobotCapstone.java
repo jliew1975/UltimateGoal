@@ -11,11 +11,15 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.states.ToggleBoolean;
 
+import lombok.Data;
+
+@Data
 public class RobotCapstone implements RobotComponent, ControlAware, TelemetryAware {
     public static final double UP = 0.69;
     public static final double DOWN = 0.45;
 
     private Servo stoneArm;
+    private RobotStoneAligner aligner;
 
     private boolean isLiftSlides = true;
     private ToggleBoolean servoToggle = new ToggleBoolean(false);
@@ -51,6 +55,10 @@ public class RobotCapstone implements RobotComponent, ControlAware, TelemetryAwa
 
             if(isLiftSlides) {
                 outtake.outtakeSlides.runToPosition(800);
+                aligner.setPosition(RobotStoneAligner.ALIGN);
+                ThreadUtils.sleep(500);
+                aligner.setPosition(RobotStoneAligner.INTAKE);
+                ThreadUtils.sleep(300);
                 isLiftSlides = false;
             }
             stoneArm.setPosition(UP);
