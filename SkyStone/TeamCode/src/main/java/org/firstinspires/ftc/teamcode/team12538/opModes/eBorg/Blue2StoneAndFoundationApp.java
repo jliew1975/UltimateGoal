@@ -80,7 +80,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
             case Left:
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
-                                .splineTo(new Pose2d(-29, 28, Math.toRadians(-45)))
+                                .splineTo(new Pose2d(-29, 25, Math.toRadians(-45)))
                                 .forward(5)
                                 .back(27)
                                 .build()
@@ -136,7 +136,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
                         robot.drive.trajectoryBuilder()
                                 .splineTo(new Pose2d(0, 38, Math.toRadians(180)))
                                 .lineTo(new Vector2d(-32, 38), new ConstantInterpolator(Math.toRadians(180)))
-                                .lineTo(new Vector2d(-32, 19.5), new ConstantInterpolator(Math.toRadians(-150)))
+                                .lineTo(new Vector2d(-30, 19), new ConstantInterpolator(Math.toRadians(-150)))
                                 .build()
                 );
 
@@ -239,7 +239,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
                                     .reverse()
-                                    .splineTo(new Pose2d(0, 30, Math.toRadians(180)))
+                                    .splineTo(new Pose2d(0, 33, Math.toRadians(180)))
                                     .addMarker(new Vector2d(0, 38), () -> {
                                         ThreadUtils.getExecutorService().submit(() -> {
                                             deployStone(500, false);
@@ -289,7 +289,8 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
 
         if(round == 2 && robot.intake.isStuck()) {
             robot.drive.turnSync(Math.toRadians(-90));
-            ThreadUtils.getExecutorService().submit(() -> splitOutStone());
+            splitOutStone();
+            robot.drive.turnSync(Math.toRadians(90));
         }
     }
 
@@ -311,7 +312,7 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
 
         robot.drive.followTrajectorySync(
                 robot.drive.trajectoryBuilder()
-                        .forward(22)
+                        .forward(25)
                         .build()
         );
 
@@ -325,9 +326,6 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
         waitForStoneDeployment();
 
         double y = 33;
-        if(position == Position.Right || position == Position.Center) {
-            y = 30;
-        }
 
         robot.drive.followTrajectorySync(
                 robot.drive.trajectoryBuilder()

@@ -167,7 +167,7 @@ public class Red1StoneAndFoundationApp extends AutoLoadingZoneApp {
 
     private void moveFoundationToBuildingSite(Position position) {
         robot.drive.followTrajectorySync(
-                robot.drive.trajectoryBuilder()
+                robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
                         .back(10)
                         .build()
         );

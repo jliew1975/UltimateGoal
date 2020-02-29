@@ -88,10 +88,16 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
                     // spit out stone
                     robot.intake.setPower(-1);
                 }
+
                 if(isAlign || robot.intakeSensor.hasStoneButNotCompletelyIn()) {
                     robot.stoneAligner.setPosition(RobotStoneAligner.ALIGN);
                     sleep(500);
                     robot.stoneAligner.setPosition(RobotStoneAligner.INTAKE);
+                }
+
+                if(robot.intakeSensor.isDetected()) {
+                    robot.intake.setPower(-1);
+                    sleep(500);
                 }
 
                 robot.outtake.lowerSlideForStonePickup();

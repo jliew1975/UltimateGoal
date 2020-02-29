@@ -31,7 +31,7 @@ public class AutoBuildingZoneApp extends RobotApp {
         AutoGamepad gamepad = new AutoGamepad();
 
         SkyStoneAutoRobot robot = new SkyStoneAutoRobot();
-        robot.init();
+        robot.init_old_drive();
 
         RobotDistanceSensor leftDistanceSensor = robot.leftDistSensor;
         RobotDistanceSensor rightDistanceSensor = robot.rightDistSensor;
@@ -54,7 +54,7 @@ public class AutoBuildingZoneApp extends RobotApp {
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         // Navigate the to foundation
-        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Backward), 0.5,15);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Backward), 0.3,15);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         // Position foundation claw to pull foundation
