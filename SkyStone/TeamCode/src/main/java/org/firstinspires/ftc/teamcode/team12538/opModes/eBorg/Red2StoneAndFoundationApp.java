@@ -112,8 +112,8 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
             case Right:
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder(SLOW_CONSTRAINTS)
-                                .splineTo(new Pose2d(-34, -27, Math.toRadians(50)))
-                                .forward(10)
+                                .splineTo(new Pose2d(-32, -26, Math.toRadians(50)))
+                                .forward(12)
                                 .back(27)
                                 .build()
                 );
@@ -134,8 +134,8 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
                 robot.drive.followTrajectorySync(
                         robot.drive.trajectoryBuilder()
                                 .splineTo(new Pose2d(0, -38, Math.toRadians(180)))
-                                .lineTo(new Vector2d(-40, -36), new ConstantInterpolator(Math.toRadians(180)))
-                                .lineTo(new Vector2d(-36, -8), new ConstantInterpolator(Math.toRadians(150)))
+                                .lineTo(new Vector2d(-42, -36), new ConstantInterpolator(Math.toRadians(180)))
+                                .lineTo(new Vector2d(-40, -16), new ConstantInterpolator(Math.toRadians(150)))
                                 .build()
                 );
 
@@ -266,7 +266,7 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
                 if(round == 1) {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
-                                    .splineTo(new Pose2d(0, -38, 0))
+                                    .splineTo(new Pose2d(0, -40, 0))
                                     .addMarker(new Vector2d(20, -35), () -> {
                                         ThreadUtils.getExecutorService().submit(() -> {
                                             deployStone(100);
@@ -280,7 +280,7 @@ public class Red2StoneAndFoundationApp extends AutoLoadingZoneApp {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
                                     .reverse()
-                                    .splineTo(new Pose2d(0, -38, Math.toRadians(180)))
+                                    .splineTo(new Pose2d(0, -40, Math.toRadians(180)))
                                     .addMarker(new Vector2d(10, -35), () -> {
                                         ThreadUtils.getExecutorService().submit(() -> {
                                             deployStone(500, false);

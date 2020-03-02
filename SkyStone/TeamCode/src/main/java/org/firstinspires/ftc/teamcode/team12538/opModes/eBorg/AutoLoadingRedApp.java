@@ -198,7 +198,7 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
                                     .splineTo(new Pose2d(0, -40, 0))
-                                    .lineTo(new Vector2d(20, -35), new SplineInterpolator(Math.toRadians(0), Math.toRadians(-90)))
+                                    .lineTo(new Vector2d(25, -35), new SplineInterpolator(Math.toRadians(0), Math.toRadians(-90)))
                                     .build()
                     );
                     deployStone(200);
@@ -226,7 +226,7 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                                     .reverse()
                                     .lineTo(new Vector2d(0, -40), new SplineInterpolator(Math.toRadians(180), Math.toRadians(90)))
                                     .reverse()
-                                    .lineTo(new Vector2d(20, -40), new SplineInterpolator(Math.toRadians(180), Math.toRadians(-90)))
+                                    .lineTo(new Vector2d(25, -40), new SplineInterpolator(Math.toRadians(180), Math.toRadians(-90)))
                                     .build()
                     );
                     deployStone(200);
@@ -252,7 +252,7 @@ public class AutoLoadingRedApp extends AutoLoadingZoneApp {
                     robot.drive.followTrajectorySync(
                             robot.drive.trajectoryBuilder()
                                     .splineTo(new Pose2d(0, -40, Math.toRadians(0)))
-                                    .lineTo(new Vector2d(20, -40), new SplineInterpolator(Math.toRadians(0), Math.toRadians(-90)))
+                                    .lineTo(new Vector2d(25, -40), new SplineInterpolator(Math.toRadians(0), Math.toRadians(-90)))
                                     .build()
                     );
                     deployStone(200);

@@ -24,6 +24,7 @@ public class SkyStoneAutoRobot extends CommonRobotHardware implements Robot {
     }
 
     public void init_old_drive() {
+        super.init();
         mecanumDrive = new NewMecanumDrive();
         mecanumDrive.init();
         mecanumDrive.init_imu();

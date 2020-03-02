@@ -59,13 +59,16 @@ public class AutoBuildingZoneApp extends RobotApp {
 
         // Position foundation claw to pull foundation
         robot.foundationClaw.setClawPosition(RobotFoundationClaw.LOWER_CLAW_POS);
-        sleep(500);
+        sleep(1000);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Forward), 0.5,20);
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.TurnRight), 0.5,Math.toRadians(90));
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+
 
         // Pull foundation to building site
         frontViewDetector.setLimit(0d);
         gamepad.detector = frontViewDetector;
-        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Forward), 0.5,38);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         // Release foundation by lifting foundation claw
         robot.foundationClaw.setClawPosition(RobotFoundationClaw.INIT_POSITION);
@@ -73,20 +76,12 @@ public class AutoBuildingZoneApp extends RobotApp {
 
         sideViewDetector.setLimit(3d);
         gamepad.detector = sideViewDetector;
-        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeRight), 0.3,50);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Forward), 0.3,10);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        if(sideViewDetector.isDetected()) {
-            AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Backward), 0.3,18);
-            robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-            sleep(500);
-
-            AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeRight), 0.3,18);
-            robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-        }
-
-        sleep(500);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeLeft), 0.3,20);
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Forward), 0.3,30);
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }
 
     private MecanumDrive.AutoDirection resolveDirection(MecanumDrive.AutoDirection currentDirection) {
