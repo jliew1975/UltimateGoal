@@ -24,10 +24,13 @@ public abstract class CommonRobotHardware {
     public RobotIntake intake = new RobotIntake();
     public RobotFoundationClaw foundationClaw = new RobotFoundationClaw();
     public RobotOuttake outtake = new RobotOuttake();
+
+    public RobotStoneAligner stoneAligner = new RobotStoneAligner();
+
     public RobotCapstone capstone = new RobotCapstone();
     public RobotParkingServo parkingServo = new RobotParkingServo();
 
-    public RobotStoneAligner stoneAligner = new RobotStoneAligner();
+
     public RobotColorProximitySensor intakeSensor = new RobotColorProximitySensor();
     public RobotDistanceSensor leftDistSensor = new RobotDistanceSensor("left",0.040, 0.52);
     public RobotDistanceSensor rightDistSensor = new RobotDistanceSensor("right",0.821, 0.321);
@@ -42,6 +45,8 @@ public abstract class CommonRobotHardware {
         capstone.init();
         stoneAligner.init();
         parkingServo.init();
+
+        capstone.setAligner(stoneAligner);
 
         OpModeUtils.getGlobalStore().addComponent(HardwareName.outtake.name(), outtake);
         OpModeUtils.getGlobalStore().addComponent(HardwareName.intakeSensor.name(), intakeSensor);

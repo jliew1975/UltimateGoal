@@ -78,20 +78,36 @@ public abstract class RobotApp extends LinearOpMode {
 
         try {
             if (robot.intakeSensor.isDetected()) {
+                while(robot.drive.getPoseEstimate().getX() < 0d) {
+                    // wait for it to reach certain x and y coordinate
+                }
+
                 robot.outtake.prepareForStoneDeployment();
                 robot.outtake.outtakeSlides.runToPosition(height);
                 robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_OPEN_POSITION);
-                sleep(200);
+                sleep(300);
 
-                if(skipWait) {
+                if (skipWait) {
                     stoneDeployDone = true;
                 }
 
                 robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
                 robot.outtake.performStoneIntakeOperation();
+
             }
         } finally {
             stoneDeployDone = true;
+        }
+    }
+
+    protected void splitOutStone() {
+        // if stone stuck in intake split it out
+        if(robot.intake.isStuck()) {
+            robot.outtake.outtakeClaw.setClawPosition(RobotStoneClaw.CLAW_INTAKE_POSITION);
+            robot.outtake.liftSlideForStoneIntake();
+            robot.intake.setPower(-1);
+            sleep(800);
+            robot.intake.setPower(0);
         }
     }
 }

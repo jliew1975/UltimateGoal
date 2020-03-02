@@ -15,8 +15,6 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public class AutoBuildingZoneApp extends RobotApp {
     protected boolean pickupSkystone = false;
-    protected VuforiaDetector detector = null;
-
 
     @Override
     public void performRobotOperation() throws InterruptedException {
@@ -33,13 +31,7 @@ public class AutoBuildingZoneApp extends RobotApp {
         AutoGamepad gamepad = new AutoGamepad();
 
         SkyStoneAutoRobot robot = new SkyStoneAutoRobot();
-        robot.init();
-
-        if(pickupSkystone) {
-            detector = new VuforiaDetector();
-            detector.init();
-            detector.activate(VuforiaDetector.TargetMode.StoneDetection);
-        }
+        robot.init_old_drive();
 
         RobotDistanceSensor leftDistanceSensor = robot.leftDistSensor;
         RobotDistanceSensor rightDistanceSensor = robot.rightDistSensor;
@@ -62,18 +54,21 @@ public class AutoBuildingZoneApp extends RobotApp {
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         // Navigate the to foundation
-        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Backward), 0.5,15);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Backward), 0.3,15);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         // Position foundation claw to pull foundation
         robot.foundationClaw.setClawPosition(RobotFoundationClaw.LOWER_CLAW_POS);
-        sleep(500);
+        sleep(1000);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Forward), 0.5,20);
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.TurnRight), 0.5,Math.toRadians(90));
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+
 
         // Pull foundation to building site
         frontViewDetector.setLimit(0d);
         gamepad.detector = frontViewDetector;
-        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Forward), 0.5,38);
-        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
 
         // Release foundation by lifting foundation claw
         robot.foundationClaw.setClawPosition(RobotFoundationClaw.INIT_POSITION);
@@ -81,20 +76,12 @@ public class AutoBuildingZoneApp extends RobotApp {
 
         sideViewDetector.setLimit(3d);
         gamepad.detector = sideViewDetector;
-        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeRight), 0.3,50);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Forward), 0.3,10);
         robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-        if(sideViewDetector.isDetected()) {
-            AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Backward), 0.3,18);
-            robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-
-            sleep(500);
-
-            AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeRight), 0.3,18);
-            robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
-        }
-
-        sleep(500);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.StrafeLeft), 0.3,20);
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
+        AutoGamepadUtils.move(gamepad, resolveDirection(AutoDirection.Forward), 0.3,30);
+        robot.mecanumDrive.autoNavigateWithGamepad(gamepad);
     }
 
     private MecanumDrive.AutoDirection resolveDirection(MecanumDrive.AutoDirection currentDirection) {

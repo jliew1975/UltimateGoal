@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
 
 @TeleOp(name="Robot Tele (Test)", group="Linear Opmode")
+@Disabled
 public class TeleOpTestRobotApp extends RobotApp {
     @Override
     public void performRobotOperation() throws InterruptedException {
@@ -45,6 +46,7 @@ public class TeleOpTestRobotApp extends RobotApp {
             Button dPadUp = new Button();
             Button dPadDown = new Button();
 
+            robot.intakeSensor.start();
             while(opModeIsActive()) {
                 dPadUp.input(gamepad1.dpad_up);
                 dPadDown.input(gamepad1.dpad_down);
@@ -64,9 +66,10 @@ public class TeleOpTestRobotApp extends RobotApp {
                 }
 
                 telemetry.addData("Capstone", robot.capstone.getPosition());
-                telemetry.addData("Stone Distance", robot.intakeSensor.sensorDistance.getDistance(DistanceUnit.INCH));
+                telemetry.addData("Stone Distance", robot.intakeSensor.getSensorValue());
                 telemetry.addData("left intake Power Draw", robot.intake.getLeftRoller().getCurrentPowerDraw());
                 telemetry.addData("right intake Power Draw", robot.intake.getRightRoller().getCurrentPowerDraw());
+                telemetry.addData("intakeDetector", robot.intakeSensor.isDetected());
                 telemetry.update();
             }
         } finally {

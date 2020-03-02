@@ -9,16 +9,24 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 
 public class SkyStoneAutoRobot extends CommonRobotHardware implements Robot {
     /**
-     * We can swap the drive logic with either
-     * MecanumDrive or NewMecanumDrive implementation here
+     * Old Mecanum drive logic
      */
-    public AutoDrive mecanumDrive = new NewMecanumDrive();
+    public AutoDrive mecanumDrive = null;
 
-    public SampleMecanumDriveBase drive = new SampleMecanumDriveREVOptimized(OpModeUtils.getHardwareMap());
+    /**
+     * Road Runner drive logic
+     */
+    public SampleMecanumDriveBase drive = null;
 
     public void init() {
+        drive = new SampleMecanumDriveREVOptimized(OpModeUtils.getHardwareMap());
         super.init();
-        // mecanumDrive.init();
-        // mecanumDrive.init_imu();
+    }
+
+    public void init_old_drive() {
+        super.init();
+        mecanumDrive = new NewMecanumDrive();
+        mecanumDrive.init();
+        mecanumDrive.init_imu();
     }
 }
