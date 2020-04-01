@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
  * Define all robot components this class for easy maintenance
  */
 public abstract class CommonRobotHardware {
-    public enum HardwareName { outtake, intakeSensor }
+    public enum HardwareName { drive, outtake, intakeSensor }
 
     public RobotIntake intake = new RobotIntake();
     public RobotFoundationClaw foundationClaw = new RobotFoundationClaw();

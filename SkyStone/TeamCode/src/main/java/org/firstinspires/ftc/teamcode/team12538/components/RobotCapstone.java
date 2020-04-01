@@ -51,18 +51,20 @@ public class RobotCapstone implements RobotComponent, ControlAware, TelemetryAwa
         servoToggle.input(gamepad.b);
 
         if(servoToggle.output()) {
-            RobotOuttake outtake = OpModeUtils.getGlobalStore().getComponent("outtake");
+            ThreadUtils.getExecutorService().submit(() -> {
+                RobotOuttake outtake = OpModeUtils.getGlobalStore().getComponent("outtake");
 
-            if(isLiftSlides) {
-                outtake.outtakeSlides.runToPosition(800);
-                aligner.setPosition(RobotStoneAligner.ALIGN);
-                ThreadUtils.sleep(500);
-                aligner.setPosition(RobotStoneAligner.INTAKE);
-                ThreadUtils.sleep(300);
-                isLiftSlides = false;
-            }
-            stoneArm.setPosition(UP);
-            OpModeUtils.getGlobalStore().setCap(true);
+                if(isLiftSlides) {
+                    outtake.outtakeSlides.runToPosition(800);
+                    aligner.setPosition(RobotStoneAligner.ALIGN);
+                    ThreadUtils.sleep(500);
+                    aligner.setPosition(RobotStoneAligner.INTAKE);
+                    ThreadUtils.sleep(300);
+                    isLiftSlides = false;
+                }
+                stoneArm.setPosition(UP);
+                OpModeUtils.getGlobalStore().setCap(true);
+            });
         } else {
             stoneArm.setPosition(DOWN);
             isLiftSlides = true;

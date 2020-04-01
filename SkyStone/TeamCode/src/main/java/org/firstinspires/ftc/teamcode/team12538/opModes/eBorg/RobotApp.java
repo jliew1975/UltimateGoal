@@ -91,7 +91,7 @@ public abstract class RobotApp extends LinearOpMode {
                     stoneDeployDone = true;
                 }
 
-                robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight);
+                robot.outtake.outtakeSlides.runToStoneHeight(robot.outtake.stoneHeight, false);
                 robot.outtake.performStoneIntakeOperation();
 
             }

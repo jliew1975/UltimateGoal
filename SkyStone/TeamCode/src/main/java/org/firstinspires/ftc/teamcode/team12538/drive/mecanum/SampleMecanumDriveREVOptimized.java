@@ -8,13 +8,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.team12538.drive.localizer.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +57,14 @@ public class SampleMecanumDriveREVOptimized extends SampleMecanumDriveBase {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
+
+        Orientation angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+        File initAngleFile = AppUtil.getInstance().getSettingsFile("InitAngle.txt");
+        if(OpModeUtils.getGlobalStore().autoColor == AutonomousColor.Blue) {
+            ReadWriteFile.writeFile(initAngleFile, String.valueOf(angle.firstAngle - (float) (Math.PI / 2)));
+        } else {
+            ReadWriteFile.writeFile(initAngleFile, String.valueOf(angle.firstAngle + (float) (Math.PI / 2)));
+        }
 
         // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         //  (not needed)

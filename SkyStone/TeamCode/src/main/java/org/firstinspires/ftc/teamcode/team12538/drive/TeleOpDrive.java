@@ -8,4 +8,6 @@ public interface TeleOpDrive {
     void printTelemetry();
     void navigateWithGamepad(Gamepad gamepad);
     void resetEncoderValues();
+
+    default void adjustAngle() {}
 }

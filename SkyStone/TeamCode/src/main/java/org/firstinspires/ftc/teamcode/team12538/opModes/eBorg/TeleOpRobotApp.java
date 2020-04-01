@@ -62,7 +62,8 @@ public class TeleOpRobotApp extends RobotApp {
                 }
 
                 if(btnY.onPress()) {
-                    robot.drive.turnSync(Math.toRadians(180));
+                    // robot.drive.turnSync(Math.toRadians(180));
+                    robot.mecanumDrive.adjustAngle();
                 }
 
                 robot.capstone.control(gamepad2);
@@ -76,6 +77,7 @@ public class TeleOpRobotApp extends RobotApp {
 
                 telemetry.addData("Stone Level", robot.outtake.stoneHeight);
                 telemetry.addData("Slide Position", robot.outtake.outtakeSlides.getCurrentPosition());
+                robot.mecanumDrive.printTelemetry();
                 telemetry.update();
             }
         } finally {

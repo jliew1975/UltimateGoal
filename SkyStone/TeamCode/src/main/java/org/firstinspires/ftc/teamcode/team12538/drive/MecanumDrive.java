@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -15,12 +16,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.ext.DcMotorWrapper;
 import org.firstinspires.ftc.teamcode.team12538.ext.PIDControllerV1;
+import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -86,10 +91,7 @@ public class MecanumDrive implements TeleOpDrive {
     @Getter @Setter
     protected Orientation lastAngles = new Orientation();
 
-    protected Orientation angleFacingStone;
-    protected Orientation angleFacingAudienceRedAlliance;
-    protected Orientation angleFacingAudienceBlueAlliance;
-
+    protected Orientation angleFacingAudience;
 
     protected Telemetry telemetry;
     protected ElapsedTime runtime = new ElapsedTime();
@@ -143,13 +145,10 @@ public class MecanumDrive implements TeleOpDrive {
         imu.startAccelerationIntegration(new Position(), new Velocity(), 500);
 
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-        angleFacingStone = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+        angleFacingAudience = new Orientation();
 
-        angleFacingAudienceBlueAlliance = new Orientation();
-        angleFacingAudienceBlueAlliance.firstAngle -= (float) (Math.PI/2);
-
-        angleFacingAudienceRedAlliance = new Orientation();
-        angleFacingAudienceRedAlliance.firstAngle += (float) (Math.PI/2);
+        File initAngleFile = AppUtil.getInstance().getSettingsFile("InitAngle.txt");
+        angleFacingAudience.firstAngle = Float.parseFloat(ReadWriteFile.readFile(initAngleFile));
 
         telemetry.addData("imu", "finish imu calabration");
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());

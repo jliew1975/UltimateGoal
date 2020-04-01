@@ -50,20 +50,16 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
         double scaleFactor = 1 / maxPower;
 
         if(gamepad.left_trigger > 0) {
-            if(gamepad.left_stick_x != 0d) {
-                scaleFactor *= 0.8;
-            } else {
-                scaleFactor *= 0.3;
-            }
+            leftFront.setPower(Math.signum(leftFrontPower) * 0.5);
+            leftRear.setPower(Math.signum(leftRearPower) * 0.5);
+            rightRear.setPower(Math.signum(rightRearPower) * 0.5);
+            rightFront.setPower(Math.signum(rightFrontPower) * 0.5);
+        } else {
+            leftFront.setPower(leftFrontPower * scaleFactor);
+            leftRear.setPower(leftRearPower * scaleFactor);
+            rightRear.setPower(rightRearPower * scaleFactor);
+            rightFront.setPower(rightFrontPower * scaleFactor);
         }
-
-        // Due to uneven weight distribution on the robot,
-        // power for the rear wheel motors are multiplied by the rearWheelFactor to slow it down
-        // so it can strafe correctly.
-        leftFront.setPower(Math.abs(leftFrontPower * scaleFactor) <= 0.2 ? 0d : leftFrontPower * scaleFactor);
-        leftRear.setPower(Math.abs(leftRearPower * scaleFactor) <= 0.2 ? 0d : leftRearPower * scaleFactor * rearWheelFactor);
-        rightRear.setPower(Math.abs(rightRearPower * scaleFactor) <= 0.2 ? 0d : rightRearPower * scaleFactor * rearWheelFactor);
-        rightFront.setPower(Math.abs(rightFrontPower * scaleFactor) <= 0.2 ? 0d : rightFrontPower * scaleFactor);
     }
 
     @Override
@@ -256,11 +252,6 @@ public class PIDMecanumDrive extends MecanumDrive implements AutoDrive {
         }
 
         telemetry.update();
-    }
-
-    @Override
-    public void flipLastAngleForErrorCorrection(LastAngleMode lastAngleMode) {
-        throw new UnsupportedOperationException();
     }
 
     private boolean isOnTarget(AutoGamepad gamepad) {

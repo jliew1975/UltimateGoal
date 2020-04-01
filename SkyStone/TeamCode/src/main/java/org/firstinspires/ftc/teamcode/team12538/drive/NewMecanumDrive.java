@@ -12,8 +12,10 @@ import org.firstinspires.ftc.teamcode.team12538.ext.AutoGamepad;
 import org.firstinspires.ftc.teamcode.team12538.detectors.RobotDetectorLimit;
 import org.firstinspires.ftc.teamcode.team12538.ext.PIDControllerV1;
 import org.firstinspires.ftc.teamcode.team12538.ext.PIDControllerV2;
+import org.firstinspires.ftc.teamcode.team12538.utils.AutoGamepadUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
+import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,8 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
     private static final double WHEELRADIUS = 1.969;
 
     private double rearWheelFactor = 0.70;
+
+    Button toggle = new Button();
 
     public PIDControllerV2 rotateController = new PIDControllerV2(12d, 10d, 15d, 0.0001, 0.0001);
 
@@ -59,16 +63,27 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
         double scaleFactor = 1 / maxPower;
 
         if(gamepad.left_trigger > 0) {
-            scaleFactor *= 0.5;
+            leftFront.setPower(Math.signum(leftFrontPower) * 0.5);
+            leftRear.setPower(Math.signum(leftRearPower) * 0.5);
+            rightRear.setPower(Math.signum(rightRearPower) * 0.5);
+            rightFront.setPower(Math.signum(rightFrontPower) * 0.5);
+        } else {
+            leftFront.setPower(leftFrontPower * scaleFactor);
+            leftRear.setPower(leftRearPower * scaleFactor);
+            rightRear.setPower(rightRearPower * scaleFactor);
+            rightFront.setPower(rightFrontPower * scaleFactor);
         }
+    }
 
-        // Due to uneven weight distribution on the robot,
-        // power for the rear wheel motors are multiplied by the rearWheelFactor to slow it down
-        // so it can strafe correctly.
-        leftFront.setPower(Math.abs(leftFrontPower * scaleFactor) <= 0.2 ? 0d : leftFrontPower * scaleFactor);
-        leftRear.setPower(Math.abs(leftRearPower * scaleFactor) <= 0.2 ? 0d : leftRearPower * scaleFactor);
-        rightRear.setPower(Math.abs(rightRearPower * scaleFactor) <= 0.2 ? 0d : rightRearPower * scaleFactor);
-        rightFront.setPower(Math.abs(rightFrontPower * scaleFactor) <= 0.2 ? 0d : rightFrontPower * scaleFactor);
+    @Override
+    public void adjustAngle() {
+        AutoGamepad gamepad = new AutoGamepad();
+        globalAngle = 0;
+        lastAngles = angleFacingAudience;
+        do {
+            gamepad.right_stick_x = -rotateController.performPID(getAngle());
+            angularAdjustment(gamepad);
+        } while(OpModeUtils.opModeIsActive() && !isOntarget(gamepad) && runtime.seconds() < gamepad.timeout);
     }
 
     @Override
@@ -233,28 +248,8 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
     }
 
     @Override
-    public void flipLastAngleForErrorCorrection(LastAngleMode lastAngleMode) {
-        switch(lastAngleMode) {
-            case AudienceDirectionBlueAlliance:
-                this.lastAngles = angleFacingAudienceBlueAlliance;
-                break;
-            case AudienceDirectionRedAlliance:
-                this.lastAngles = angleFacingAudienceRedAlliance;
-                break;
-            default:
-                this.lastAngles = angleFacingStone;
-                break;
-        }
-
-        // reset delta to 0;
-        globalAngle = 0;
-    }
-
-    @Override
     public void printTelemetry() {
-        telemetry.addData("leftFront", leftFront.getCurrentPosition());
-        telemetry.addData("rightFront", rightFront.getCurrentPosition());
-        telemetry.addData("strafe", leftRear.getCurrentPosition());
+        telemetry.addData("currentAngle", lastAngles.firstAngle);
     }
 
     private void printTelemetry(AutoGamepad gamepad, List<Integer> targetPositions) {

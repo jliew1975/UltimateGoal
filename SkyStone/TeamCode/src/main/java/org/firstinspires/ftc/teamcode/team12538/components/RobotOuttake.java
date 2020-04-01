@@ -194,7 +194,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
         }
 
         if(OpModeUtils.opModeIsActive()) {
-            outtakeSlides.runToStoneHeight(stoneHeight);
+            outtakeSlides.runToStoneHeight(stoneHeight, false);
         }
     }
 
@@ -246,7 +246,7 @@ public class RobotOuttake implements RobotComponent, ControlAware, TelemetryAwar
                     ThreadUtils.sleep(250);
 
                     if (outtakeClaw.getArmPosition() != RobotStoneClaw.ARM_STONE_PICKUP_POSITION) {
-                        outtakeSlides.runToStoneHeight(stoneHeight);
+                        outtakeSlides.runToStoneHeight(stoneHeight, true);
                     }
                 }
             } finally {

@@ -88,13 +88,15 @@ public class RobotOuttakeSlides implements RobotComponent, TelemetryAware {
         return targetPosition;
     }
 
-    public void runToStoneHeight(int height) {
+    public void runToStoneHeight(int height, boolean restrictLowerPos) {
         int targetPosition = height * ENCODER_TICKS_PER_STONE;
         if(targetPosition > ENCODER_TICKS_FOR_MAX_HEIGHT) {
             targetPosition = ENCODER_TICKS_FOR_MAX_HEIGHT;
         }
 
-
+        if(restrictLowerPos && targetPosition < getCurrentPosition()) {
+            return;
+        }
 
         runToPosition(targetPosition);
     }

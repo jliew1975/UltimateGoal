@@ -14,7 +14,7 @@ public class SkyStoneTeleOpRobot extends CommonRobotHardware implements Robot {
      * We can swap the drive logic with either
      * MecanumDrive or NewMecanumDrive implementation here
      */
-    public TeleOpDrive mecanumDrive = new PIDMecanumDrive();
+    public TeleOpDrive mecanumDrive = new NewMecanumDrive();
 
     /*
      * For Auto function in teleop.
@@ -25,5 +25,6 @@ public class SkyStoneTeleOpRobot extends CommonRobotHardware implements Robot {
     public void init() {
         super.init();
         mecanumDrive.init();
+        mecanumDrive.init_imu();
     }
 }
