@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.team12538.utils.states.Button;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class NewMecanumDrive extends MecanumDrive implements AutoDrive, TelemetryAware {
     MotorPower motorPower = new MotorPower();
@@ -27,6 +28,17 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
     private static final double TRACKLENGTH = 6;
     private static final double TRACKBASE = 7.645;
     private static final double WHEELRADIUS = 1.969;
+    double stickAngle = 0;
+    double angleDifference = 0;
+    double magnitude = 0;
+    double xVelocity = 0;
+    double yVelocity = 0;
+    double angularVelocity = 0;
+    double lastGlobalAngle = 0;
+    final double GAIN = 0.15;
+
+    //Convert global angle from bearings
+    double robotGlobalAngle = 0;
 
     private double rearWheelFactor = 0.70;
 
@@ -43,10 +55,29 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
 
     @Override
     public void navigateWithGamepad(Gamepad gamepad) {
+        robotGlobalAngle = getAngle() + Math.PI/2;
+        stickAngle = -Math.atan2(gamepad.left_stick_y , gamepad.left_stick_x);
+        angleDifference = stickAngle - robotGlobalAngle;
+        magnitude = Math.sqrt(Math.pow(gamepad.left_stick_y,2) + Math.pow(gamepad.left_stick_x,2));
+
         // Set desired velocities
         double xVelocity = gamepad.left_stick_y;
         double yVelocity = gamepad.left_stick_x;
-        double angularVelocity = gamepad.right_stick_x;
+        double angularVelocity = 0;
+        if (gamepad.left_stick_x != 0 || gamepad.left_stick_y != 0) {
+            if (gamepad.right_stick_x == 0) {
+                angularVelocity = (getAngle() - lastGlobalAngle) * GAIN;
+            }
+        }
+        if (gamepad.right_stick_x != 0) {
+            lastGlobalAngle = getAngle();
+            angularVelocity = gamepad.right_stick_x;
+        }
+
+
+//        xVelocity = - magnitude * Math.cos(angleDifference);
+//        yVelocity =  - magnitude * Math.sin(angleDifference);
+//        angularVelocity = gamepad.right_stick_x;
 
         // Convert desired velocities into wheel velocities
         double leftFrontPower = (xVelocity - yVelocity - (TRACKBASE + TRACKLENGTH) * (angularVelocity)) / WHEELRADIUS;
@@ -62,17 +93,11 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
         // Calculate factor to scale all wheel powers to make less than 1
         double scaleFactor = 1 / maxPower;
 
-        if(gamepad.left_trigger > 0) {
-            leftFront.setPower(Math.signum(leftFrontPower) * 0.5);
-            leftRear.setPower(Math.signum(leftRearPower) * 0.5);
-            rightRear.setPower(Math.signum(rightRearPower) * 0.5);
-            rightFront.setPower(Math.signum(rightFrontPower) * 0.5);
-        } else {
-            leftFront.setPower(leftFrontPower * scaleFactor);
-            leftRear.setPower(leftRearPower * scaleFactor);
-            rightRear.setPower(rightRearPower * scaleFactor);
-            rightFront.setPower(rightFrontPower * scaleFactor);
-        }
+        //Set motor powers
+        leftFront.setPower(leftFrontPower * scaleFactor);
+        leftRear.setPower(leftRearPower * scaleFactor);
+        rightRear.setPower(rightRearPower * scaleFactor);
+        rightFront.setPower(rightFrontPower * scaleFactor);
     }
 
     @Override
@@ -166,6 +191,7 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
 
             telemetry.addData("Target", rotateController.getTarget());
             telemetry.addData("Current", getAngle());
+
             telemetry.update();
         } else {
             while(OpModeUtils.opModeIsActive() && runtime.seconds() < gamepad.timeout) {
@@ -249,7 +275,14 @@ public class NewMecanumDrive extends MecanumDrive implements AutoDrive, Telemetr
 
     @Override
     public void printTelemetry() {
-        telemetry.addData("currentAngle", lastAngles.firstAngle);
+
+        telemetry.addData("Current Angle", robotGlobalAngle);
+        telemetry.addData("Angle Difference", angleDifference);
+        telemetry.addData("Stick Angle", stickAngle);
+        telemetry.addData("Magnitude", magnitude);
+        telemetry.addData("X Velocity", xVelocity);
+        telemetry.addData("Y Velocity", yVelocity);
+        telemetry.addData("Angular Velocity", angularVelocity);
     }
 
     private void printTelemetry(AutoGamepad gamepad, List<Integer> targetPositions) {

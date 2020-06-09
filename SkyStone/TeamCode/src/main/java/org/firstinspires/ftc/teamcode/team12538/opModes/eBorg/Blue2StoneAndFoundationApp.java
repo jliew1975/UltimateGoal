@@ -4,14 +4,18 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.heading.ConstantInterpolator;
 import com.acmerobotics.roadrunner.path.heading.SplineInterpolator;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.team12538.components.RobotStoneClaw;
 import org.firstinspires.ftc.teamcode.team12538.detectors.TargetPositionalDetector;
 import org.firstinspires.ftc.teamcode.team12538.detectors.TargetPositionalDetector.Position;
+import org.firstinspires.ftc.teamcode.team12538.utils.AssetsTrajectoryLoader;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousColor;
 import org.firstinspires.ftc.teamcode.team12538.utils.AutonomousMode;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
+
+import java.io.IOException;
 
 import kotlin.Unit;
 
@@ -25,21 +29,29 @@ public class Blue2StoneAndFoundationApp extends AutoLoadingZoneApp {
 
     @Override
     protected void autoVisionLogic(TargetPositionalDetector detector) {
-        Position skystonePosition = detector.getPosition();
+        Trajectory trajectory = null;
+        try {
+            trajectory = AssetsTrajectoryLoader.load("TestingBlue");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        robot.drive.followTrajectorySync(trajectory);
+        //Position skystonePosition = detector.getPosition();
 
         // set robot initial pose
-        robot.drive.setPoseEstimate(new Pose2d(-38, 62, Math.toRadians(-90)));
+        //robot.drive.setPoseEstimate(new Pose2d(-38, 62, Math.toRadians(-90)));
 
-        switch (skystonePosition) {
-            case Left:
-                executeLogic(Position.Left);
-                break;
-            case Center:
-                executeLogic(Position.Center);
-                break;
-            default:
-                executeLogic(Position.Right);
-        }
+//        //switch (skystonePosition) {
+//            case Left:
+//                executeLogic(Position.Left);
+//                break;
+//            case Center:
+//                executeLogic(Position.Center);
+//                break;
+//            default:
+//                executeLogic(Position.Right);
+//        //}
     }
 
     protected void executeLogic(Position position) {

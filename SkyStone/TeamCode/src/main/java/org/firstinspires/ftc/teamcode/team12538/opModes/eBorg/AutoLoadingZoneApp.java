@@ -18,6 +18,8 @@ import org.firstinspires.ftc.teamcode.team12538.utils.OpModeUtils;
 import org.firstinspires.ftc.teamcode.team12538.utils.ThreadUtils;
 import org.openftc.revextensions2.ExpansionHubEx;
 
+import java.io.IOException;
+
 public abstract class AutoLoadingZoneApp extends RobotApp {
     protected ElapsedTime runtime = new ElapsedTime();
 
@@ -56,13 +58,15 @@ public abstract class AutoLoadingZoneApp extends RobotApp {
                 autoVisionLogic(detector);
                 sleep(1000);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             robot.intakeSensor.stop();
             OpModeUtils.stop();
         }
     }
 
-    protected abstract void autoVisionLogic(TargetPositionalDetector detector);
+    protected abstract void autoVisionLogic(TargetPositionalDetector detector) throws IOException;
 
     protected void waitForStoneDeployment() {
         while(!isStopRequested() && !stoneDeployDone) {
