@@ -23,7 +23,6 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 @MotorType(maxRPM = 19.2, ticksPerRev = 537.6, gearing = 19.2)
 @DeviceProperties(xmlTag="NeveRest20GearmotorExt", name="NeveRest 20 Gearmotor Extension", builtIn = false)
 public class DriveConstants {
-
     /*
      * The type of motor used on the drivetrain. While the SDK has definitions for many common
      * motors, there may be slight gear ratio inaccuracies for planetary gearboxes and other
@@ -32,6 +31,12 @@ public class DriveConstants {
      */
     private static final MotorConfigurationType MOTOR_CONFIG =
             MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
+
+    /*
+     * These are motor constants that should be listed online for your motors.
+     */
+    public static final double TICKS_PER_REV = 1;
+    public static final double MAX_RPM = 1;
 
     /*
      * Set the first flag appropriately. If using the built-in motor velocity PID, update
@@ -82,25 +87,15 @@ public class DriveConstants {
 
 
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / MOTOR_CONFIG.getTicksPerRev();
+        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
     public static double rpmToVelocity(double rpm) {
         return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
     }
 
-    public static double getMaxRpm() {
-        return MOTOR_CONFIG.getMaxRPM() *
-                (RUN_USING_ENCODER ? MOTOR_CONFIG.getAchieveableMaxRPMFraction() : 1.0);
-    }
-
-    public static double getTicksPerSec() {
-        // note: MotorConfigurationType#getAchieveableMaxTicksPerSecond() isn't quite what we want
-        return (MOTOR_CONFIG.getMaxRPM() * MOTOR_CONFIG.getTicksPerRev() / 60.0);
-    }
-
     public static double getMotorVelocityF() {
         // see https://docs.google.com/document/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/edit#heading=h.61g9ixenznbx
-        return 32767 / getTicksPerSec();
+        return 32767 * 60.0 / (MAX_RPM * TICKS_PER_REV);
     }
 }

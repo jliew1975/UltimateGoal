@@ -42,7 +42,7 @@ public class RoadRunner1Test extends LinearOpMode {
             case 0:
                 drive.followTrajectorySync(
                         drive.trajectoryBuilder()
-                                .splineTo(new Pose2d(X, Y, Math.toRadians(HEADING)))
+                                .splineTo(new Vector2d(X, Y), Math.toRadians(HEADING))
                                 .build()
                 );
 
@@ -76,7 +76,7 @@ public class RoadRunner1Test extends LinearOpMode {
             case 5:
                 drive.followTrajectorySync(
                         drive.trajectoryBuilder()
-                                .lineTo(new Vector2d(X, Y), new LinearInterpolator(0d, 0d))
+                                .lineTo(new Vector2d(X, Y))
                         .build()
                 );
 
