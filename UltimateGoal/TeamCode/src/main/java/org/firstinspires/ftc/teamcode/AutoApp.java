@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.detectors.StarterRingsDetector;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 import org.firstinspires.ftc.teamcode.util.AutonomousColor;
 import org.firstinspires.ftc.teamcode.util.OpModeStore;
@@ -12,6 +13,7 @@ public abstract class AutoApp extends LinearOpMode {
     protected AutonomousColor autoColor = AutonomousColor.Unknown;
 
     protected AutoRobot robot;
+    protected StarterRingsDetector detector;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -33,7 +35,18 @@ public abstract class AutoApp extends LinearOpMode {
         robot = new AutoRobot();
         robot.init();
 
-        // Invoke Robot Operations
+        // detector = new StarterRingsDetector();
+        // detector.init();
+        // detector.activate();
+
+        // wait for player to hit star
+        waitForStart();
+
+        if(isStopRequested()) {
+            return;
+        }
+
+        // Invoke Robot Autonomous Operations
         performRobotOperation();
     }
 

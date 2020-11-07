@@ -19,12 +19,6 @@ public class AutoRedAppA extends AutoApp {
 
     @Override
     public void performRobotOperation() throws InterruptedException {
-        // StarterRingsDetector detector = new StarterRingsDetector();
-        // detector.init();
-        // detector.activate();
-
-        waitForStart();
-
         // detector.deactivate();
         // RingCount ringCount = detector.getRingCount();
 

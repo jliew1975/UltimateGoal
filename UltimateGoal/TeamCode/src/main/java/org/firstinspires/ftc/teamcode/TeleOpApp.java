@@ -32,9 +32,11 @@ public class TeleOpApp extends LinearOpMode {
 
         waitForStart();
 
-        if(isStopRequested()) { return; }
+        if(isStopRequested()) {
+            return;
+        }
 
-        while(opModeIsActive()) {
+        while(opModeIsActive() && !isStopRequested()) {
             robot.controlA(gamepad1);
             robot.controlB(gamepad2);
 
