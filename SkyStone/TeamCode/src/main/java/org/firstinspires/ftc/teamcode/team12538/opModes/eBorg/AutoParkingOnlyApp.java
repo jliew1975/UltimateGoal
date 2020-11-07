@@ -19,7 +19,7 @@ public class AutoParkingOnlyApp extends RobotApp {
 
     @Override
     public void performRobotOperation() throws InterruptedException {
-        SkyStoneAutoRobot robot = new SkyStoneAutoRobot();
+        robot = new SkyStoneAutoRobot();
         robot.init();
 
         AutoGamepad gamepad = new AutoGamepad();

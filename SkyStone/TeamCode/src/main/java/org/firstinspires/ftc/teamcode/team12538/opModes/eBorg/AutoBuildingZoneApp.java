@@ -30,7 +30,7 @@ public class AutoBuildingZoneApp extends RobotApp {
         // Initialize a autonomous gamepad
         AutoGamepad gamepad = new AutoGamepad();
 
-        SkyStoneAutoRobot robot = new SkyStoneAutoRobot();
+        robot = new SkyStoneAutoRobot();
         robot.init_old_drive();
 
         RobotDistanceSensor leftDistanceSensor = robot.leftDistSensor;
