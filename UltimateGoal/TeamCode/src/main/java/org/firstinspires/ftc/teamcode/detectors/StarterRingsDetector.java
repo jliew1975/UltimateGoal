@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.detectors;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -17,9 +16,24 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-class StarterRingsDetector {
+public class StarterRingsDetector {
+    /*
+     * An enum to define the skystone position
+     */
+    public enum RingCount
+    {
+        FOUR,
+        ONE,
+        NONE
+    }
+
     private OpenCvCamera robotCam;
     private RingsDeterminationPipeline pipeline;
+
+    private int avg1;
+
+    // Volatile since accessed by OpMode thread w/o synchronization
+    private volatile RingCount ringCount = RingCount.FOUR;
 
     private Telemetry telemetry;
 
@@ -54,34 +68,31 @@ class StarterRingsDetector {
         });
     }
 
+    public int getAnalysis() {
+        return avg1;
+    }
 
-    public static class RingsDeterminationPipeline extends OpenCvPipeline
+    public RingCount getRingCount() {
+        return ringCount;
+    }
+
+    class RingsDeterminationPipeline extends OpenCvPipeline
     {
-        /*
-         * An enum to define the skystone position
-         */
-        public enum RingPosition
-        {
-            FOUR,
-            ONE,
-            NONE
-        }
-
         /*
          * Some color constants
          */
-        static final Scalar RECT = new Scalar(0, 255, 0);
+        final Scalar RECT = new Scalar(0, 255, 0);
 
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(100,98);
+        final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(100,98);
 
         static final int REGION_WIDTH = 35;
         static final int REGION_HEIGHT = 25;
 
         final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
+        final int ONE_RING_THRESHOLD = 136;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -96,10 +107,6 @@ class StarterRingsDetector {
         Mat region1_Cb;
         Mat YCrCb = new Mat();
         Mat Cb = new Mat();
-        int avg1;
-
-        // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile RingPosition position = RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -133,21 +140,20 @@ class StarterRingsDetector {
                     RECT, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = RingPosition.FOUR; // Record our analysis
+            ringCount = RingCount.FOUR; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD) {
-                position = RingPosition.FOUR;
+                ringCount = RingCount.FOUR;
             } else if (avg1 > ONE_RING_THRESHOLD) {
-                position = RingPosition.ONE;
+                ringCount = RingCount.ONE;
             } else {
-                position = RingPosition.NONE;
+                ringCount = RingCount.NONE;
             }
 
-            return input;
-        }
+            telemetry.addData("Analysis", avg1);
+            telemetry.addData("Ring Count", ringCount);
+            telemetry.update();
 
-        public int getAnalysis()
-        {
-            return avg1;
+            return input;
         }
     }
 }

@@ -25,12 +25,15 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.util.OpModeUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,7 +104,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                    new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 30d);
 
         poseHistory = new ArrayList<>();
 
@@ -145,9 +148,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
-        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -226,6 +233,17 @@ public class SampleMecanumDrive extends MecanumDrive {
         packet.put("xError", lastError.getX());
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
+
+        /*
+        Telemetry telemetry = OpModeUtils.getTelemetry();
+        telemetry.addData("mode", mode);
+        telemetry.addData("x", currentPose.getX());
+        telemetry.addData("y", currentPose.getY());
+        telemetry.addData("heading", currentPose.getHeading());
+        telemetry.addData("xError", lastError.getX());
+        telemetry.addData("yError", lastError.getY());
+        telemetry.addData("headingError", lastError.getHeading());
+        */
 
         switch (mode) {
             case IDLE:
