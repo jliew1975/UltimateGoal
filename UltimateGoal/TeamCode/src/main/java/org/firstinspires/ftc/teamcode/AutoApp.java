@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 import org.firstinspires.ftc.teamcode.util.AutonomousColor;
 import org.firstinspires.ftc.teamcode.util.OpModeStore;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
+import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
 public abstract class AutoApp extends LinearOpMode {
@@ -48,6 +49,9 @@ public abstract class AutoApp extends LinearOpMode {
 
         // Invoke Robot Autonomous Operations
         performRobotOperation();
+
+        // Transfer the current pose to PoseStorage so we can use it in TeleOp
+        PoseStorage.currentPose = robot.getDrive().getPoseEstimate();
     }
 
     public abstract void performRobotOperation() throws InterruptedException;
