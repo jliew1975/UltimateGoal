@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.detectors.StarterRingsDetector;
 import org.firstinspires.ftc.teamcode.detectors.StarterRingsDetector.RingCount;
 import org.firstinspires.ftc.teamcode.util.AutonomousColor;
 
