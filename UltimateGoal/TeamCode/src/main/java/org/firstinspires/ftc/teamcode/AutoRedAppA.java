@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.util.AutonomousColor;
 
 @Autonomous(name="Red (A)", group="Group 1")
 public class AutoRedAppA extends AutoApp {
-    private Pose2d startPose = new Pose2d(-60, -25, Math.toRadians(0));
+    private Pose2d startPose = new Pose2d(-62, -26, Math.toRadians(0));
 
     public AutoRedAppA() {
         super.autoColor = AutonomousColor.Red;
@@ -18,12 +18,14 @@ public class AutoRedAppA extends AutoApp {
 
     @Override
     public void performRobotOperation() throws InterruptedException {
+        // set robot initial pose
+        robot.getDrive().setPoseEstimate(startPose);
+
         // detector.deactivate();
         // RingCount ringCount = detector.getRingCount();
 
-        robot.getDrive().setPoseEstimate(startPose);
         // performAutoLogic(ringCount);
-        performAutoLogic(RingCount.FOUR);
+        // performAutoLogic(RingCount.FOUR);
     }
 
     private void performAutoLogic(RingCount ringCount) {
@@ -46,6 +48,11 @@ public class AutoRedAppA extends AutoApp {
                     .splineToSplineHeading(new Pose2d(12, -45, Math.toRadians(-90)), Math.toRadians(-90))
                     .build();
         robot.getDrive().followTrajectory(trajectory);
+
+        // TODO: Drop wobble goal
+
+        // TODO: Go back to launch zone for shooting power shot
+        // TODO: Park robot at launch line
     }
 
 
@@ -55,6 +62,9 @@ public class AutoRedAppA extends AutoApp {
                         .splineToSplineHeading(new Pose2d(35, -25, Math.toRadians(-90)), Math.toRadians(-90))
                         .build();
         robot.getDrive().followTrajectory(trajectory);
+
+        // TODO: Go back to launch zone for shooting power shot
+        // TODO: Park robot at launch line
     }
 
     private void performFour() {
@@ -63,5 +73,25 @@ public class AutoRedAppA extends AutoApp {
                         .splineToSplineHeading(new Pose2d(60, -50, Math.toRadians(-90)), Math.toRadians(-90))
                         .build();
         robot.getDrive().followTrajectory(trajectory);
+
+        // TODO: Go back to launch zone for shooting power shot
+        // TODO: Park robot at launch line
+    }
+
+    private void navigateToLaunchZone() {
+        Trajectory trajectory =
+                robot.getDrive().trajectoryBuilder(robot.getDrive().getPoseEstimate())
+                        .splineToSplineHeading(new Pose2d(-5, -10, Math.toRadians(90)), Math.toRadians(0))
+                        .build();
+        robot.getDrive().followTrajectory(trajectory);
+    }
+
+    private void shootPowerShot() {
+        robot.getDrive().turn(Math.toRadians(-10));
+        // shoot
+        robot.getDrive().turn(Math.toRadians(-10));
+        // shoot
+        robot.getDrive().turn(Math.toRadians(-10));
+        // shoot
     }
 }

@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.buttons.Button;
 import org.firstinspires.ftc.teamcode.components.CommonComponents;
 import org.firstinspires.ftc.teamcode.components.Shooter;
+import org.firstinspires.ftc.teamcode.components.WobbleArm;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.teleop.MecanumDrive;
@@ -191,6 +192,6 @@ public class TeleOpRobot extends CommonComponents {
      * @param gamepad
      */
     public void controlB(Gamepad gamepad) {
-
+        super.get(WobbleArm.class).control(gamepad);
     }
 }

@@ -10,6 +10,7 @@ public class CommonComponents {
 
     public void init() {
         componentMap.put(Shooter.class, new Shooter());
+        componentMap.put(WobbleArm.class, new WobbleArm());
 
         // initialized each registered component in the component map
         componentMap.values().forEach(component -> component.init());

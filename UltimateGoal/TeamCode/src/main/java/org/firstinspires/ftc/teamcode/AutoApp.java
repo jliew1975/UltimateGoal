@@ -36,9 +36,9 @@ public abstract class AutoApp extends LinearOpMode {
         robot = new AutoRobot();
         robot.init();
 
-        // detector = new StarterRingsDetector();
-        // detector.init();
-        // detector.activate();
+        detector = new StarterRingsDetector();
+        detector.init();
+        detector.activate();
 
         // wait for player to hit star
         waitForStart();

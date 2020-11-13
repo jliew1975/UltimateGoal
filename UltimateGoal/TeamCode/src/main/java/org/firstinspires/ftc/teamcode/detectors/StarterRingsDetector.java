@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.detectors;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -48,17 +49,17 @@ public class StarterRingsDetector {
         pipeline = new RingsDeterminationPipeline();
 
         // Uncomment below for web cam
-        // robotCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        robotCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         // Uncomment below for phone cam
-        robotCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        // robotCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
         robotCam.setPipeline(pipeline); // different stages
     }
 
     public void activate() {
         robotCam.openCameraDeviceAsync(() -> {
-            robotCam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            robotCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
         });
     }
 
@@ -88,11 +89,11 @@ public class StarterRingsDetector {
          */
         final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(100,98);
 
-        static final int REGION_WIDTH = 35;
-        static final int REGION_HEIGHT = 25;
+        static final int REGION_WIDTH = 60;
+        static final int REGION_HEIGHT = 30;
 
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 136;
+        final int FOUR_RING_THRESHOLD = 146;
+        final int ONE_RING_THRESHOLD = 135;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,

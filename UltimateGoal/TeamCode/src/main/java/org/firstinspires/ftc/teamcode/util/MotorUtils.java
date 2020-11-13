@@ -22,6 +22,10 @@ public class MotorUtils {
         motors.stream().forEach(motor -> motor.setZeroPowerBehavior(zeroPowerBehavior));
     }
 
+    public static boolean motorIsBusy(DcMotor... motors) {
+        return motorIsBusy(Arrays.asList(motors));
+    }
+
     public static boolean motorIsBusy(List<DcMotor> motors) {
         if(motors.isEmpty()) {
             return false;
