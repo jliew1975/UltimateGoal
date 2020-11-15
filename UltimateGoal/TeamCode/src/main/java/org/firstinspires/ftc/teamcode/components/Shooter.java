@@ -57,9 +57,9 @@ public class Shooter implements RobotComponent {
         leftServo.setPosition(0d);
         rightServo.setPosition(0d);
 
-        presetLevel.put(1, 0.370);
-        presetLevel.put(2, 0.4150);
-        presetLevel.put(3, 0.425);
+        presetLevel.put(1, 0.4100);
+        presetLevel.put(2, 0.4100);
+        presetLevel.put(3, 0.4250);
     }
 
     public void control(Gamepad gamepad) {
@@ -94,13 +94,7 @@ public class Shooter implements RobotComponent {
         bBtn.input(gamepad.b);
 
         if(xBtn.onPress()) {
-            ThreadUtils.getExecutorService().submit(() -> {
-                leftServo.setPosition(0.2);
-                rightServo.setPosition(0.2);
-                ThreadUtils.sleep(800);
-                leftServo.setPosition(0d);
-                rightServo.setPosition(0d);
-            });
+            lowerShooter();
         } else if(bBtn.onPress()) {
             leftServo.setPosition(presetLevel.get(level));
             rightServo.setPosition(presetLevel.get(level));
@@ -128,8 +122,23 @@ public class Shooter implements RobotComponent {
     public void fire() {
         ThreadUtils.getExecutorService().submit(() -> {
             trigger.setPosition(FIRE);
-            ThreadUtils.sleep(200);
+            ThreadUtils.sleep(500);
             trigger.setPosition(READY);
+        });
+    }
+
+    public void liftShooter(int level) {
+        leftServo.setPosition(presetLevel.get(level));
+        rightServo.setPosition(presetLevel.get(level));
+    }
+
+    public void lowerShooter() {
+        ThreadUtils.getExecutorService().submit(() -> {
+            leftServo.setPosition(0.2);
+            rightServo.setPosition(0.2);
+            ThreadUtils.sleep(800);
+            leftServo.setPosition(0d);
+            rightServo.setPosition(0d);
         });
     }
 

@@ -113,8 +113,7 @@ public class WobbleArm implements RobotComponent {
         wobbleServo.setPosition(SERVO_OPEN);
     }
 
-
-    private void runToPosition(int position) {
+    public void runToPosition(int position) {
         wobbleMotor.setTargetPosition(position);
         MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, wobbleMotor);
         wobbleMotor.setPower(0.3);
