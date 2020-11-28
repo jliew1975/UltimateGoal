@@ -12,14 +12,15 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.buttons.Button;
 import org.firstinspires.ftc.teamcode.components.CommonComponents;
+import org.firstinspires.ftc.teamcode.components.Intake;
 import org.firstinspires.ftc.teamcode.components.Shooter;
 import org.firstinspires.ftc.teamcode.components.WobbleArm;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.teleop.MecanumDrive;
+import org.firstinspires.ftc.teamcode.util.AutonomousColor;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
-import org.firstinspires.ftc.teamcode.util.PoseStorage;
+import org.firstinspires.ftc.teamcode.util.GlobalStorage;
 
 public class TeleOpRobot extends CommonComponents {
     public static double DRAWING_TARGET_RADIUS = 2;
@@ -44,7 +45,7 @@ public class TeleOpRobot extends CommonComponents {
 
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing
-    private Vector2d targetPosition = new Vector2d(0, 0);
+    private Vector2d targetPosition;
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as SampleMecanumDrive's heading controller
@@ -56,7 +57,6 @@ public class TeleOpRobot extends CommonComponents {
 
     public void init() {
         super.init();
-        // drive.init();
 
         drive = new SampleMecanumDrive(OpModeUtils.getHardwareMap());
 
@@ -66,7 +66,10 @@ public class TeleOpRobot extends CommonComponents {
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        drive.getLocalizer().setPoseEstimate(PoseStorage.currentPose);
+        drive.getLocalizer().setPoseEstimate(GlobalStorage.currentPose);
+
+        // Allow component to get reference to robot drive.
+        OpModeUtils.getGlobalStore().setDrive(drive);
 
         // Set input bounds for the heading controller
         // Automatically handles overflow
@@ -74,6 +77,10 @@ public class TeleOpRobot extends CommonComponents {
 
         // Get a reference to the telemetry object
         telemetry = OpModeUtils.getTelemetry();
+
+        // Set the target to the tower goal base on auto color
+        targetPosition = (AutonomousColor.Red == GlobalStorage.color) ?
+                new Vector2d(72, -36) : new Vector2d(72, 36);
     }
 
     /**
@@ -184,6 +191,7 @@ public class TeleOpRobot extends CommonComponents {
         telemetry.addData("heading", poseEstimate.getHeading());
 
         // robot components controls
+        super.get(Intake.class).control(gamepad);
         super.get(Shooter.class).control(gamepad);
     }
 

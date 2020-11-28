@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponent;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,8 @@ public class OpModeStore {
     private Map<String, RobotComponent> componentMap = new HashMap<>();
 
     private volatile boolean liftOuttake = false;
+
+    private SampleMecanumDrive drive;
 
     public void init() {
         resetEncoder = false;

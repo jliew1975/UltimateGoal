@@ -1,20 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
+import org.firstinspires.ftc.teamcode.components.Shooter;
 import org.firstinspires.ftc.teamcode.detectors.StarterRingsDetector;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 import org.firstinspires.ftc.teamcode.util.AutonomousColor;
 import org.firstinspires.ftc.teamcode.util.OpModeStore;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
-import org.firstinspires.ftc.teamcode.util.PoseStorage;
+import org.firstinspires.ftc.teamcode.util.GlobalStorage;
 import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
-public abstract class AutoApp extends LinearOpMode {
+public abstract class AutoApp extends CommonOpMode {
+    protected boolean isPickupSecondWobbleGoal = false;
     protected AutonomousColor autoColor = AutonomousColor.Unknown;
 
     protected AutoRobot robot;
     protected StarterRingsDetector detector;
+
+    public AutoApp() {
+        initTargetPoseValues();
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -51,8 +55,36 @@ public abstract class AutoApp extends LinearOpMode {
         performRobotOperation();
 
         // Transfer the current pose to PoseStorage so we can use it in TeleOp
-        PoseStorage.currentPose = robot.getDrive().getPoseEstimate();
+        GlobalStorage.color = autoColor;
+        GlobalStorage.currentPose = robot.getDrive().getPoseEstimate();
+
     }
 
     public abstract void performRobotOperation() throws InterruptedException;
+
+    protected void prepareShooter() {
+        Shooter shooter = robot.get(Shooter.class);
+        shooter.liftShooter(0.4);
+    }
+
+    protected void shootPowerShot() {
+        Shooter shooter = robot.get(Shooter.class);
+        shooter.start();
+
+        ThreadUtils.sleep(1000);
+        try {
+            robot.getDrive().turn(calculatePowerShotAngle(robot, PowerShotPos.One));
+            shooter.liftShooter(pShotPose1);
+            shooter.fire();
+            robot.getDrive().turn(calculatePowerShotAngle(robot, PowerShotPos.Two));
+            shooter.liftShooter(pShotPose2);
+            shooter.fire();
+            robot.getDrive().turn(calculatePowerShotAngle(robot, PowerShotPos.Three));
+            shooter.liftShooter(pShotPose3);
+            shooter.fire();
+            sleep(2000);
+        } finally {
+            shooter.stop();
+        }
+    }
 }

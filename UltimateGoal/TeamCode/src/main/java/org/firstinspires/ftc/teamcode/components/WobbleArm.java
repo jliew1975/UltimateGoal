@@ -45,8 +45,7 @@ public class WobbleArm implements RobotComponent {
         if(OpModeUtils.getGlobalStore().getRunMode() == OpModeStore.RunMode.Autonomous) {
             wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
-
-        wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
         wobbleMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -63,15 +62,17 @@ public class WobbleArm implements RobotComponent {
                 isBusy = true;
                 ThreadUtils.getExecutorService().submit(() -> {
                     try {
+                        int targetPos;
                         if(mode == Mode.Unlatch) {
                             latch();
-                            ThreadUtils.sleep(500);
-                            runToPosition(0);
+                            targetPos = 0;
                         } else {
                             unlatch();
-                            runToPosition(770);
+                            targetPos = 770;
                         }
 
+                        ThreadUtils.sleep(500);
+                        runToPosition(targetPos);
                         mode = (mode == Mode.Latch) ? Mode.Unlatch : Mode.Latch;
                     } finally {
                         isBusy = false;
@@ -102,6 +103,7 @@ public class WobbleArm implements RobotComponent {
         }
 
         Telemetry telemetry = OpModeUtils.getTelemetry();
+        telemetry.addData("wobbleMode", mode);
         telemetry.addData("wobbleMotor", wobbleMotor.getCurrentPosition());
     }
 

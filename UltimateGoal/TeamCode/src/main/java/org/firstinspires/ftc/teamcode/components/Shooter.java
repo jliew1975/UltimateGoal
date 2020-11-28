@@ -1,18 +1,24 @@
 package org.firstinspires.ftc.teamcode.components;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.buttons.Button;
+import org.firstinspires.ftc.teamcode.robot.AutoRobot;
+import org.firstinspires.ftc.teamcode.util.AutonomousColor;
+import org.firstinspires.ftc.teamcode.util.GlobalStorage;
+import org.firstinspires.ftc.teamcode.util.MotorUtils;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
+import org.firstinspires.ftc.teamcode.util.ShooterUtils;
 import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import lombok.Data;
 
@@ -20,9 +26,6 @@ import lombok.Data;
 public class Shooter implements RobotComponent {
     public static final double FIRE = 0d;
     public static final double READY = 1d;
-
-    public static final double LIFT = 0.43;
-    public static final double REST = 0d;
 
     private DcMotor motor;
     private Servo trigger;
@@ -36,9 +39,16 @@ public class Shooter implements RobotComponent {
     Button xBtn = new Button();
     Button bBtn = new Button();
 
+    Button leftTrigger = new Button();
+    Button rightTrigger = new Button();
+
+    private double power = 1d;
+
     private volatile int level = 1;
 
-    Map<Integer, Double> presetLevel = new HashMap<>();
+    volatile boolean isBusy = false;
+
+    private Pose2d towerPose;
 
     @Override
     public void init() {
@@ -50,16 +60,19 @@ public class Shooter implements RobotComponent {
         rightServo = hardwareMap.get(Servo.class, "rightServo");
         rightServo.setDirection(Servo.Direction.REVERSE);
 
-        // leftServo.scaleRange(REST, 0.43);
-        // rightServo.scaleRange(REST, 0.43);
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motor);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motor);
 
-        //motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftServo.setPosition(0d);
-        rightServo.setPosition(0d);
+        leftServo.setPosition(0.36d);
+        rightServo.setPosition(0.36d);
 
-        presetLevel.put(1, 0.4100);
-        presetLevel.put(2, 0.4100);
-        presetLevel.put(3, 0.4250);
+        trigger.setPosition(READY);
+
+        if(GlobalStorage.color == AutonomousColor.Blue) {
+            towerPose = new Pose2d(72, 36);
+        } else {
+            towerPose = new Pose2d(72, -36);
+        }
     }
 
     public void control(Gamepad gamepad) {
@@ -90,29 +103,32 @@ public class Shooter implements RobotComponent {
             }
         }
 
+        leftTrigger.input(gamepad.left_trigger > 0);
+        rightTrigger.input(gamepad.right_trigger > 0);
+
+        if(leftTrigger.onPress()) {
+            power += 0.1;
+        } else if(rightTrigger.onPress()) {
+            power -= 0.1;
+        }
+
         xBtn.input(gamepad.x);
         bBtn.input(gamepad.b);
 
         if(xBtn.onPress()) {
             lowerShooter();
         } else if(bBtn.onPress()) {
-            leftServo.setPosition(presetLevel.get(level));
-            rightServo.setPosition(presetLevel.get(level));
-
-            level++;
-            if(level == 4) {
-                level = 1;
-            }
+            liftShooter(towerPose);
         }
 
         Telemetry telemetry = OpModeUtils.getTelemetry();
-        telemetry.addData("leftServo", leftServo.getPosition());
-        telemetry.addData("rightServo", rightServo.getPosition());
-        telemetry.addData("targetLevel", level);
+        telemetry.addData("Servo Pos", getPosition());
+        telemetry.addData("HighGoalAngle", Math.toDegrees(ShooterUtils.calculateHighGoalAngle(towerPose)));
+        telemetry.addData("ShooterServoAngle", ShooterUtils.getShooterServoAngle(towerPose));
     }
 
     public void start() {
-        motor.setPower(1d);
+        motor.setPower(power);
     }
 
     public void stop() {
@@ -122,23 +138,27 @@ public class Shooter implements RobotComponent {
     public void fire() {
         ThreadUtils.getExecutorService().submit(() -> {
             trigger.setPosition(FIRE);
-            ThreadUtils.sleep(500);
+            ThreadUtils.sleep(800);
             trigger.setPosition(READY);
         });
     }
 
-    public void liftShooter(int level) {
-        leftServo.setPosition(presetLevel.get(level));
-        rightServo.setPosition(presetLevel.get(level));
+    public void liftShooter(double targetPos) {
+        leftServo.setPosition(targetPos);
+        rightServo.setPosition(targetPos);
+    }
+
+    public void liftShooter(Pose2d targetPose) {
+        double servoPos = ShooterUtils.getShooterServoAngle(targetPose);
+        leftServo.setPosition(servoPos);
+        rightServo.setPosition(servoPos);
+        ThreadUtils.sleep(800);
     }
 
     public void lowerShooter() {
         ThreadUtils.getExecutorService().submit(() -> {
-            leftServo.setPosition(0.2);
-            rightServo.setPosition(0.2);
-            ThreadUtils.sleep(800);
-            leftServo.setPosition(0d);
-            rightServo.setPosition(0d);
+            leftServo.setPosition(0.3);
+            rightServo.setPosition(0.3);
         });
     }
 

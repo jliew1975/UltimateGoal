@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.components.CommonComponents;
+import org.firstinspires.ftc.teamcode.components.Shooter;
 import org.firstinspires.ftc.teamcode.components.WobbleArm;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
@@ -27,6 +28,9 @@ public class AutoRobot extends CommonComponents {
 
         HardwareMap hardwareMap = OpModeUtils.getHardwareMap();
         drive = new SampleMecanumDrive(hardwareMap);
+
+        // Allow component to get reference to robot drive.
+        OpModeUtils.getGlobalStore().setDrive(drive);
     }
 
     public void prepareWobbleArm() {
@@ -39,23 +43,32 @@ public class AutoRobot extends CommonComponents {
     public void dropWobbleGoal() {
         WobbleArm wobbleArm = get(WobbleArm.class);
 
-        isBusy = true;
+        wobbleArm.runToPosition(770);
+        wobbleArm.unlatch();
+        ThreadUtils.sleep(500);
 
-        ThreadUtils.getExecutorService().submit(()-> {
-            try {
-                wobbleArm.runToPosition(770);
-                wobbleArm.unlatch();
-                ThreadUtils.sleep(500);
-                wobbleArm.runToPosition(0);
-            } finally {
-                isBusy = false;
-            }
+        ThreadUtils.getExecutorService().submit(() -> {
+            wobbleArm.runToPosition(0);
         });
+    }
 
-        while (isBusy) {
-            ThreadUtils.idle();
-        }
+    public void prepareArmToPickupWobbleGoal() {
+        ThreadUtils.getExecutorService().submit(() -> {
+            WobbleArm wobbleArm = get(WobbleArm.class);
+            wobbleArm.unlatch();
+            wobbleArm.runToPosition(770);
+        });
+    }
 
-        // ThreadUtils.sleep(3000);
+    public void pickupWobbleGoal() {
+        WobbleArm wobbleArm = get(WobbleArm.class);
+        wobbleArm.unlatch();
+        wobbleArm.runToPosition(770);
+        wobbleArm.latch();
+        ThreadUtils.sleep(500);
+
+        ThreadUtils.getExecutorService().submit(() -> {
+           wobbleArm.runToPosition(0);
+        });
     }
 }

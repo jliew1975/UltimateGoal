@@ -8,12 +8,12 @@ import org.firstinspires.ftc.teamcode.detectors.StarterRingsDetector.RingCount;
 import org.firstinspires.ftc.teamcode.util.AutonomousColor;
 import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
-@Autonomous(name="Red (L)", group="Group 1")
-public class LeftAutoRedApp extends AutoApp {
-    private Pose2d startPose = new Pose2d(-62, -26, Math.toRadians(180));
+@Autonomous(name="Blue (R)", group="Group 1")
+public class RightAutoBlueApp extends AutoApp {
+    private Pose2d startPose = new Pose2d(-63, 25, Math.toRadians(180));
 
-    public LeftAutoRedApp() {
-        super.autoColor = AutonomousColor.Red;
+    public RightAutoBlueApp() {
+        super.autoColor = AutonomousColor.Blue;
     }
 
     @Override
@@ -44,8 +44,8 @@ public class LeftAutoRedApp extends AutoApp {
 
     private void performNone() {
         Trajectory toZoneA1 =
-                robot.getDrive().trajectoryBuilder(startPose, true)
-                        .splineToSplineHeading(new Pose2d(12, -45, Math.toRadians(90)), Math.toRadians(-90))
+                robot.getDrive().trajectoryBuilder(startPose, Math.toRadians(-15))
+                        .splineToLinearHeading(new Pose2d(12, 45, Math.toRadians(-90)), Math.toRadians(90))
                         .build();
 
         robot.getDrive().followTrajectory(toZoneA1);
@@ -53,9 +53,9 @@ public class LeftAutoRedApp extends AutoApp {
 
         if(isPickupSecondWobbleGoal) {
             Trajectory toPickupSecondWobble =
-                    robot.getDrive().trajectoryBuilder(robot.getDrive().getPoseEstimate())
+                    robot.getDrive().trajectoryBuilder(robot.getDrive().getPoseEstimate(), Math.toRadians(80))
                             .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
-                            .lineToLinearHeading(new Pose2d(-35, -47, 0))
+                            .splineToLinearHeading(new Pose2d(-39, 56, Math.toRadians(30)), Math.toRadians(-140))
                             .build();
 
             robot.getDrive().followTrajectory(toPickupSecondWobble);
@@ -64,7 +64,7 @@ public class LeftAutoRedApp extends AutoApp {
 
             Trajectory toZoneA2 =
                     robot.getDrive().trajectoryBuilder(robot.getDrive().getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-5, -60, Math.toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(-5, 60, Math.toRadians(180)))
                             .build();
 
             robot.getDrive().followTrajectory(toZoneA2);
@@ -74,7 +74,7 @@ public class LeftAutoRedApp extends AutoApp {
         Trajectory toLaunchZone =
                 robot.getDrive().trajectoryBuilder(robot.getDrive().getPoseEstimate())
                         .addDisplacementMarker(() -> prepareShooter())
-                        .lineToLinearHeading(new Pose2d(-5, -40, 0))
+                        .lineToLinearHeading(new Pose2d(-5, 40, 0))
                         .build();
 
         robot.getDrive().followTrajectory(toLaunchZone);
@@ -82,7 +82,7 @@ public class LeftAutoRedApp extends AutoApp {
 
         Trajectory toParking =
                 robot.getDrive().trajectoryBuilder(toLaunchZone.end())
-                        .lineToLinearHeading(new Pose2d(10, -10, 0))
+                        .lineToLinearHeading(new Pose2d(10, 10, 0))
                         .build();
 
         robot.getDrive().followTrajectory(toParking);
@@ -92,7 +92,7 @@ public class LeftAutoRedApp extends AutoApp {
     private void performOne() {
         Trajectory toZoneB1 =
                 robot.getDrive().trajectoryBuilder(startPose, true)
-                        .splineToSplineHeading(new Pose2d(23, -24, Math.toRadians(35)), Math.toRadians(-35))
+                        .splineToSplineHeading(new Pose2d(26, 25, Math.toRadians(35)), Math.toRadians(-135))
                         .build();
 
         robot.getDrive().followTrajectory(toZoneB1);
@@ -100,17 +100,18 @@ public class LeftAutoRedApp extends AutoApp {
 
         if(isPickupSecondWobbleGoal) {
             Trajectory toPickupSecondWobble =
-                    robot.getDrive().trajectoryBuilder(robot.getDrive().getPoseEstimate(), Math.toRadians(170))
+                    robot.getDrive().trajectoryBuilder(robot.getDrive().getPoseEstimate())
                             .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
-                            .splineToLinearHeading(new Pose2d(-46, -39, Math.toRadians(90)), Math.toRadians(-90))
+                            .splineToLinearHeading(new Pose2d(-35, 50, 0), Math.toRadians(-170))
                             .build();
 
             robot.getDrive().followTrajectory(toPickupSecondWobble);
             robot.pickupWobbleGoal();
+            robot.getDrive().turn(180);
 
             Trajectory toZoneB2 =
                     robot.getDrive().trajectoryBuilder(robot.getDrive().getPoseEstimate())
-                            .splineToSplineHeading(new Pose2d(22, -23, Math.toRadians(35)), Math.toRadians(180))
+                            .splineToLinearHeading(new Pose2d(25, 47, Math.toRadians(145)), Math.toRadians(-40))
                             .build();
 
             robot.getDrive().followTrajectory(toZoneB2);
@@ -127,8 +128,8 @@ public class LeftAutoRedApp extends AutoApp {
         shootPowerShot();
 
         Trajectory toParking =
-                robot.getDrive().trajectoryBuilder(toLaunchZone.end())
-                        .lineToLinearHeading(new Pose2d(10, -10, 0))
+                robot.getDrive().trajectoryBuilder(robot.getDrive().getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(10, 10, 0))
                         .build();
 
         robot.getDrive().followTrajectory(toParking);
