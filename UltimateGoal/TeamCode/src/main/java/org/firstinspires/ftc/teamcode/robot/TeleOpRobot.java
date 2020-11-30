@@ -80,7 +80,7 @@ public class TeleOpRobot extends CommonComponents {
 
         // Set the target to the tower goal base on auto color
         targetPosition = (AutonomousColor.Red == GlobalStorage.color) ?
-                new Vector2d(72, -36) : new Vector2d(72, 36);
+                new Vector2d(72, -38) : new Vector2d(72, 38);
     }
 
     /**

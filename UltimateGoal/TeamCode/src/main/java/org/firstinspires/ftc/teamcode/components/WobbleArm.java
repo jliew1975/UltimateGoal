@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.util.OpModeUtils;
 import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
 public class WobbleArm implements RobotComponent {
-    private static final double SERVO_OPEN = 0.1;
-    private static final double SERVO_CLOSE = 0.5;
+    private static final double SERVO_OPEN = 0d;
+    private static final double SERVO_CLOSE = 0.55;
 
     private enum Mode { Latch, Unlatch }
 
@@ -39,8 +39,8 @@ public class WobbleArm implements RobotComponent {
         wobbleServo = hardwareMap.get(Servo.class, "wobbleServo");
         wobbleMotor = hardwareMap.get(DcMotor.class, "wobbleMotor");
 
-        wobbleServo.setPosition(SERVO_CLOSE);
         wobbleServo.setDirection(Servo.Direction.REVERSE);
+        wobbleServo.setPosition(SERVO_CLOSE);
 
         if(OpModeUtils.getGlobalStore().getRunMode() == OpModeStore.RunMode.Autonomous) {
             wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -68,7 +68,7 @@ public class WobbleArm implements RobotComponent {
                             targetPos = 0;
                         } else {
                             unlatch();
-                            targetPos = 770;
+                            targetPos = 560;
                         }
 
                         ThreadUtils.sleep(500);
@@ -84,7 +84,7 @@ public class WobbleArm implements RobotComponent {
                 isBusy = true;
                 ThreadUtils.getExecutorService().submit(() -> {
                     try {
-                        runToPosition(450);
+                        runToPosition(280);
                         unlatch();
                         mode = Mode.Unlatch;
                     } finally {
@@ -94,9 +94,9 @@ public class WobbleArm implements RobotComponent {
             }
         } else if(!isBusy) {
             if (gamepad.dpad_up) {
-                wobbleMotor.setPower(0.1);
+                wobbleMotor.setPower(-0.3);
             } else if (gamepad.dpad_down) {
-                wobbleMotor.setPower(-0.1);
+                wobbleMotor.setPower(0.3);
             } else {
                 wobbleMotor.setPower(0.0);
             }

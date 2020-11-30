@@ -2,11 +2,15 @@ package org.firstinspires.ftc.teamcode.components;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.buttons.Button;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 import org.firstinspires.ftc.teamcode.util.AutonomousColor;
@@ -26,6 +30,9 @@ import lombok.Data;
 public class Shooter implements RobotComponent {
     public static final double FIRE = 0d;
     public static final double READY = 1d;
+
+    public static final double INTAKE_POS = 0.470;
+    private static final double OFFSET = -0.08;
 
     private DcMotor motor;
     private Servo trigger;
@@ -60,11 +67,15 @@ public class Shooter implements RobotComponent {
         rightServo = hardwareMap.get(Servo.class, "rightServo");
         rightServo.setDirection(Servo.Direction.REVERSE);
 
-        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motor);
-        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motor);
+        MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.FLOAT, motor);
+        // MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motor);
+        // MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motor);
 
-        leftServo.setPosition(0.36d);
-        rightServo.setPosition(0.36d);
+        // motor.setPositionPIDFCoefficients(0.5);
+        // motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(1.689, 0.1689, 0, 16.89));
+
+        leftServo.setPosition(0.39);
+        rightServo.setPosition(0.39 + OFFSET);
 
         trigger.setPosition(READY);
 
@@ -92,15 +103,11 @@ public class Shooter implements RobotComponent {
         dpadDown.input(gamepad.dpad_down);
 
         if(dpadUp.onPress()) {
-            if(getPosition() < 0.45) {
-                leftServo.setPosition(leftServo.getPosition() + 0.01);
-                rightServo.setPosition(rightServo.getPosition() + 0.01);
-            }
+            leftServo.setPosition(leftServo.getPosition() + 0.01);
+            rightServo.setPosition((rightServo.getPosition() + 0.01));
         } else if(dpadDown.onPress()) {
-            if(getPosition() > 0d) {
-                leftServo.setPosition(leftServo.getPosition() - 0.01);
-                rightServo.setPosition(rightServo.getPosition() - 0.01);
-            }
+            leftServo.setPosition(leftServo.getPosition() - 0.01);
+            rightServo.setPosition((rightServo.getPosition() - 0.01));
         }
 
         leftTrigger.input(gamepad.left_trigger > 0);
@@ -122,13 +129,17 @@ public class Shooter implements RobotComponent {
         }
 
         Telemetry telemetry = OpModeUtils.getTelemetry();
-        telemetry.addData("Servo Pos", getPosition());
+        telemetry.addData("Right Servo", rightServo.getPosition());
+        telemetry.addData("Left Servo", leftServo.getPosition());
         telemetry.addData("HighGoalAngle", Math.toDegrees(ShooterUtils.calculateHighGoalAngle(towerPose)));
         telemetry.addData("ShooterServoAngle", ShooterUtils.getShooterServoAngle(towerPose));
+        telemetry.addData("ShooterMotorCalculatedVelocity", ShooterUtils.calculateShooterVelocity(towerPose));
+        // telemetry.addData("ShooterMotorActualVelocity", motor.getVelocity());
+        telemetry.addData("ShooterMotorActualPower", motor.getPower());
     }
 
     public void start() {
-        motor.setPower(power);
+        motor.setPower(1d);
     }
 
     public void stop() {
@@ -145,24 +156,25 @@ public class Shooter implements RobotComponent {
 
     public void liftShooter(double targetPos) {
         leftServo.setPosition(targetPos);
-        rightServo.setPosition(targetPos);
+        rightServo.setPosition(targetPos + OFFSET);
     }
 
     public void liftShooter(Pose2d targetPose) {
         double servoPos = ShooterUtils.getShooterServoAngle(targetPose);
         leftServo.setPosition(servoPos);
-        rightServo.setPosition(servoPos);
+        rightServo.setPosition(servoPos + OFFSET);
         ThreadUtils.sleep(800);
     }
 
     public void lowerShooter() {
         ThreadUtils.getExecutorService().submit(() -> {
-            leftServo.setPosition(0.3);
-            rightServo.setPosition(0.3);
+            leftServo.setPosition(0.39);
+            rightServo.setPosition(0.39 + OFFSET);
         });
     }
 
-    private double getPosition() {
-        return Math.min(leftServo.getPosition(), rightServo.getPosition());
+    public void setMode(double mode) {
+        leftServo.setPosition(INTAKE_POS);
+        rightServo.setPosition(INTAKE_POS + OFFSET);
     }
 }

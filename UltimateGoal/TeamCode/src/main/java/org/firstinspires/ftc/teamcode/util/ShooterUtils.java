@@ -10,6 +10,8 @@ import java.util.TreeMap;
 public class ShooterUtils {
     private static Map<Double, Double> presetLevel = new TreeMap<>();
 
+    private static final double ENCODER_TICKS_PER_REV = 29d;
+
     static {
         presetLevel.put(7.5, 42.28);
         presetLevel.put(15.0, 48.1);
@@ -36,7 +38,7 @@ public class ShooterUtils {
             }
         }
         double theta = (hs_angle - ls_angle)/7.5 * (shooterAngleDeg - l_angle) + ls_angle;
-        return 0.152 / 54.0 * (theta - 36) + 0.32;
+        return 0.152 / 54.0 * (theta - 36) + 0.349;
     }
 
     public static double calculateHighGoalAngle(Pose2d towerPose) {
@@ -55,6 +57,25 @@ public class ShooterUtils {
 
         return Math.atan(yVelocity/xVelocity);
     }
+
+    public static double calculateShooterVelocity(Pose2d towerPose) {
+        Pose2d currPose = OpModeUtils.getGlobalStore().getDrive().getPoseEstimate();
+        double hDist = toMeter(
+                Math.sqrt(
+                        Math.pow(towerPose.getX() - currPose.getX(), 2) +
+                                Math.pow(towerPose.getY() - currPose.getY(), 2)));
+
+        Telemetry telemetry = OpModeUtils.getTelemetry();
+        telemetry.addData("hDist", (hDist * 39.37));
+
+        double vDist = toMeter(35);
+        double yVelocity = Math.sqrt(19.6 * vDist);
+        double xVelocity = hDist/(Math.sqrt(vDist/4.9));
+
+        return Math.sqrt(Math.pow(xVelocity,2) + Math.pow(yVelocity, 2)) *  2/0.010668;
+    }
+
+
 
     private static double toMeter(double inputInInches) {
         return inputInInches/39.37;
