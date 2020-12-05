@@ -174,6 +174,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         return new TrajectoryBuilder(startPose, startHeading, constraints);
     }
 
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed, DriveConstraints constraints) {
+        return new TrajectoryBuilder(startPose, reversed, constraints);
+    }
+
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading, DriveConstraints constraints) {
+        return new TrajectoryBuilder(startPose, startHeading, constraints);
+    }
+
     public void turnAsync(double angle) {
         double heading = getPoseEstimate().getHeading();
 

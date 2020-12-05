@@ -18,6 +18,10 @@ public class AutoRobot extends CommonComponents {
      */
     protected SampleMecanumDrive drive;
 
+    private static final int DOWN = 680;
+    private static final int UP = 0;
+
+
     /**
      * Using this boolean eliminate the need for sleep
      */
@@ -36,34 +40,41 @@ public class AutoRobot extends CommonComponents {
     public void prepareWobbleArm() {
         WobbleArm wobbleArm = get(WobbleArm.class);
         ThreadUtils.getExecutorService().submit(()-> {
-            wobbleArm.runToPosition(770);
+            wobbleArm.runToPosition(DOWN);
         });
     }
 
     public void dropWobbleGoal() {
+        dropWobbleGoal(true);
+    }
+
+    public void dropWobbleGoal(boolean isLift) {
         WobbleArm wobbleArm = get(WobbleArm.class);
 
-        wobbleArm.runToPosition(770);
+        wobbleArm.runToPosition(DOWN);
         wobbleArm.unlatch();
         ThreadUtils.sleep(500);
 
-        ThreadUtils.getExecutorService().submit(() -> {
-            wobbleArm.runToPosition(0);
-        });
+        if(isLift) {
+            ThreadUtils.getExecutorService().submit(() -> {
+                wobbleArm.runToPosition(UP);
+            });
+        }
+        // ThreadUtils.sleep(800);
     }
 
     public void prepareArmToPickupWobbleGoal() {
         ThreadUtils.getExecutorService().submit(() -> {
             WobbleArm wobbleArm = get(WobbleArm.class);
             wobbleArm.unlatch();
-            wobbleArm.runToPosition(770);
+            wobbleArm.runToPosition(DOWN);
         });
     }
 
     public void pickupWobbleGoal() {
         WobbleArm wobbleArm = get(WobbleArm.class);
         wobbleArm.unlatch();
-        wobbleArm.runToPosition(770);
+        wobbleArm.runToPosition(DOWN);
         wobbleArm.latch();
         ThreadUtils.sleep(500);
 

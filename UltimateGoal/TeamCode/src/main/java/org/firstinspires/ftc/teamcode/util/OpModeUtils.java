@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class OpModeUtils {
     private static ElapsedTime ELAPSED_TIME = new ElapsedTime();
@@ -56,5 +58,13 @@ public class OpModeUtils {
 
     public static long getTimeRemaining() {
         return 30 - Math.round(ELAPSED_TIME.milliseconds() + 0.5);
+    }
+
+    public static SampleMecanumDrive getDrive() {
+        return getGlobalStore().getDrive();
+    }
+
+    public static Pose2d getRobotCurrentPose() {
+        return getGlobalStore().getDrive().getPoseEstimate();
     }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.buttons.Button;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 import org.firstinspires.ftc.teamcode.util.AutonomousColor;
 import org.firstinspires.ftc.teamcode.util.GlobalStorage;
@@ -34,6 +36,8 @@ public class Shooter implements RobotComponent {
     public static final double INTAKE_POS = 0.470;
     private static final double OFFSET = -0.08;
 
+    public enum SpinWheelMode { SPIN, STOP }
+
     private DcMotor motor;
     private Servo trigger;
 
@@ -43,15 +47,19 @@ public class Shooter implements RobotComponent {
     Button dpadUp = new Button();
     Button dpadDown = new Button();
 
+    Button aBtn = new Button();
     Button xBtn = new Button();
     Button bBtn = new Button();
 
     Button leftTrigger = new Button();
     Button rightTrigger = new Button();
 
+    Button rightBumper = new Button();
+
     private double power = 1d;
 
     private volatile int level = 1;
+    private volatile SpinWheelMode SPIN_MODE = SpinWheelMode.STOP;
 
     volatile boolean isBusy = false;
 
@@ -79,24 +87,33 @@ public class Shooter implements RobotComponent {
 
         trigger.setPosition(READY);
 
-        if(GlobalStorage.color == AutonomousColor.Blue) {
-            towerPose = new Pose2d(72, 36);
-        } else {
-            towerPose = new Pose2d(72, -36);
-        }
+        towerPose = TargetConstant.towerPose;
     }
 
     public void control(Gamepad gamepad) {
-        if(gamepad.a) {
-            trigger.setPosition(FIRE);
-        } else {
-            trigger.setPosition(READY);
+        aBtn.input(gamepad.a);
+
+        if(aBtn.onPress()) {
+            ThreadUtils.getExecutorService().submit(() -> {
+                for(int ringCnt = 0; ringCnt < 3; ringCnt++) {
+                    trigger.setPosition(FIRE);
+                    ThreadUtils.sleep(500);
+                    trigger.setPosition(READY);
+                    ThreadUtils.sleep(500);
+                }
+            });
         }
 
-        if(gamepad.right_bumper) {
-            start();
-        } else {
-            stop();
+        rightBumper.input(gamepad.right_bumper);
+
+        if(rightBumper.onPress()) {
+            if(SPIN_MODE == SpinWheelMode.STOP) {
+                SPIN_MODE = SpinWheelMode.SPIN;
+                start();
+            } else {
+                SPIN_MODE = SpinWheelMode.STOP;
+                stop();
+            }
         }
 
         dpadUp.input(gamepad.dpad_up);
@@ -125,7 +142,20 @@ public class Shooter implements RobotComponent {
         if(xBtn.onPress()) {
             lowerShooter();
         } else if(bBtn.onPress()) {
-            liftShooter(towerPose);
+            ThreadUtils.getExecutorService().submit(() -> {
+                SampleMecanumDrive drive = OpModeUtils.getDrive();
+
+                Trajectory trajectory =
+                        drive.trajectoryBuilder(drive.getPoseEstimate())
+                                .lineToLinearHeading(new Pose2d(-5, -40, 0))
+                                .build();
+                drive.followTrajectory(trajectory);
+
+                // OpModeUtils.getDrive().turn(ShooterUtils.calculateHorizontalRobotAngle(TargetConstant.towerPose));
+            });
+
+            // liftShooter(towerPose);
+            liftShooter(0.442);
         }
 
         Telemetry telemetry = OpModeUtils.getTelemetry();
@@ -134,8 +164,7 @@ public class Shooter implements RobotComponent {
         telemetry.addData("HighGoalAngle", Math.toDegrees(ShooterUtils.calculateHighGoalAngle(towerPose)));
         telemetry.addData("ShooterServoAngle", ShooterUtils.getShooterServoAngle(towerPose));
         telemetry.addData("ShooterMotorCalculatedVelocity", ShooterUtils.calculateShooterVelocity(towerPose));
-        // telemetry.addData("ShooterMotorActualVelocity", motor.getVelocity());
-        telemetry.addData("ShooterMotorActualPower", motor.getPower());
+        telemetry.addData("ShooterHorizontalRobotAngle", Math.toDegrees(ShooterUtils.calculateHorizontalRobotAngle(towerPose)));
     }
 
     public void start() {
@@ -154,16 +183,24 @@ public class Shooter implements RobotComponent {
         });
     }
 
+    public void fireSync() {
+        trigger.setPosition(FIRE);
+        ThreadUtils.sleep(800);
+        trigger.setPosition(READY);
+    }
+
     public void liftShooter(double targetPos) {
         leftServo.setPosition(targetPos);
         rightServo.setPosition(targetPos + OFFSET);
     }
 
     public void liftShooter(Pose2d targetPose) {
-        double servoPos = ShooterUtils.getShooterServoAngle(targetPose);
-        leftServo.setPosition(servoPos);
-        rightServo.setPosition(servoPos + OFFSET);
-        ThreadUtils.sleep(800);
+        liftShooter(targetPose, 0.003);
+    }
+
+    public void liftShooter(Pose2d targetPose, double offset) {
+        double servoPos = ShooterUtils.getShooterServoAngle(targetPose) + offset;
+        liftShooter(servoPos);
     }
 
     public void lowerShooter() {

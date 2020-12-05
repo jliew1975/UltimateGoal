@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
 public class WobbleArm implements RobotComponent {
     private static final double SERVO_OPEN = 0d;
-    private static final double SERVO_CLOSE = 0.55;
+    private static final double SERVO_CLOSE = 0.8;
 
     private enum Mode { Latch, Unlatch }
 

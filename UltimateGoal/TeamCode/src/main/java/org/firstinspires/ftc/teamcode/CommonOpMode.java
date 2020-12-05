@@ -4,9 +4,11 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.Shooter;
+import org.firstinspires.ftc.teamcode.components.TargetConstant;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 import org.firstinspires.ftc.teamcode.util.AutonomousColor;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
+import org.firstinspires.ftc.teamcode.util.ShooterUtils;
 
 public abstract class CommonOpMode extends LinearOpMode {
     public enum PowerShotPos { One, Two, Three }
@@ -18,19 +20,10 @@ public abstract class CommonOpMode extends LinearOpMode {
     protected Pose2d towerPose;
 
     public void initTargetPoseValues() {
-        if(OpModeUtils.getGlobalStore().autoColor == AutonomousColor.Red) {
-            pShotPose1 = new Pose2d(74, 4);
-            pShotPose2 = new Pose2d(74, -4);
-            pShotPose3 = new Pose2d(74, -10);
-
-            towerPose = new Pose2d(72, -36);
-        } else {
-            pShotPose1 = new Pose2d(74, -4);
-            pShotPose2 = new Pose2d(74, 4);
-            pShotPose3 = new Pose2d(74, 10);
-
-            towerPose = new Pose2d(72, 36);
-        }
+        pShotPose1 = TargetConstant.pShotPose1;
+        pShotPose2 = TargetConstant.pShotPose2;
+        pShotPose3 = TargetConstant.pShotPose3;
+        towerPose = TargetConstant.towerPose;
     }
 
     protected double calculateTowerAngle(AutoRobot robot) {
@@ -45,6 +38,17 @@ public abstract class CommonOpMode extends LinearOpMode {
     }
 
     protected double calculatePowerShotAngle(AutoRobot robot, PowerShotPos pos) {
+        switch(pos) {
+            case One:
+                return calculatePowerShotAngle(robot, pShotPose1);
+            case Two:
+                return calculatePowerShotAngle(robot, pShotPose2);
+            default:
+                return calculatePowerShotAngle(robot, pShotPose3);
+        }
+    }
+
+    protected double calculatePowerShotAngle(AutoRobot robot, Pose2d targetPose) {
         Pose2d currPose = robot.getDrive().getPoseEstimate();
 
         double heading = currPose.getHeading();
@@ -52,14 +56,12 @@ public abstract class CommonOpMode extends LinearOpMode {
             heading = heading - (2 * Math.PI);
         }
 
-        switch(pos) {
-            case One:
-                return Math.atan((pShotPose1.getY() - currPose.getY())/(pShotPose1.getX() - currPose.getX()) - heading);
-            case Two:
-                return Math.atan((pShotPose2.getY() - currPose.getY())/(pShotPose2.getX() - currPose.getX()) - heading);
-            default:
-                return Math.atan((pShotPose3.getY() - currPose.getY())/(pShotPose3.getX() - currPose.getX()) - heading);
-        }
+        double distance = Math.sqrt(
+                Math.pow((targetPose.getY() - currPose.getY()), 2) +
+                        Math.pow((targetPose.getX() - currPose.getX()), 2)
+        );
+
+        return Math.atan((targetPose.getY() - currPose.getY())/(targetPose.getX() - currPose.getX())) - heading - Math.atan(5.17 / distance);
     }
 
     protected double calculateShooterSpeed(AutoRobot robot) {

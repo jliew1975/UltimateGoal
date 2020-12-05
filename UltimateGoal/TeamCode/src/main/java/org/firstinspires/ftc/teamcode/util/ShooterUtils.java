@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.util;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CommonOpMode;
+import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -33,7 +35,7 @@ public class ShooterUtils {
                 l_angle = entry.getKey();
                 ls_angle = entry.getValue();
                 h_angle = entry.getKey() + 7.5;
-                hs_angle = presetLevel.get(h_angle);
+                hs_angle = presetLevel.getOrDefault(h_angle, 80.37);
                 break;
             }
         }
@@ -73,6 +75,22 @@ public class ShooterUtils {
         double xVelocity = hDist/(Math.sqrt(vDist/4.9));
 
         return Math.sqrt(Math.pow(xVelocity,2) + Math.pow(yVelocity, 2)) *  2/0.010668;
+    }
+
+    public static double calculateHorizontalRobotAngle(Pose2d targetPose) {
+        Pose2d currPose = OpModeUtils.getRobotCurrentPose();
+
+        double heading = currPose.getHeading();
+        if(heading > Math.PI) {
+            heading = heading - (2 * Math.PI);
+        }
+
+        double distance = Math.sqrt(
+                Math.pow((targetPose.getY() - currPose.getY()), 2) +
+                        Math.pow((targetPose.getX() - currPose.getX()), 2)
+        );
+
+        return Math.atan((targetPose.getY() - currPose.getY())/(targetPose.getX() - currPose.getX())) - heading + Math.atan(5.17 / distance);
     }
 
 
