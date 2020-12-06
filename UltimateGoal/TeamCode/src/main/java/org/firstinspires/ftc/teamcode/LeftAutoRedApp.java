@@ -111,7 +111,7 @@ public class LeftAutoRedApp extends AutoApp {
             Trajectory toPickupSecondWobble =
                     robot.getDrive().trajectoryBuilder(robot.getDrive().getPoseEstimate(), Math.toRadians(170))
                             .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
-                            .splineToLinearHeading(new Pose2d(-33, -53, Math.toRadians(0)), Math.toRadians(180))
+                            .splineToLinearHeading(new Pose2d(-33, -53, Math.toRadians(-15)), Math.toRadians(180))
                             .build();
 
             robot.getDrive().followTrajectory(toPickupSecondWobble);

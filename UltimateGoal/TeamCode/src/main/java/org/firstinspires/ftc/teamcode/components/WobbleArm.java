@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,24 +21,26 @@ public class WobbleArm implements RobotComponent {
     private enum Mode { Latch, Unlatch }
 
     private Servo wobbleServo;
-    private DcMotor wobbleMotor;
+    private DcMotorEx wobbleMotor;
 
     private ElapsedTime runtime = new ElapsedTime();
 
     private volatile boolean isBusy = false;
     private Button btnY = new Button();
     private Button btnA = new Button();
+    private Button btnB = new Button();
 
     private Button dpadUp = new Button();
     private Button dpadDown = new Button();
 
-    private volatile Mode mode = Mode.Latch;
+    private volatile Mode motorMode = Mode.Latch;
+    private volatile Mode servoMode = Mode.Latch;
 
     @Override
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getHardwareMap();
         wobbleServo = hardwareMap.get(Servo.class, "wobbleServo");
-        wobbleMotor = hardwareMap.get(DcMotor.class, "wobbleMotor");
+        wobbleMotor = hardwareMap.get(DcMotorEx.class, "wobbleMotor");
 
         wobbleServo.setDirection(Servo.Direction.REVERSE);
         wobbleServo.setPosition(SERVO_CLOSE);
@@ -45,6 +48,9 @@ public class WobbleArm implements RobotComponent {
         if(OpModeUtils.getGlobalStore().getRunMode() == OpModeStore.RunMode.Autonomous) {
             wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
+
+        // wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleMotor.setPositionPIDFCoefficients(2.0);
         
         wobbleMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -57,53 +63,70 @@ public class WobbleArm implements RobotComponent {
         dpadUp.input(gamepad.dpad_up);
         dpadDown.input(gamepad.dpad_down);
 
-        if(btnY.onPress()) {
-            if(!isBusy) {
+        /*
+        if (btnY.onPress()) {
+            if (!isBusy) {
                 isBusy = true;
                 ThreadUtils.getExecutorService().submit(() -> {
                     try {
                         int targetPos;
-                        if(mode == Mode.Unlatch) {
+                        if (motorMode == Mode.Unlatch) {
+                            targetPos = -200;
                             latch();
-                            targetPos = 0;
+                            motorMode = Mode.Latch;
                         } else {
+                            targetPos = 630;
                             unlatch();
-                            targetPos = 560;
+                            motorMode = Mode.Unlatch;
                         }
 
                         ThreadUtils.sleep(500);
                         runToPosition(targetPos);
-                        mode = (mode == Mode.Latch) ? Mode.Unlatch : Mode.Latch;
                     } finally {
                         isBusy = false;
                     }
                 });
             }
-        } else if(btnA.onPress()) {
-            if(!isBusy) {
+
+
+        }
+        */
+
+        if (btnA.onPress()) {
+            if (!isBusy && motorMode == Mode.Latch) {
                 isBusy = true;
                 ThreadUtils.getExecutorService().submit(() -> {
                     try {
                         runToPosition(280);
                         unlatch();
-                        mode = Mode.Unlatch;
+                        motorMode = Mode.Unlatch;
                     } finally {
                         isBusy = false;
                     }
                 });
             }
-        } else if(!isBusy) {
-            if (gamepad.dpad_up) {
-                wobbleMotor.setPower(-0.3);
-            } else if (gamepad.dpad_down) {
-                wobbleMotor.setPower(0.3);
+        } else if (!isBusy) {
+            if (dpadUp.isPressed()) {
+                wobbleMotor.setPower(-0.5);
+            } else if (dpadDown.isPressed()) {
+                wobbleMotor.setPower(0.5);
             } else {
                 wobbleMotor.setPower(0.0);
             }
         }
 
+        if (btnY.onPress()) {
+            if(servoMode == Mode.Unlatch) {
+                latch();
+                servoMode = Mode.Latch;
+            } else {
+                unlatch();
+                servoMode = Mode.Unlatch;
+            }
+        }
+
         Telemetry telemetry = OpModeUtils.getTelemetry();
-        telemetry.addData("wobbleMode", mode);
+        telemetry.addData("wobbleMode", motorMode);
         telemetry.addData("wobbleMotor", wobbleMotor.getCurrentPosition());
     }
 
@@ -115,13 +138,18 @@ public class WobbleArm implements RobotComponent {
         wobbleServo.setPosition(SERVO_OPEN);
     }
 
-    public void runToPosition(int position) {
-        wobbleMotor.setTargetPosition(position);
+    public void runToPosition(int encoderTicks) {
+        wobbleMotor.setTargetPosition(encoderTicks);
         MotorUtils.setMode(DcMotor.RunMode.RUN_TO_POSITION, wobbleMotor);
         wobbleMotor.setPower(0.3);
 
+        runtime.reset();
+        runtime.startTime();
         while(OpModeUtils.opModeIsActive() && MotorUtils.motorIsBusy(wobbleMotor)) {
             // wait for motor to reach target position
+            if(runtime.milliseconds() > 2000) {
+                break;
+            }
         }
 
         wobbleMotor.setPower(0d);

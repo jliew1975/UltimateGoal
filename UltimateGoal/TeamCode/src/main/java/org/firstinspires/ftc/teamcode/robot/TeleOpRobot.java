@@ -10,10 +10,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CommonOpMode;
 import org.firstinspires.ftc.teamcode.buttons.Button;
 import org.firstinspires.ftc.teamcode.components.CommonComponents;
 import org.firstinspires.ftc.teamcode.components.Intake;
+import org.firstinspires.ftc.teamcode.components.Robot;
 import org.firstinspires.ftc.teamcode.components.Shooter;
+import org.firstinspires.ftc.teamcode.components.TargetConstant;
 import org.firstinspires.ftc.teamcode.components.WobbleArm;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -21,8 +24,9 @@ import org.firstinspires.ftc.teamcode.util.AutonomousColor;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
 import org.firstinspires.ftc.teamcode.util.GlobalStorage;
+import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
-public class TeleOpRobot extends CommonComponents {
+public class TeleOpRobot extends CommonComponents implements Robot {
     public static double DRAWING_TARGET_RADIUS = 2;
 
     // Define 2 states, driver control or alignment control
@@ -31,10 +35,9 @@ public class TeleOpRobot extends CommonComponents {
         ALIGN_TO_POINT
     }
 
-    /**
-     * Old MecanumDrive
-     */
-     // private MecanumDrive drive = new MecanumDrive();
+    private final Pose2d pShotPose1;
+    private final Pose2d pShotPose2;
+    private final Pose2d pShotPose3;
 
     /**
      * Road runner drive in TeleOp
@@ -54,6 +57,13 @@ public class TeleOpRobot extends CommonComponents {
     private Telemetry telemetry;
 
     private Button leftBumper = new Button();
+    private Button xBtn = new Button();
+
+    public TeleOpRobot() {
+        pShotPose1 = TargetConstant.pShotPose1;
+        pShotPose2 = TargetConstant.pShotPose2;
+        pShotPose3 = TargetConstant.pShotPose3;
+    }
 
     public void init() {
         super.init();
@@ -193,6 +203,11 @@ public class TeleOpRobot extends CommonComponents {
         // robot components controls
         super.get(Intake.class).control(gamepad);
         super.get(Shooter.class).control(gamepad);
+
+        xBtn.input(gamepad.x);
+        if(xBtn.onPress()) {
+            shootPowerShot();
+        }
     }
 
     /**
@@ -201,5 +216,62 @@ public class TeleOpRobot extends CommonComponents {
      */
     public void controlB(Gamepad gamepad) {
         super.get(WobbleArm.class).control(gamepad);
+    }
+
+    @Override
+    public Pose2d getCurrentPoss() {
+        return drive.getPoseEstimate();
+    }
+
+    @Override
+    public SampleMecanumDrive getDrive() {
+        return drive;
+    }
+
+    private double calculatePowerShotAngle(CommonOpMode.PowerShotPos pos) {
+        switch(pos) {
+            case One:
+                return calculatePowerShotAngle(pShotPose1);
+            case Two:
+                return calculatePowerShotAngle(pShotPose2);
+            default:
+                return calculatePowerShotAngle(pShotPose3);
+        }
+    }
+
+    private double calculatePowerShotAngle(Pose2d targetPose) {
+        Pose2d currPose = drive.getPoseEstimate();
+
+        double heading = currPose.getHeading();
+        if(heading > Math.PI) {
+            heading = heading - (2 * Math.PI);
+        }
+
+        double distance = Math.sqrt(
+                Math.pow((targetPose.getY() - currPose.getY()), 2) +
+                        Math.pow((targetPose.getX() - currPose.getX()), 2)
+        );
+
+        return Math.atan((targetPose.getY() - currPose.getY())/(targetPose.getX() - currPose.getX())) - heading - Math.atan(5.17 / distance);
+    }
+
+    protected void shootPowerShot() {
+        Shooter shooter = get(Shooter.class);
+        shooter.start();
+
+        try {
+            drive.turn(calculatePowerShotAngle(CommonOpMode.PowerShotPos.One));
+            shooter.liftShooter(pShotPose1, -0.004);
+            ThreadUtils.sleep(1000);
+            shooter.fireSync();
+            drive.turn(calculatePowerShotAngle(CommonOpMode.PowerShotPos.Two));
+            shooter.liftShooter(pShotPose2, -0.004);
+            shooter.fireSync();
+            drive.turn(calculatePowerShotAngle(CommonOpMode.PowerShotPos.Three));
+            shooter.liftShooter(pShotPose3, -0.004);
+            shooter.fireSync();
+        } finally {
+            shooter.stop();
+        }
     }
 }

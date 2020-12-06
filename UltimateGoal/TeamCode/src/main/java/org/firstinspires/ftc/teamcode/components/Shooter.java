@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.CommonOpMode;
 import org.firstinspires.ftc.teamcode.buttons.Button;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
@@ -211,7 +212,7 @@ public class Shooter implements RobotComponent {
     }
 
     public void setMode(double mode) {
-        leftServo.setPosition(INTAKE_POS);
-        rightServo.setPosition(INTAKE_POS + OFFSET);
+        leftServo.setPosition(mode);
+        rightServo.setPosition(mode + OFFSET);
     }
 }

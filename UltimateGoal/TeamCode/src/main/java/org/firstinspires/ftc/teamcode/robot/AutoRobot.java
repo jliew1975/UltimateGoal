@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.components.CommonComponents;
+import org.firstinspires.ftc.teamcode.components.Robot;
 import org.firstinspires.ftc.teamcode.components.Shooter;
 import org.firstinspires.ftc.teamcode.components.WobbleArm;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -12,13 +14,13 @@ import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 import lombok.Data;
 
 @Data
-public class AutoRobot extends CommonComponents {
+public class AutoRobot extends CommonComponents implements Robot {
     /**
      * Road Runner Drive
      */
     protected SampleMecanumDrive drive;
 
-    private static final int DOWN = 680;
+    private static final int DOWN = 480;
     private static final int UP = 0;
 
 
@@ -81,5 +83,15 @@ public class AutoRobot extends CommonComponents {
         ThreadUtils.getExecutorService().submit(() -> {
            wobbleArm.runToPosition(0);
         });
+    }
+
+    @Override
+    public Pose2d getCurrentPoss() {
+        return drive.getPoseEstimate();
+    }
+
+    @Override
+    public SampleMecanumDrive getDrive() {
+        return drive;
     }
 }
