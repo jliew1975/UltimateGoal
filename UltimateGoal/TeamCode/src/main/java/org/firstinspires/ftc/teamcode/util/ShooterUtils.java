@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CommonOpMode;
+import org.firstinspires.ftc.teamcode.components.Shooter;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 
 import java.util.Map;
@@ -92,8 +93,6 @@ public class ShooterUtils {
 
         return Math.atan((targetPose.getY() - currPose.getY())/(targetPose.getX() - currPose.getX())) - heading + Math.atan(5.17 / distance);
     }
-
-
 
     private static double toMeter(double inputInInches) {
         return inputInInches/39.37;

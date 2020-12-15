@@ -3,18 +3,17 @@ package org.firstinspires.ftc.teamcode;
 import org.firstinspires.ftc.teamcode.components.Shooter;
 import org.firstinspires.ftc.teamcode.detectors.StarterRingsDetector;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
-import org.firstinspires.ftc.teamcode.util.AutonomousColor;
+import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory;
 import org.firstinspires.ftc.teamcode.util.OpModeStore;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
 import org.firstinspires.ftc.teamcode.util.GlobalStorage;
 import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
 public abstract class AutoApp extends CommonOpMode {
-    protected boolean isPickupSecondWobbleGoal = false;
-    protected AutonomousColor autoColor = AutonomousColor.Unknown;
-
     protected AutoRobot robot;
     protected StarterRingsDetector detector;
+
+    protected TrajectoryFactory trajectoryFactory;
 
     public AutoApp() {
         initTargetPoseValues();
@@ -24,9 +23,6 @@ public abstract class AutoApp extends CommonOpMode {
     public void runOpMode() throws InterruptedException {
         // Tell global store that runMode is in Autonomous mode
         OpModeUtils.getGlobalStore().runMode = OpModeStore.RunMode.Autonomous;
-
-        // Tell global store the color of alliance
-        OpModeUtils.getGlobalStore().autoColor = autoColor;
 
         // Reset encoder
         OpModeUtils.setResetEncoder(true);
@@ -39,6 +35,8 @@ public abstract class AutoApp extends CommonOpMode {
 
         robot = new AutoRobot();
         robot.init();
+
+        trajectoryFactory.init(robot);
 
         detector = new StarterRingsDetector();
         detector.init();
@@ -55,7 +53,6 @@ public abstract class AutoApp extends CommonOpMode {
         performRobotOperation();
 
         // Transfer the current pose to PoseStorage so we can use it in TeleOp
-        GlobalStorage.color = autoColor;
         GlobalStorage.currentPose = robot.getDrive().getPoseEstimate();
 
     }

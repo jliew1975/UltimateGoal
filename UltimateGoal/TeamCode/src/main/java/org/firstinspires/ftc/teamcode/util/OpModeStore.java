@@ -16,7 +16,6 @@ public class OpModeStore {
 
     private LinearOpMode opMode = null;
     public RunMode runMode = RunMode.TeleOp;
-    public AutonomousColor autoColor = AutonomousColor.Red;
 
     private volatile boolean resetEncoder = false;
 

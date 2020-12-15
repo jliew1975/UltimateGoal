@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
+import org.firstinspires.ftc.teamcode.util.GlobalStorage;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
 
@@ -107,7 +108,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                    new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 1d);
+                    new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
         poseHistory = new ArrayList<>();
 
@@ -247,17 +248,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
 
-        /*
-        Telemetry telemetry = OpModeUtils.getTelemetry();
-        telemetry.addData("mode", mode);
-        telemetry.addData("x", currentPose.getX());
-        telemetry.addData("y", currentPose.getY());
-        telemetry.addData("heading", currentPose.getHeading());
-        telemetry.addData("xError", lastError.getX());
-        telemetry.addData("yError", lastError.getY());
-        telemetry.addData("headingError", lastError.getHeading());
-        */
-
         switch (mode) {
             case IDLE:
                 // do nothing
@@ -318,6 +308,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         DashboardUtil.drawRobot(fieldOverlay, currentPose);
 
         dashboard.sendTelemetryPacket(packet);
+        GlobalStorage.currentPose = getPoseEstimate();
     }
 
     public void waitForIdle() {

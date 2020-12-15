@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.components.CommonComponents;
@@ -70,6 +71,14 @@ public class AutoRobot extends CommonComponents implements Robot {
             WobbleArm wobbleArm = get(WobbleArm.class);
             wobbleArm.unlatch();
             wobbleArm.runToPosition(DOWN);
+        });
+    }
+
+    public void prepareShooter() {
+        Shooter shooter = get(Shooter.class);
+        ThreadUtils.getExecutorService().submit(() -> {
+            shooter.liftShooter(0.45);
+            shooter.start();
         });
     }
 

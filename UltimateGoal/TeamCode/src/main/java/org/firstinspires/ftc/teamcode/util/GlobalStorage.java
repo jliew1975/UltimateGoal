@@ -8,6 +8,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
  * A static field allows data to persist between opmodes.
  */
 public class GlobalStorage {
-    public static AutonomousColor color = AutonomousColor.Red;
+    public static int wobbleCount = 1;
+    public static AutoConstant.Side side = AutoConstant.Side.Left;
+    public static AutonomousColor autoColor = AutonomousColor.Red;
+
     public static Pose2d currentPose = new Pose2d();
 }
