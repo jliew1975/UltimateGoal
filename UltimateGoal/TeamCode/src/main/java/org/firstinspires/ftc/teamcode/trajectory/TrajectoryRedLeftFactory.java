@@ -40,36 +40,36 @@ public class TrajectoryRedLeftFactory {
                         .splineToSplineHeading(new Pose2d(20.0, -40.0, Math.toRadians(90.0)), Math.toRadians(-90.0))
                         .build();
 
-        Trajectory toPickupSecondWobble =
+        Trajectory toPickupWobble =
                 drive.trajectoryBuilder(toZone1.end(), Math.toRadians(90))
                         .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
                         .splineToLinearHeading(new Pose2d(-33.0, -53.0, 0.0), Math.toRadians(180.0))
                         .build();
 
         Trajectory toZone2 =
-                drive.trajectoryBuilder(Pose2dUtils.updateHeading(toPickupSecondWobble.end(), 0.0), true)
+                drive.trajectoryBuilder(updateHeading(toPickupWobble.end(), -180), true)
                         .splineToLinearHeading(new Pose2d(-10.0, -55.0, Math.toRadians(180.0)), Math.toRadians(-15.0))
                         .build();
 
         Trajectory forward2 =
                 drive.trajectoryBuilder(toZone2.end())
                         .addDisplacementMarker(() -> robot.prepareShooter())
-                        .forward(10)
+                        .forward(10.0)
                         .build();
 
         Trajectory toLaunchZone =
                 drive.trajectoryBuilder((GlobalStorage.wobbleCount > 1) ? forward2.end() : toZone1.end())
-                        .lineToLinearHeading(new Pose2d(-5, -40, 0))
+                        .lineToLinearHeading(new Pose2d(-5.0, -40.0, 0.0))
                         .build();
 
         Trajectory toParking =
                 drive.trajectoryBuilder(toLaunchZone.end())
-                        .lineToLinearHeading(new Pose2d(10, -40, 0))
+                        .lineToLinearHeading(new Pose2d(10.0, -40.0, 0.0))
                         .build();
 
         return Arrays.asList(
                 new TrajectoryWrapper(toZone1),
-                new TrajectoryWrapper(toPickupSecondWobble),
+                new TrajectoryWrapper(toPickupWobble),
                 new TrajectoryWrapper(-180.0),
                 new TrajectoryWrapper(toZone2),
                 new TrajectoryWrapper(forward2),
@@ -85,14 +85,14 @@ public class TrajectoryRedLeftFactory {
                         .splineToSplineHeading(new Pose2d(30.0, -24.0, Math.toRadians(145.0)), Math.toRadians(-35.0))
                         .build();
 
-        Trajectory toPickupSecondWobble =
+        Trajectory toPickupWobble =
                 drive.trajectoryBuilder(toZone1.end(), Math.toRadians(170.0))
                         .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
                         .splineToLinearHeading(new Pose2d(-33.5, -53.0, Math.toRadians(-15.0)), Math.toRadians(180.0))
                         .build();
 
         Trajectory toZone2 =
-                drive.trajectoryBuilder(toPickupSecondWobble.end(), true)
+                drive.trajectoryBuilder(updateHeading(toPickupWobble.end(), -175), true)
                         .splineToSplineHeading(new Pose2d(20.0, -50.0, Math.toRadians(-135.0)), 0.0)
                         .build();
 
@@ -114,12 +114,17 @@ public class TrajectoryRedLeftFactory {
 
         return Arrays.asList(
                 new TrajectoryWrapper(toZone1),
-                new TrajectoryWrapper(toPickupSecondWobble),
+                new TrajectoryWrapper(toPickupWobble),
                 new TrajectoryWrapper(-175.0),
                 new TrajectoryWrapper(toZone2),
                 new TrajectoryWrapper(forward),
                 new TrajectoryWrapper(toLaunchZone),
                 new TrajectoryWrapper(toParking));
+    }
+
+    private static Pose2d updateHeading(Pose2d currPose, double angle) {
+        double newHeading = currPose.getHeading() + Math.toRadians(angle);
+        return Pose2dUtils.updateHeading(currPose, newHeading);
     }
 
     private static List<TrajectoryWrapper> buildFour(AutoRobot robot, Pose2d startPose) {
@@ -130,14 +135,14 @@ public class TrajectoryRedLeftFactory {
                         .splineToSplineHeading(new Pose2d(60.0, -38.0, Math.toRadians(90.0)), Math.toRadians(-70.0))
                         .build();
 
-        Trajectory toPickupSecondWobble =
+        Trajectory toPickupWobble =
                 drive.trajectoryBuilder(toZone1.end())
                         .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
                         .splineToLinearHeading(new Pose2d(-32.0, -51.0, 0.0), Math.toRadians(180.0))
                         .build();
 
         Trajectory toZone2 =
-                drive.trajectoryBuilder(drive.getPoseEstimate(), true)
+                drive.trajectoryBuilder(updateHeading(toPickupWobble.end(), -175), true)
                         .lineToLinearHeading(new Pose2d(40.0, -58.0, Math.toRadians(180.0)))
                         .build();
 
@@ -159,7 +164,7 @@ public class TrajectoryRedLeftFactory {
 
         return Arrays.asList(
                 new TrajectoryWrapper(toZone1),
-                new TrajectoryWrapper(toPickupSecondWobble),
+                new TrajectoryWrapper(toPickupWobble),
                 new TrajectoryWrapper(-175.0),
                 new TrajectoryWrapper(toZone2),
                 new TrajectoryWrapper(forward),
