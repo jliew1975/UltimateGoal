@@ -44,14 +44,14 @@ public class TrajectoryBlueRightFactory {
                         .forward(10.0)
                         .build();
 
-        Trajectory toPickupSecondWobble =
+        Trajectory toPickupWobble =
                 drive.trajectoryBuilder(forward1.end(), false)
                         .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
                         .lineToLinearHeading(new Pose2d(-35, 45, 0))
                         .build();
 
         Trajectory toZone2 =
-                drive.trajectoryBuilder(toPickupSecondWobble.end())
+                drive.trajectoryBuilder(toPickupWobble.end())
                         .splineToLinearHeading(new Pose2d(-5.0, -59.0, Math.toRadians(-170)), Math.toRadians(0))
                         .build();
 
@@ -74,7 +74,7 @@ public class TrajectoryBlueRightFactory {
         return Arrays.asList(
                 new TrajectoryWrapper(toZone1),
                 new TrajectoryWrapper(forward1),
-                new TrajectoryWrapper(toPickupSecondWobble),
+                new TrajectoryWrapper(toPickupWobble),
                 new TrajectoryWrapper(toZone2),
                 new TrajectoryWrapper(forward2),
                 new TrajectoryWrapper(toLaunchZone),
@@ -94,14 +94,14 @@ public class TrajectoryBlueRightFactory {
                         .forward(10.0)
                         .build();
 
-        Trajectory toPickupSecondWobble =
+        Trajectory toPickupWobble =
                 drive.trajectoryBuilder(forward1.end(), Math.toRadians(90.0))
                         .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
                         .splineToLinearHeading(new Pose2d(-35.0, 50.0, Math.toRadians(15)), Math.toRadians(-170))
                         .build();
 
         Trajectory turn1 =
-                drive.trajectoryBuilder(toPickupSecondWobble.end(), Math.toRadians(40.0))
+                drive.trajectoryBuilder(toPickupWobble.end(), Math.toRadians(40.0))
                         .splineToLinearHeading(new Pose2d(-5.0, 55.0, Math.toRadians(-180.0)), 0.0)
                         .build();
 
@@ -129,7 +129,7 @@ public class TrajectoryBlueRightFactory {
         return Arrays.asList(
                 new TrajectoryWrapper(toZone1),
                 new TrajectoryWrapper(forward1),
-                new TrajectoryWrapper(toPickupSecondWobble),
+                new TrajectoryWrapper(toPickupWobble),
                 new TrajectoryWrapper(turn1),
                 new TrajectoryWrapper(toZone2),
                 new TrajectoryWrapper(forward2),
@@ -155,14 +155,14 @@ public class TrajectoryBlueRightFactory {
                         .lineToLinearHeading(new Pose2d(20.0, 55.0, Math.toRadians(0.0)))
                         .build();
 
-        Trajectory toPickupSecondWobble =
+        Trajectory toPickupWobble =
                 drive.trajectoryBuilder(turn1.end(), Math.toRadians(90.0))
                         .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
                         .lineToLinearHeading(new Pose2d(-35.0, 50.0, Math.toRadians(15)))
                         .build();
 
         Trajectory turn2 =
-                drive.trajectoryBuilder(toPickupSecondWobble.end(), Math.toRadians(40.0))
+                drive.trajectoryBuilder(toPickupWobble.end(), Math.toRadians(40.0))
                         .splineToLinearHeading(new Pose2d(0.0, 55.0, Math.toRadians(180.0)), 0.0)
                         .build();
 
@@ -191,7 +191,7 @@ public class TrajectoryBlueRightFactory {
                 new TrajectoryWrapper(toZone1),
                 new TrajectoryWrapper(forward1),
                 new TrajectoryWrapper(turn1),
-                new TrajectoryWrapper(toPickupSecondWobble),
+                new TrajectoryWrapper(toPickupWobble),
                 new TrajectoryWrapper(turn2),
                 new TrajectoryWrapper(toZone2),
                 new TrajectoryWrapper(forward2),

@@ -138,7 +138,7 @@ public class TrajectoryRedLeftFactory {
         Trajectory toPickupWobble =
                 drive.trajectoryBuilder(toZone1.end())
                         .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
-                        .splineToLinearHeading(new Pose2d(-32.0, -51.0, 0.0), Math.toRadians(180.0))
+                        .splineToLinearHeading(new Pose2d(-33.0, -51.0, Math.toRadians(-15.0)), Math.toRadians(180.0))
                         .build();
 
         Trajectory toZone2 =
