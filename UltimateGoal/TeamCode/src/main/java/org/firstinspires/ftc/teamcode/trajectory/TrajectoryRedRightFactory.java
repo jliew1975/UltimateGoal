@@ -72,12 +72,12 @@ public class TrajectoryRedRightFactory {
 
         Trajectory toLaunchZone =
                 drive.trajectoryBuilder((GlobalStorage.wobbleCount > 1) ? forward2.end() : toZone1.end())
-                        .lineToLinearHeading(new Pose2d(-5, -40, 0))
+                        .lineToLinearHeading(new Pose2d(-5.0, -40.0, 0.0))
                         .build();
 
         Trajectory toParking =
                 drive.trajectoryBuilder(toLaunchZone.end())
-                        .lineToLinearHeading(new Pose2d(10, -40, 0))
+                        .lineToLinearHeading(new Pose2d(10.0, -40.0, 0.0))
                         .build();
 
         return Arrays.asList(
