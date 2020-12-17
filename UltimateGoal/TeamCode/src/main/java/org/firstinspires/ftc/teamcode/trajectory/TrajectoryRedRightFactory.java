@@ -45,7 +45,7 @@ public class TrajectoryRedRightFactory {
 
         Trajectory turn1 =
                 drive.trajectoryBuilder(forward1.end())
-                        .lineToLinearHeading(new Pose2d(-33.0, -55.0, Math.toRadians(-55.0)))
+                        .lineToLinearHeading(new Pose2d(-34.0, -55.0, Math.toRadians(-55.0)))
                         .build();
 
         Trajectory toPickupWobble =
@@ -60,7 +60,7 @@ public class TrajectoryRedRightFactory {
                         .build();
 
         Trajectory toZone2 =
-                drive.trajectoryBuilder(toPickupWobble.end(), true)
+                drive.trajectoryBuilder(turn2.end(), true)
                         .splineToLinearHeading(new Pose2d(10.0, -40, Math.toRadians(90.0)), Math.toRadians(-90.0))
                         .build();
 
