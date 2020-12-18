@@ -52,6 +52,7 @@ public class AutoRedLeftApp extends AutoApp {
         int driveIndex = 0;
         drive.followTrajectory(trajectories.get(driveIndex++).get()); // toZoneA
         robot.dropWobbleGoal(false);
+        drive.followTrajectory(trajectories.get(driveIndex++).get()); // forward
 
         if(GlobalStorage.wobbleCount > 1) {
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupWobble
@@ -76,6 +77,7 @@ public class AutoRedLeftApp extends AutoApp {
         int driveIndex = 0;
         drive.followTrajectory(trajectories.get(driveIndex++).get()); // toZoneB
         robot.dropWobbleGoal(false);
+        drive.followTrajectory(trajectories.get(driveIndex++).get()); // forward
 
         if(GlobalStorage.wobbleCount > 1) {
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupWobble
@@ -99,6 +101,7 @@ public class AutoRedLeftApp extends AutoApp {
         int driveIndex = 0;
         drive.followTrajectory(trajectories.get(driveIndex++).get()); // toZoneC
         robot.dropWobbleGoal(false);
+        drive.followTrajectory(trajectories.get(driveIndex++).get()); // forward
 
         if(GlobalStorage.wobbleCount > 1) {
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupWobble

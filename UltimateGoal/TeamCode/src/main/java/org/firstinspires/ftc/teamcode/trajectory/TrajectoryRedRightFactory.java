@@ -40,12 +40,12 @@ public class TrajectoryRedRightFactory {
 
         Trajectory forward1 =
                 drive.trajectoryBuilder(toZone1.end(), Math.toRadians(90))
-                        .forward(40.0)
+                        .forward(GlobalStorage.wobbleCount> 1 ? 35.0 : 10.0)
                         .build();
 
         Trajectory turn1 =
                 drive.trajectoryBuilder(forward1.end())
-                        .lineToLinearHeading(new Pose2d(-34.0, -55.0, Math.toRadians(-55.0)))
+                        .lineToLinearHeading(new Pose2d(-35.0, -55.0, Math.toRadians(-55.0)))
                         .build();
 
         Trajectory toPickupWobble =
@@ -54,14 +54,14 @@ public class TrajectoryRedRightFactory {
                         .back(20.0)
                         .build();
 
-        Trajectory turn2 =
+        Trajectory reverse =
                 drive.trajectoryBuilder(toPickupWobble.end())
-                        .lineToLinearHeading(new Pose2d(-50.0, -30.0, Math.toRadians(-120)))
+                        .forward(20.0)
                         .build();
 
         Trajectory toZone2 =
-                drive.trajectoryBuilder(turn2.end(), true)
-                        .splineToLinearHeading(new Pose2d(10.0, -40, Math.toRadians(90.0)), Math.toRadians(-90.0))
+                drive.trajectoryBuilder(reverse.end())
+                        .lineToLinearHeading(new Pose2d(-5.0, -55.0, Math.toRadians(180.0)))
                         .build();
 
         Trajectory forward2 =
@@ -80,16 +80,24 @@ public class TrajectoryRedRightFactory {
                         .lineToLinearHeading(new Pose2d(10.0, -40.0, 0.0))
                         .build();
 
-        return Arrays.asList(
-                new TrajectoryWrapper(toZone1),
-                new TrajectoryWrapper(forward1),
-                new TrajectoryWrapper(turn1),
-                new TrajectoryWrapper(toPickupWobble),
-                new TrajectoryWrapper(turn2),
-                new TrajectoryWrapper(toZone2),
-                new TrajectoryWrapper(forward2),
-                new TrajectoryWrapper(toLaunchZone),
-                new TrajectoryWrapper(toParking));
+        if(GlobalStorage.wobbleCount > 1) {
+            return Arrays.asList(
+                    new TrajectoryWrapper(toZone1),
+                    new TrajectoryWrapper(forward1),
+                    new TrajectoryWrapper(turn1),
+                    new TrajectoryWrapper(toPickupWobble),
+                    new TrajectoryWrapper(reverse),
+                    new TrajectoryWrapper(toZone2),
+                    new TrajectoryWrapper(forward2),
+                    new TrajectoryWrapper(toLaunchZone),
+                    new TrajectoryWrapper(toParking));
+        } else {
+            return Arrays.asList(
+                    new TrajectoryWrapper(toZone1),
+                    new TrajectoryWrapper(forward1),
+                    new TrajectoryWrapper(toLaunchZone),
+                    new TrajectoryWrapper(toParking));
+        }
     }
 
     private static List<TrajectoryWrapper> buildOne(AutoRobot robot, Pose2d startPose) {
@@ -97,7 +105,7 @@ public class TrajectoryRedRightFactory {
 
         Trajectory toZone1 =
                 drive.trajectoryBuilder(startPose, true)
-                        .splineToSplineHeading(new Pose2d(25, -45.0, Math.toRadians(-130)), Math.toRadians(35.0))
+                        .splineToSplineHeading(new Pose2d(25.0, -45.0, Math.toRadians(-130)), Math.toRadians(35.0))
                         .build();
 
         Trajectory forward1 =
@@ -122,7 +130,7 @@ public class TrajectoryRedRightFactory {
                         .build();
 
         Trajectory toZone2 =
-                drive.trajectoryBuilder(turn2.end(), true)
+                drive.trajectoryBuilder(turn2.end(), Math.toRadians(30.0))
                         .splineToLinearHeading(new Pose2d(30.0, -20.0, Math.toRadians(130.0)), Math.toRadians(-30.0))
                         .build();
 
@@ -133,25 +141,33 @@ public class TrajectoryRedRightFactory {
                         .build();
 
         Trajectory toLaunchZone =
-                drive.trajectoryBuilder((GlobalStorage.wobbleCount > 1) ? forward2.end() : toZone1.end())
-                        .lineToLinearHeading(new Pose2d(-5.0, -40.0, 0))
+                drive.trajectoryBuilder((GlobalStorage.wobbleCount > 1) ? forward2.end() : forward1.end())
+                        .lineToLinearHeading(new Pose2d(-5.0, -40.0, 0.0))
                         .build();
 
         Trajectory toParking =
                 drive.trajectoryBuilder(toLaunchZone.end())
-                        .lineToLinearHeading(new Pose2d(10.0, -40.0, 0))
+                        .lineToLinearHeading(new Pose2d(10.0, -40.0, 0.0))
                         .build();
 
-        return Arrays.asList(
-                new TrajectoryWrapper(toZone1),
-                new TrajectoryWrapper(forward1),
-                new TrajectoryWrapper(turn1),
-                new TrajectoryWrapper(toPickupWobble),
-                new TrajectoryWrapper(turn2),
-                new TrajectoryWrapper(toZone2),
-                new TrajectoryWrapper(forward2),
-                new TrajectoryWrapper(toLaunchZone),
-                new TrajectoryWrapper(toParking));
+        if(GlobalStorage.wobbleCount > 1) {
+            return Arrays.asList(
+                    new TrajectoryWrapper(toZone1),
+                    new TrajectoryWrapper(forward1),
+                    new TrajectoryWrapper(turn1),
+                    new TrajectoryWrapper(toPickupWobble),
+                    new TrajectoryWrapper(turn2),
+                    new TrajectoryWrapper(toZone2),
+                    new TrajectoryWrapper(forward2),
+                    new TrajectoryWrapper(toLaunchZone),
+                    new TrajectoryWrapper(toParking));
+        } else {
+            return Arrays.asList(
+                    new TrajectoryWrapper(toZone1),
+                    new TrajectoryWrapper(forward1),
+                    new TrajectoryWrapper(toLaunchZone),
+                    new TrajectoryWrapper(toParking));
+        }
     }
 
     private static List<TrajectoryWrapper> buildFour(AutoRobot robot, Pose2d startPose) {
@@ -159,21 +175,21 @@ public class TrajectoryRedRightFactory {
 
         Trajectory toZone1 =
                 drive.trajectoryBuilder(startPose, true)
-                        .splineToSplineHeading(new Pose2d(53, -55, Math.toRadians(180)), 0)
+                        .splineToSplineHeading(new Pose2d(53.0, -55.0, Math.toRadians(180)), 0)
                         .build();
 
         Trajectory forward1 =
                 drive.trajectoryBuilder(toZone1.end())
-                        .forward(80.0)
+                        .forward(GlobalStorage.wobbleCount > 1 ? 80.0 : 10.0)
                         .build();
 
         Trajectory turn1 =
-                drive.trajectoryBuilder(toZone1.end())
+                drive.trajectoryBuilder(forward1.end())
                         .lineToLinearHeading(new Pose2d(-33.0, -55.0, Math.toRadians(-55.0)))
                         .build();
 
         Trajectory toPickupWobble =
-                drive.trajectoryBuilder(toZone1.end())
+                drive.trajectoryBuilder(turn1.end())
                         .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
                         .back(20)
                         .build();
@@ -189,18 +205,18 @@ public class TrajectoryRedRightFactory {
                         .build();
 
         Trajectory toZone2 =
-                drive.trajectoryBuilder(robot.getDrive().getPoseEstimate(), true)
-                        .lineToLinearHeading(new Pose2d(40, -58, Math.toRadians(180)))
+                drive.trajectoryBuilder(turn2.end(), true)
+                        .lineToLinearHeading(new Pose2d(40.0, -58.0, Math.toRadians(180)))
                         .build();
 
-        Trajectory forward =
+        Trajectory forward3 =
                 drive.trajectoryBuilder(toZone2.end())
                         .addDisplacementMarker(() -> robot.prepareShooter())
                         .forward(10.0)
                         .build();
 
         Trajectory toLaunchZone =
-                drive.trajectoryBuilder((GlobalStorage.wobbleCount > 1) ? forward.end() : toZone1.end())
+                drive.trajectoryBuilder((GlobalStorage.wobbleCount > 1) ? forward3.end() : forward1.end())
                         .lineToLinearHeading(new Pose2d(-5.0, -40.0, 0.0))
                         .build();
 
@@ -209,15 +225,24 @@ public class TrajectoryRedRightFactory {
                         .lineToLinearHeading(new Pose2d(10.0, -40.0, 0.0))
                         .build();
 
-        return Arrays.asList(
-                new TrajectoryWrapper(toZone1),
-                new TrajectoryWrapper(forward1),
-                new TrajectoryWrapper(turn1),
-                new TrajectoryWrapper(toPickupWobble),
-                new TrajectoryWrapper(turn2),
-                new TrajectoryWrapper(toZone2),
-                new TrajectoryWrapper(forward2),
-                new TrajectoryWrapper(toLaunchZone),
-                new TrajectoryWrapper(toParking));
+        if(GlobalStorage.wobbleCount > 1) {
+            return Arrays.asList(
+                    new TrajectoryWrapper(toZone1),
+                    new TrajectoryWrapper(forward1),
+                    new TrajectoryWrapper(turn1),
+                    new TrajectoryWrapper(toPickupWobble),
+                    new TrajectoryWrapper(forward2),
+                    new TrajectoryWrapper(turn2),
+                    new TrajectoryWrapper(toZone2),
+                    new TrajectoryWrapper(forward3),
+                    new TrajectoryWrapper(toLaunchZone),
+                    new TrajectoryWrapper(toParking));
+        } else {
+            return Arrays.asList(
+                    new TrajectoryWrapper(toZone1),
+                    new TrajectoryWrapper(forward1),
+                    new TrajectoryWrapper(toLaunchZone),
+                    new TrajectoryWrapper(toParking));
+        }
     }
 }

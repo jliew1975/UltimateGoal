@@ -56,7 +56,7 @@ public class AutoBlueRightApp extends AutoApp {
         drive.followTrajectory(trajectories.get(driveIndex++).get()); // forward
 
         if(GlobalStorage.wobbleCount > 1) {
-            drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupSecondWobble
+            drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupWobble
             robot.pickupWobbleGoal();
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // toZoneA
             robot.dropWobbleGoal();
@@ -80,7 +80,8 @@ public class AutoBlueRightApp extends AutoApp {
         drive.followTrajectory(trajectories.get(driveIndex++).get()); // forward
 
         if(GlobalStorage.wobbleCount > 1) {
-            drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupSecondWobble
+            drive.followTrajectory(trajectories.get(driveIndex++).get()); // turn
+            drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupWobble
             robot.pickupWobbleGoal();
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // turn
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // toZoneB
@@ -105,7 +106,7 @@ public class AutoBlueRightApp extends AutoApp {
 
         if(GlobalStorage.wobbleCount > 1) {
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // turn
-            drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupSecondWobble
+            drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupWobble
             robot.pickupWobbleGoal();
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // turn
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // toZoneC

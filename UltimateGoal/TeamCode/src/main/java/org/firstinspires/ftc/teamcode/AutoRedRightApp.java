@@ -59,7 +59,7 @@ public class AutoRedRightApp extends AutoApp {
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // turn
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupWobble
             robot.pickupWobbleGoal();
-            drive.followTrajectory(trajectories.get(driveIndex++).get()); // turn
+            drive.followTrajectory(trajectories.get(driveIndex++).get()); // reverse
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // toZoneA
             robot.dropWobbleGoal();
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // forward
@@ -110,6 +110,7 @@ public class AutoRedRightApp extends AutoApp {
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // turn
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // toPickupWobble
             robot.pickupWobbleGoal();
+            drive.followTrajectory(trajectories.get(driveIndex++).get()); // forward
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // turn
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // toZoneC
             robot.dropWobbleGoal();
