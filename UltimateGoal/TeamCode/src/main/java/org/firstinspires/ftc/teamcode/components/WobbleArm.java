@@ -30,6 +30,7 @@ public class WobbleArm implements RobotComponent, Runnable {
     private ElapsedTime runtime = new ElapsedTime();
 
     private volatile boolean isBusy = false;
+    private Button btnX = new Button();
     private Button btnY = new Button();
     private Button btnA = new Button();
     private Button btnB = new Button();
@@ -63,6 +64,7 @@ public class WobbleArm implements RobotComponent, Runnable {
     }
 
     public void control(Gamepad gamepad) {
+        btnY.input(gamepad.x);
         btnY.input(gamepad.y);
         btnA.input(gamepad.a);
         btnB.input(gamepad.b);
@@ -70,7 +72,9 @@ public class WobbleArm implements RobotComponent, Runnable {
         dpadUp.input(gamepad.dpad_up);
         dpadDown.input(gamepad.dpad_down);
 
-        if (btnY.onPress()) {
+        if(btnX.onPress()) {
+            mode = Mode.TargetZoneDrop;
+        } else if (btnY.onPress()) {
             mode = Mode.LiftForPickup;
         } else if(btnA.onPress()) {
             mode = Mode.DownForPickup;
@@ -127,15 +131,19 @@ public class WobbleArm implements RobotComponent, Runnable {
                 case TargetZoneDrop:
                     fullWobbleDrop();
                     mode = Mode.Idle;
+                    break;
                 case DropZoneDrop:
                     partialWobbleDrop();
                     mode = Mode.Idle;
+                    break;
                 case ManualAdjustUp:
                     manualAdjustUp();
                     mode = Mode.Idle;
+                    break;
                 case ManualAdjustDown:
                     manualAdjustDown();
                     mode = Mode.Idle;
+                    break;
                 case Idle:
                     wobbleMotor.setPower(0d);
             }
@@ -169,12 +177,16 @@ public class WobbleArm implements RobotComponent, Runnable {
     private void manualAdjustUp() {
         if(wobbleMotor.getCurrentPosition() > -200) {
             wobbleMotor.setPower(-0.5);
+        } else {
+            wobbleMotor.setPower(0d);
         }
     }
 
     private void manualAdjustDown() {
         if(wobbleMotor.getCurrentPosition() < 630) {
             wobbleMotor.setPower(0.5);
+        } else {
+            wobbleMotor.setPower(0d);
         }
     }
 }
