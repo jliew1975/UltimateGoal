@@ -14,11 +14,15 @@ import org.firstinspires.ftc.teamcode.util.OpModeStore;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
 import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
-public class WobbleArm implements RobotComponent {
+public class WobbleArm implements RobotComponent, Runnable {
     private static final double SERVO_OPEN = 0d;
     private static final double SERVO_CLOSE = 0.8;
 
-    private enum Mode { Latch, Unlatch }
+    private static final int WOBBLE_ARM_DOWN = 630;
+    private static final int WOBBLE_ARM_PARTIAL_DOWN = 280;
+    private static final int WOBBLE_ARM_LIFT = -200;
+
+    private enum Mode { DownForPickup, LiftForPickup, TargetZoneDrop, DropZoneDrop, ManualAdjustUp, ManualAdjustDown, Idle }
 
     private Servo wobbleServo;
     private DcMotorEx wobbleMotor;
@@ -33,8 +37,7 @@ public class WobbleArm implements RobotComponent {
     private Button dpadUp = new Button();
     private Button dpadDown = new Button();
 
-    private volatile Mode motorMode = Mode.Latch;
-    private volatile Mode servoMode = Mode.Latch;
+    private volatile Mode mode = Mode.Idle;
 
     @Override
     public void init() {
@@ -47,6 +50,9 @@ public class WobbleArm implements RobotComponent {
 
         if(OpModeUtils.getGlobalStore().getRunMode() == OpModeStore.RunMode.Autonomous) {
             wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        } else {
+            Thread internalThread = new Thread(this);
+            internalThread.start();
         }
 
         // wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -59,74 +65,25 @@ public class WobbleArm implements RobotComponent {
     public void control(Gamepad gamepad) {
         btnY.input(gamepad.y);
         btnA.input(gamepad.a);
+        btnB.input(gamepad.b);
 
         dpadUp.input(gamepad.dpad_up);
         dpadDown.input(gamepad.dpad_down);
 
-        /*
         if (btnY.onPress()) {
-            if (!isBusy) {
-                isBusy = true;
-                ThreadUtils.getExecutorService().submit(() -> {
-                    try {
-                        int targetPos;
-                        if (motorMode == Mode.Unlatch) {
-                            targetPos = -200;
-                            latch();
-                            motorMode = Mode.Latch;
-                        } else {
-                            targetPos = 630;
-                            unlatch();
-                            motorMode = Mode.Unlatch;
-                        }
-
-                        ThreadUtils.sleep(500);
-                        runToPosition(targetPos);
-                    } finally {
-                        isBusy = false;
-                    }
-                });
-            }
-
-
-        }
-        */
-
-        if (btnA.onPress()) {
-            if (!isBusy && motorMode == Mode.Latch) {
-                isBusy = true;
-                ThreadUtils.getExecutorService().submit(() -> {
-                    try {
-                        runToPosition(280);
-                        unlatch();
-                        motorMode = Mode.Unlatch;
-                    } finally {
-                        isBusy = false;
-                    }
-                });
-            }
-        } else if (!isBusy) {
-            if (dpadUp.isPressed()) {
-                wobbleMotor.setPower(-0.5);
-            } else if (dpadDown.isPressed()) {
-                wobbleMotor.setPower(0.5);
-            } else {
-                wobbleMotor.setPower(0.0);
-            }
-        }
-
-        if (btnY.onPress()) {
-            if(servoMode == Mode.Unlatch) {
-                latch();
-                servoMode = Mode.Latch;
-            } else {
-                unlatch();
-                servoMode = Mode.Unlatch;
-            }
+            mode = Mode.LiftForPickup;
+        } else if(btnA.onPress()) {
+            mode = Mode.DownForPickup;
+        } else if(btnB.onPress()) {
+            mode = Mode.DropZoneDrop;
+        } else if(dpadUp.isPressed()) {
+            mode = Mode.ManualAdjustUp;
+        } else if(dpadDown.isPressed()) {
+            mode = Mode.ManualAdjustDown;
         }
 
         Telemetry telemetry = OpModeUtils.getTelemetry();
-        telemetry.addData("wobbleMode", motorMode);
+        telemetry.addData("wobbleMode", mode);
         telemetry.addData("wobbleMotor", wobbleMotor.getCurrentPosition());
     }
 
@@ -154,5 +111,70 @@ public class WobbleArm implements RobotComponent {
 
         wobbleMotor.setPower(0d);
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, wobbleMotor);
+    }
+
+    public void run() {
+        try {
+            switch (mode) {
+                case DownForPickup:
+                    prepareWobbleArmForPickup();
+                    mode = Mode.Idle;
+                    break;
+                case LiftForPickup:
+                    liftUpWobble();
+                    mode = Mode.Idle;
+                    break;
+                case TargetZoneDrop:
+                    fullWobbleDrop();
+                    mode = Mode.Idle;
+                case DropZoneDrop:
+                    partialWobbleDrop();
+                    mode = Mode.Idle;
+                case ManualAdjustUp:
+                    manualAdjustUp();
+                    mode = Mode.Idle;
+                case ManualAdjustDown:
+                    manualAdjustDown();
+                    mode = Mode.Idle;
+                case Idle:
+                    wobbleMotor.setPower(0d);
+            }
+        } catch(Throwable th) {
+            th.printStackTrace();
+            mode = Mode.Idle;
+        }
+    }
+
+    private void prepareWobbleArmForPickup() {
+        wobbleServo.setPosition(SERVO_OPEN);
+        runToPosition(WOBBLE_ARM_DOWN);
+    }
+
+    private void liftUpWobble() {
+        wobbleServo.setPosition(SERVO_CLOSE);
+        ThreadUtils.sleep(200); // wait for servo to reach target position
+        runToPosition(WOBBLE_ARM_LIFT);
+    }
+
+    private void fullWobbleDrop() {
+        runToPosition(WOBBLE_ARM_DOWN);
+        wobbleServo.setPosition(SERVO_OPEN);
+    }
+
+    private void partialWobbleDrop() {
+        runToPosition(WOBBLE_ARM_PARTIAL_DOWN);
+        wobbleServo.setPosition(SERVO_OPEN);
+    }
+
+    private void manualAdjustUp() {
+        if(wobbleMotor.getCurrentPosition() > -200) {
+            wobbleMotor.setPower(-0.5);
+        }
+    }
+
+    private void manualAdjustDown() {
+        if(wobbleMotor.getCurrentPosition() < 630) {
+            wobbleMotor.setPower(0.5);
+        }
     }
 }
