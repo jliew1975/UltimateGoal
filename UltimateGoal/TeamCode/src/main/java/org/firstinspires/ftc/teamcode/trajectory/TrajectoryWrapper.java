@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode.trajectory;
 
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+
+@Getter
+@Setter
 public class TrajectoryWrapper {
     public enum TrajectoryType { Path, Turn }
     private Trajectory trajectory;
@@ -21,6 +24,7 @@ public class TrajectoryWrapper {
         this.trajectoryType = TrajectoryType.Turn;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T get() {
         if(trajectoryType == TrajectoryType.Path) {
             return (T) trajectory;

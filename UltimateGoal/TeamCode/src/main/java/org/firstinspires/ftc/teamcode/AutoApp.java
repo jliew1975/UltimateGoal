@@ -59,12 +59,6 @@ public abstract class AutoApp extends CommonOpMode {
 
     public abstract void performRobotOperation() throws InterruptedException;
 
-    protected void prepareShooter() {
-        Shooter shooter = robot.get(Shooter.class);
-        shooter.liftShooter(0.45);
-        shooter.start();
-    }
-
     protected void shootPowerShot() {
         Shooter shooter = robot.get(Shooter.class);
         shooter.start();

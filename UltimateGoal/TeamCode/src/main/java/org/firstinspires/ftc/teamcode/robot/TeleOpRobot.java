@@ -89,7 +89,7 @@ public class TeleOpRobot extends CommonComponents implements Robot {
         telemetry = OpModeUtils.getTelemetry();
 
         // Set the target to the tower goal base on auto color
-        targetPosition = (AutonomousColor.Red == GlobalStorage.color) ?
+        targetPosition = (AutonomousColor.Red == GlobalStorage.autoColor) ?
                  new Vector2d(72, 31) : new Vector2d(72, -31);
     }
 
