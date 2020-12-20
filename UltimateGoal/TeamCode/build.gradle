@@ -21,6 +21,8 @@ repositories {
 dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:easyopencv:1.4.1'
+    implementation 'com.arcrobotics:ftclib:1.1.6'
+    implementation 'com.arcrobotics.ftclib:vision:1.1.0'
     compileOnly 'org.projectlombok:lombok:1.18.10'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
 }

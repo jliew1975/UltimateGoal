@@ -18,8 +18,12 @@ import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
+import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -39,12 +43,14 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.getMotorVelocityF;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
@@ -81,7 +87,8 @@ public class MecanumDriveCancelable extends MecanumDrive {
     private MotionProfile turnProfile;
     private double turnStart;
 
-    private DriveConstraints constraints;
+    private TrajectoryVelocityConstraint velConstraint;
+    private TrajectoryAccelerationConstraint accelConstraint;
     private TrajectoryFollower follower;
 
     private LinkedList<Pose2d> poseHistory;
@@ -107,7 +114,11 @@ public class MecanumDriveCancelable extends MecanumDrive {
         turnController = new PIDFController(HEADING_PID);
         turnController.setInputBounds(0, 2 * Math.PI);
 
-        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
+        velConstraint = new MinVelocityConstraint(Arrays.asList(
+                new AngularVelocityConstraint(MAX_ANG_VEL),
+                new MecanumVelocityConstraint(MAX_VEL, TRACK_WIDTH)
+        ));
+        accelConstraint = new ProfileAccelerationConstraint(MAX_ACCEL);
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -151,7 +162,7 @@ public class MecanumDriveCancelable extends MecanumDrive {
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
+            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
@@ -165,15 +176,15 @@ public class MecanumDriveCancelable extends MecanumDrive {
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
-        return new TrajectoryBuilder(startPose, constraints);
+        return new TrajectoryBuilder(startPose, velConstraint, accelConstraint);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
-        return new TrajectoryBuilder(startPose, reversed, constraints);
+        return new TrajectoryBuilder(startPose, reversed, velConstraint, accelConstraint);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
-        return new TrajectoryBuilder(startPose, startHeading, constraints);
+        return new TrajectoryBuilder(startPose, startHeading, velConstraint, accelConstraint);
     }
 
     public void turnAsync(double angle) {
@@ -184,9 +195,8 @@ public class MecanumDriveCancelable extends MecanumDrive {
         turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(heading, 0, 0, 0),
                 new MotionState(heading + angle, 0, 0, 0),
-                constraints.maxAngVel,
-                constraints.maxAngAccel,
-                constraints.maxAngJerk
+                MAX_ANG_VEL,
+                MAX_ANG_ACCEL
         );
 
         turnStart = clock.seconds();
@@ -333,15 +343,11 @@ public class MecanumDriveCancelable extends MecanumDrive {
         }
     }
 
-    public void setPIDCoefficients(DcMotor.RunMode runMode, PIDCoefficients coefficients) {
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(
-                coefficients.kP, coefficients.kI, coefficients.kD, getMotorVelocityF());
-
+    public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
         PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
-                pidfCoefficients.p, pidfCoefficients.i, pidfCoefficients.d,
-                pidfCoefficients.f * 12 / batteryVoltageSensor.getVoltage()
+                coefficients.p, coefficients.i, coefficients.d,
+                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
         );
-
         for (DcMotorEx motor : motors) {
             motor.setPIDFCoefficients(runMode, compensatedCoefficients);
         }

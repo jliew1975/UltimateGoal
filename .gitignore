@@ -4,3 +4,6 @@
 Rover Ruckus Code/ftc_app/ftc_app.iml
 Rover Ruckus Code/ftc_app/local.properties
 build
+/RRPathVisualizer/.idea
+/RRPathVisualizer/build
+/RRPathVisualizer/.idea
