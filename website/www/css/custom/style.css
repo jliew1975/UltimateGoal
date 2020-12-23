@@ -1,0 +1,2522 @@
+/* =======================================================================
+Template Name:HOSTING html5 templete
+Author:  CrazyCafe
+Author URI:
+Version: 1.0
+Description: This Template is created for web template
+Developed By:Romana Nasrin
+--------------------------------------------------------------------------
+CSS INDEX
+-> Common Css -------------------------------->( "css\sass\style.scss" at Line No: 43)
+-> Header-Top Css ---------------------------->( "css\sass\style.scss" at Line No: 216)
+-> Header-Bottom Css ------------------------->( "css\sass\style.scss" at Line No: 247)
+-> Hero-Area Css ----------------------------->( "css\sass\style.scss" at Line No: 602)
+-> romana_charity_area Css ------------------->( "css\sass\style.scss" at Line No: 711)
+-> romana_cause_area Css --------------------->( "css\sass\style.scss" at Line No: 807)
+-> romana_about_area Css --------------------->( "css\sass\style.scss" at Line No: 976)
+-> romana_better_place_area Css -------------->( "css\sass\style.scss" at Line No: 1045)
+-> romana_donation_area Css ------------------>( "css\sass\style.scss" at Line No: 1086)
+-> romana_client_area Css -------------------->( "css\sass\style.scss" at Line No: 1236)
+-> romana_recentNews_area Css ---------------->( "css\sass\style.scss" at Line No: 1293)
+-> romana_footer_area Css -------------------->( "css\sass\style.scss" at Line No: 1367)
+-> Home-2 Css -------------------------------->( "css\sass\style.scss" at Line No: 1473)
+-> All_Page_Common Css ----------------------->( "css\sass\style.scss" at Line No: 1464)
+-> About Page Css----------------------------->( "css\sass\style.scss" at Line No: 1716)
+-> Event Page Css----------------------------->( "css\sass\style.scss" at Line No: 1759)
+-> Event Detail Page Css---------------------->( "css\sass\style.scss" at Line No: 1838)
+-> Volunteer-Page Css------------------------->( "css\sass\style.scss" at Line No: 1871)
+-> News Page Css------------------------------>( "css\sass\style.scss" at Line No: 1929)
+-> News-Detail-Page Css----------------------->( "css\sass\style.scss" at Line No: 1939)
+-> Cause-Deail Page Css----------------------->( "css\sass\style.scss" at Line No: 1941)
+-> 404 page Css------------------------------->( "css\sass\style.scss" at Line No: 2063)
+-> Contact page Css--------------------------->( "css\sass\style.scss" at Line No: 2147)
+-> Registration page Css---------------------->( "css\sass\style.scss" at Line No: 2173)
+-> Preloder Css------------------------------->( "css\sass\style.scss" at Line No: 2234)
+
+
+/* ===================================== Import Scss ================================== */
+.commonh2, .romana_section_title h2 {
+  font-size: 40px;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: #000; }
+
+.commonh3, .romana_single_cause_text h3, .romana_single_post .romana_post_title h2, .home2 .romana_count_down h2, .romana_children_area h3, .romana_children_area .romana_event_timeline h4, .romana_news_detail_area h3, .romana_cause_detail_area h3 {
+  font-size: 30px;
+  font-weight: 500;
+  text-transform: inherit;
+  color: #000; }
+
+.common_btn, .romana_client_btn a, ul.cartSearch li.donation a, .romana_hero_text .romana_slider_btn a, .romana_charity_text .romana_charity_btn a, .romana_cause_btn a, .romana_about_text .romana_about_btn a, .romana_better_place_text .romana_better_place_btn a, .romana_view_more_btn a, .romana_children_area .romana_children_text .romana_attend_btn a, .cause_detail_donate_btn a, .romana_error_text .romana_error_btn a {
+  background: #ad102f;
+  display: inline-block;
+  width: 172px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  text-transform: capitalize;
+  font-weight: 300;
+  color: #f5f1de;
+  font-size: 16px;
+  border-radius: 3px;
+  -webkit-transition-duration: 0.4s;
+  -moz-transition-duration: 0.4s;
+  -o-transition-duration: 0.4s;
+  transition-duration: 0.4s; }
+
+.common_bg, .hero_slider_bg, .romana_allPage_area {
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: relative; }
+
+.common_after, .hero_slider_bg:after, .romana_better_place_area:after, .romana_about_video:after, .home2 .romana_clock:after, .romana_allPage_area:after {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0; }
+
+.common_shadow, .romana_about_video img, .romana_single_donation .romana_donation_img, .romana_our_mission_area .romana_mission_img img {
+  border: 10px solid #f5f1de;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.12);
+  height: 300px;
+  }
+
+common_shadow, .romana_about_video img, .romana_single_donation .romana_donation_img, .romana_our_mission_area .romana_team_mission_img img {
+  border: 10px solid #f5f1de;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.12);
+  height: 500px;
+  }
+
+.common_shadow_btn {
+  box-shadow: 1px 3px 4px rgba(0, 0, 0, 0.15); }
+
+.common_input_after {
+  background: #dbeeff;
+  color: #f5f1de;
+  content: "\f0d7 ";
+  cursor: pointer;
+  font-family: FontAwesome;
+  font-size: 17px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  height: 45px;
+  width: 50px;
+  text-align: center;
+  line-height: 45px;
+  pointer-events: none; }
+
+.common_slider_nav {
+  width: 46px;
+  height: 46px;
+  line-height: 38px;
+  position: absolute;
+  border: 5px solid #d3e9fd;
+  top: 50%;
+  margin-top: -25px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 18px;
+  color: #f5f1de;
+  -webkit-transition-duration: 0.4s;
+  -moz-transition-duration: 0.4s;
+  -o-transition-duration: 0.4s;
+  transition-duration: 0.4s; }
+
+/* ------------------------------------------------
+    1.***Base Css Start***
+------------------------------------------------- */
+* {
+  margin: 0px;
+  padding: 0px;
+  list-style: none; }
+
+a {
+  text-decoration: none;
+  outline: none; }
+
+a:hover, a:focus, input, textarea {
+  text-decoration: none;
+  outline: none; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0px;
+  padding: 0px; }
+
+img {
+  max-width: 100%; }
+
+ol, ul {
+  margin: 0px;
+  padding: 0px; }
+
+select {
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  -webkit-appearance: none; }
+
+html,
+body {
+  height: 100%; }
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  line-height: 30px;
+  color: #888;
+  background: #f5f1de;
+  font-weight: 300;
+  line-height: 27px; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    body {
+      font-size: 14px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    body {
+      font-size: 14px; } }
+
+/* ==================================== Common Css =================================== */
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_section_title br {
+    display: none; } }
+
+.romana_section_title {
+  color: #666;
+  line-height: 24px; }
+
+.romana_section_title h2 {
+  margin-bottom: 5px; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_section_title h2 {
+      font-size: 35px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_section_title h2 {
+      font-size: 30px; } }
+
+.romana_section_padding {
+  padding-top: 80px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_section_padding {
+      padding-top: 60px; } }
+
+@media only screen and (min-width: 0px) and (max-width: 991px) {
+  .romana_better_place_text.text-center br {
+    display: none; } }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_hero_text br {
+    display: none; } }
+
+.owl-carousel .owl-item img {
+  width: auto; }
+
+.romana_common_form .field {
+  height: 54px;
+  margin-bottom: 15px;
+  position: relative; }
+
+.romana_common_form input[type="text"], .romana_common_form label, .romana_common_form textarea {
+  background: transparent none repeat scroll 0 0;
+  border: 1px solid #c6c6c6;
+  bottom: 0;
+  color: #888;
+  font-size: 15px;
+  height: 44px;
+  left: 0;
+  line-height: 44px;
+  margin: 0;
+  padding: 0 15px;
+  position: absolute;
+  text-indent: 5px;
+  top: 0;
+  transition-duration: 0.3s;
+  width: 100%;
+  font-weight: 300; }
+
+.romana_common_form .star_color {
+  color: #ad102f; }
+
+.romana_common_form textarea {
+  height: 190px;
+  resize: none; }
+
+.romana_common_form .text-field label {
+  height: 190px; }
+
+.romana_submit_btn input[type="submit"] {
+  background: #ad102f;
+  border: medium none;
+  color: #f5f1de;
+  font-size: 15px;
+  height: 43px;
+  line-height: 43px;
+  margin-bottom: 40px;
+  margin-top: 148px;
+  text-transform: capitalize;
+  width: 100%;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s; }
+
+.romana_submit_btn input[type="submit"]:hover {
+  background: none;
+  border: 1px solid #ad102f;
+  color: #888; }
+
+.romana_common_form input[type="text"]:focus, .romana_common_form label:focus, .romana_common_form textarea:focus {
+  border: 1px solid #ad102f; }
+
+.romana_donation_method ul li label {
+  color: #000000;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 300;
+  margin: 2px auto;
+  padding: 11px 0 0 50px;
+  position: relative;
+  text-transform: capitalize;
+  z-index: 9; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_donation_method ul li label {
+      padding: 11px 0 0 45px; } }
+
+.romana_donation_method ul li input[type="radio"] {
+  position: absolute;
+  visibility: hidden; }
+
+.romana_donation_method ul li .check {
+  border: 2px solid #c6c6c6;
+  border-radius: 100%;
+  display: block;
+  height: 18px;
+  left: 20px;
+  position: absolute;
+  top: 3px;
+  transition: border 0.25s linear 0s;
+  width: 18px;
+  z-index: 5; }
+
+.romana_donation_method ul li .check::before {
+  border-radius: 100%;
+  content: "";
+  display: block;
+  height: 10px;
+  left: 2px;
+  margin: auto;
+  position: absolute;
+  top: 2px;
+  transition: background 0.25s linear 0s;
+  width: 10px; }
+
+input[type="radio"]:checked ~ .check::before {
+  background: #ad102f; }
+
+.romana_donation_method > ul {
+  margin-left: -20px;
+  margin-top: 10px; }
+
+.romana_donation_method ul li {
+  position: relative;
+  width: 100%;
+  display: inline; }
+
+input[type="radio"]:checked ~ .check {
+  border: 2px solid #c7c7c7; }
+
+.hvr-bounce-to-right, .hvr-bounce-to-left, .hvr-shutter-out-horizontal {
+  overflow: hidden; }
+
+.hvr-bounce-to-right:before {
+  background: #1c7bd0; }
+
+.hvr-bounce-to-left::before {
+  background: #1c7bd0  none repeat scroll 0 0; }
+
+.romana_single_plan:hover .hvr-grow {
+  transform: scale(1.1); }
+
+select {
+  background: #f5f1de none repeat scroll 0 0;
+  border: 1px solid #c6c6c6;
+  color: #888;
+  font-size: 15px;
+  height: 50px;
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 288px;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s; }
+  select:focus, select:hover {
+    border: 1px solid #ad102f; }
+
+.select_option_one,
+.select_option_two {
+  position: relative; }
+
+.select_option_one::after,
+.select_option_two::after {
+  background: transparent none repeat scroll 0 0;
+  color: #888888;
+  content: "\eb89";
+  cursor: pointer;
+  font-family: "IcoFont";
+  font-size: 17px;
+  height: 54px;
+  line-height: 58px;
+  pointer-events: none;
+  position: absolute;
+  right: 72px;
+  text-align: center;
+  top: -4px;
+  width: 50px; }
+
+/* ==================================== Header-Top Css ============================== */
+.romana_header_top {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 6px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_header_top {
+      display: none; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_header_top {
+      overflow: hidden; } }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_header_top {
+      overflow: hidden; } }
+
+.romana_header_top_left li {
+  float: left;
+  padding-right: 30px; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_header_top_left li {
+      padding-right: 20px; } }
+  .romana_header_top_left li a {
+    color: #666;
+    text-transform: capitalize;
+    font-size: 14px; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_header_top_left li a {
+        padding-right: 12px; } }
+
+.romana_header_top_right a {
+  color: #666;
+  font-size: 13px; }
+
+/* ==================================== Header-Bottom Css =========================== */
+.romana_header_bottom {
+  position: relative;
+  z-index: 999; }
+
+.romana_logo {
+  margin-top: 5px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_logo {
+      margin-bottom: 6px;
+    } }
+
+nav#navbar {
+  text-align: center; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    nav#navbar {
+      text-align: left; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    nav#navbar {
+      text-align: left; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    nav#navbar {
+      position: absolute;
+      width: 280px;
+      padding-right: 0;
+      background: #f5f1de;
+      z-index: 2;
+      right: 15px;
+      top: 68px;
+      border: 10px solid #f5f1de;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    nav#navbar {
+      width: 320px; } }
+
+nav#navbar ul.nav {
+  margin: 0;
+  list-style: none;
+  float: none;
+  display: inline-block;
+  vertical-align: top; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    nav#navbar ul.nav {
+      float: left; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    nav#navbar ul.nav {
+      display: block;
+      text-align: left; } }
+  nav#navbar ul.nav li {
+    display: inline-block;
+    position: relative; }
+    nav#navbar ul.nav li a {
+      color: #000;
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 34px;
+      margin-top: 35px;
+      padding: 0 20px;
+      text-transform: capitalize;
+      -webkit-transition-duration: 0.4s;
+      -moz-transition-duration: 0.4s;
+      -o-transition-duration: 0.4s;
+      transition-duration: 0.4s; }
+      @media only screen and (min-width: 992px) and (max-width: 1199px) {
+        nav#navbar ul.nav li a {
+          padding: 0 18px; } }
+      @media only screen and (min-width: 768px) and (max-width: 991px) {
+        nav#navbar ul.nav li a {
+          font-size: 12px;
+          line-height: 10px;
+          margin: 35px 0 31px;
+          padding: 0 10px; } }
+      @media only screen and (min-width: 0px) and (max-width: 767px) {
+        nav#navbar ul.nav li a {
+          display: block;
+          margin: 0;
+          padding: 15px; } }
+      nav#navbar ul.nav li a:hover {
+        color: #ad102f; }
+        @media only screen and (min-width: 0px) and (max-width: 767px) {
+          nav#navbar ul.nav li a:hover {
+            color: #f5f1de;
+            background-color: #ad102f; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      nav#navbar ul.nav li {
+        border: 1px solid #d2d2d2;
+        display: block;
+        margin: 0px; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      nav#navbar ul.nav li ul {
+        border: none; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      nav#navbar ul.nav li ul li {
+        border: 1px solid #d2d2d2; } }
+  nav#navbar ul.nav li.active a {
+    color: #ad102f; }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  nav#navbar ul.nav li ul.dropdown-menu {
+    box-shadow: none;
+    background: #f8fbfd;
+    float: none;
+    width: 100%;
+    padding: 0;
+    position: static; } }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  nav#navbar ul.nav li ul.dropdown-menu li {
+    border-left: 3px solid #ad102f; } }
+
+nav#navbar ul.nav li ul.dropdown-menu li a {
+  color: #000; }
+  nav#navbar ul.nav li ul.dropdown-menu li a:hover {
+    color: #ad102f; }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  nav#navbar ul.nav li.active a:hover {
+    color: #f5f1de; } }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  nav#navbar ul.nav li ul.dropdown-menu li a:hover {
+    color: #f5f1de; } }
+
+@media only screen and (min-width: 768px) {
+  nav#navbar ul.nav li ul.dropdown-menu {
+    width: 200px;
+    background: #f5f1de;
+    border: 3px solid #ad102f;
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    top: 200%;
+    opacity: 0;
+    visibility: hidden;
+    padding: 0;
+    -webkit-transition: all 0.25s ease-out 0s;
+    transition: all 0.25s ease-out 0s;
+    display: block;
+    padding: 10px 0px; }
+
+  nav#navbar ul.nav li ul.dropdown-menu li {
+    width: 100%; }
+
+  nav#navbar ul.nav li ul.dropdown-menu li a {
+    display: block;
+    width: 100%;
+    line-height: 35px;
+    margin: 0;
+    text-align: left;
+    padding-left: 20px;
+    font-size: 12px; }
+
+  nav#navbar ul.nav li ul.dropdown-menu li a:before {
+    content: '\eb88';
+    font-family: "IcoFont";
+    margin-right: 12px;
+    color: #ad102f; }
+
+  nav#navbar ul.nav li.open ul.dropdown-menu {
+    top: 100%;
+    opacity: 1;
+    visibility: visible; }
+
+  nav#navbar ul.nav li > a,
+  nav#navbar ul.nav li > a:focus,
+  nav#navbar ul.nav li > a:hover {
+    background: transparent; } }
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  nav#navbar ul.nav li:nth-last-child(1) ul.dropdown-menu,
+  nav#navbar ul.nav li:nth-last-child(2) ul.dropdown-menu {
+    left: auto;
+    right: -137px !important; } }
+.navbar-toggle {
+  margin-bottom: 11px;
+  margin-right: -6px;
+  margin-top: 14px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .navbar-toggle {
+      position: relative;
+      z-index: 9; } }
+
+.romana_client_btn {
+  padding: 20px 0px;
+  text-align: right;
+  position: relative; }
+  .romana_client_btn a {
+    background: #ad102f;
+    width: 145px;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: capitalize; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_client_btn a {
+        font-size: 12px;
+        width: 109px; } }
+    .romana_client_btn a i {
+      padding-right: 13px; }
+      @media only screen and (min-width: 768px) and (max-width: 991px) {
+        .romana_client_btn a i {
+          padding-right: 5px; } }
+
+ul.cartSearch {
+  margin: 0;
+  list-style: none;
+  display: inline-block;
+  position: absolute;
+  right: 15px;
+  top: 1; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    ul.cartSearch {
+      top: -6px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    ul.cartSearch {
+      top: -9px;
+      left: 120px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    ul.cartSearch {
+      left: 280px; } }
+  ul.cartSearch li {
+    display: inline; }
+    ul.cartSearch li a {
+      color: #000000;
+      display: inline-block;
+      font-size: 12px;
+      line-height: 20px;
+      margin: 30px -5px 23px 30px;
+      padding: 5px;
+      transition-duration: 0.4s;
+      vertical-align: top; }
+      @media only screen and (min-width: 0px) and (max-width: 767px) {
+        ul.cartSearch li a {
+          display: none; } }
+      @media only screen and (min-width: 768px) and (max-width: 991px) {
+        ul.cartSearch li a {
+          margin: 26px -5px 23px 30px; } }
+      ul.cartSearch li a:hover {
+        color: #ad102f; }
+
+ul.cartSearch {
+  top: 1px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    ul.cartSearch {
+      top: -9px; } }
+
+ul.cartSearch li.donation a {
+  font-size: 15px;
+  height: 40px;
+  line-height: 28px;
+  margin-top: 24px;
+  width: 125px; }
+  ul.cartSearch li.donation a:hover {
+    color: #000; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    ul.cartSearch li.donation a {
+      margin-top: 18px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    ul.cartSearch li.donation a {
+      font-size: 12px;
+      width: 110px; } }
+
+form.searchForm {
+  background-color: #f5f1de;
+  height: 50px;
+  position: absolute;
+  right: 15px;
+  width: 100%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  overflow: hidden;
+  bottom: -50px;
+  width: 500px;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  transform: scale(1, 0); }
+  form.searchForm i {
+    color: #000;
+    content: "\efb2";
+    font-family: "IcoFont";
+    font-size: 20px;
+    left: 10px;
+    line-height: 50px;
+    position: absolute;
+    cursor: pointer;
+    padding-right: 10px;
+    border-right: 1px solid #eee; }
+    form.searchForm i:hover {
+      color: #ad102f; }
+
+form.searchForm.active {
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1); }
+
+form.searchForm input {
+  border: medium none;
+  display: inline-block;
+  float: left;
+  height: 50px;
+  width: 85%;
+  padding-left: 55px;
+  font-size: 17px; }
+
+form.searchForm input + input {
+  width: 15%;
+  background: #ad102f;
+  font-family: "IcoFont";
+  color: #f5f1de;
+  font-size: 18px;
+  padding-left: 0; }
+
+.navbar-toggle {
+  margin-top: 10px; }
+  .navbar-toggle i {
+    color: #000; }
+
+/* ==================================== Hero-Area Css ======================= */
+.romana_hero_area .slider_prg {
+  background-color: #f5f1de !important;
+  bottom: -100px;
+  height: 1px;
+  left: 50%;
+  margin-left: -110px;
+  overflow: hidden;
+  position: absolute;
+  width: 220px; }
+.romana_hero_area .slider_prg_in {
+  position: absolute;
+  width: 0px;
+  height: 100%;
+  background-color: #ad102f;
+  content: '';
+  animation-iteration-count: infinite; }
+@keyframes slider_prg_in {
+  form {
+    width: 0px; }
+  to {
+    width: 100%; } }
+.hero_slider_bg {
+  background: url(../../images/slider_bg.jpg);
+  height: 578px;
+  position: relative; }
+
+.hero_slider_bg:after, .romana_better_place_area:after {
+  background: rgba(0, 0, 0, 0.54); }
+
+.romana_hero_text {
+  color: #f5f1de;
+  padding-top: 138px;
+  position: relative;
+  z-index: 9;
+  height: 400px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_hero_text {
+      font-size: 15px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_hero_text {
+      text-align: center;
+      padding-top: 125px; } }
+  .romana_hero_text h1 {
+    font-size: 60px;
+    font-weight: 300;
+    text-transform: capitalize;
+    margin-bottom: 25px; }
+    @media only screen and (min-width: 992px) and (max-width: 1199px) {
+      .romana_hero_text h1 {
+        font-size: 50px; } }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_hero_text h1 {
+        font-size: 42px; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .romana_hero_text h1 {
+        font-size: 30px; } }
+    .romana_hero_text h1 span {
+      color: #ad102f; }
+  .romana_hero_text .romana_slider_btn {
+    margin-top: 30px; }
+
+.romana_hero_text h1.animated {
+  animation-duration: 1s; }
+
+.romana_hero_text p.animated {
+  animation-duration: 1.5s; }
+
+.romana_slider_btn.animated {
+  animation-duration: 2s; }
+
+/* ==================================== romana_charity_area Css ======================= */
+.romana_charity_area, .romana_client_area {
+  background: url(../../images/pattern_bg.jpg);
+  color: #f5f1de;
+  position: relative;
+  margin-top: -1px; }
+
+.romana_charity_area {
+  overflow: hidden; }
+
+.romana_charity_date {
+  background: #000000 none repeat scroll 0 0;
+  height: 60px;
+  padding-bottom: 10px;
+  padding-left: 100px;
+  padding-top: 10px;
+  position: absolute;
+  top: 30px;
+  width: 290px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_charity_date {
+      padding-left: 11px;
+      width: 186px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_charity_date {
+      top: 120px;
+      padding-left: 121px;
+      width: 323px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_charity_date {
+      padding-left: 110px;
+      top: 40px;
+      width: 265px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_charity_date h2 {
+      font-size: 25px;
+      line-height: 35px; } }
+
+.romana_progress_circle_bottom_single {
+  float: left;
+  font-size: 22px;
+  padding: 25px 22px 0;
+  text-transform: capitalize; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_progress_circle_bottom_single {
+      font-size: 16px; } }
+  .romana_progress_circle_bottom_single span {
+    display: block; }
+
+.romana_progress_circle_top {
+  padding-top: 27px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_progress_circle_top {
+      margin: 0 auto;
+      padding-top: 135px;
+      width: 200px; } }
+
+.progress-bar {
+  margin-left: 0px; }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_progress_circle {
+    margin: 0 auto;
+    width: 300px; } }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_progress_circle_bottom {
+    overflow: hidden;
+    width: 250px;
+    margin: 0 auto; } }
+
+.romana_charity_text {
+  padding-bottom: 56px;
+  padding-top: 50px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_charity_text {
+      padding-left: 50px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_charity_text {
+      text-align: center; } }
+  .romana_charity_text h2 {
+    font-size: 24px;
+    font-weight: 300; }
+  .romana_charity_text h3 {
+    font-size: 36px;
+    margin: 10px 0px; }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .romana_charity_text h3 {
+        font-size: 27px; } }
+  .romana_charity_text .romana_charity_btn {
+    margin-top: 20px; }
+    .romana_charity_text .romana_charity_btn a {
+      background: #f5f1de;
+      color: #000; }
+
+/* ==================================== romana_cause_area Css ======================= */
+.romana_recent_cause {
+  margin-bottom: 40px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_recent_cause {
+      margin-bottom: -25px; } }
+
+.romana_single_cause_text_img {
+  position: relative;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_single_cause_text_img {
+      margin-top: 50px; } }
+
+.romana_day_left {
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  background: #ad102f;
+  height: 43px;
+  left: -3px;
+  position: absolute;
+  text-align: center;
+  top: -3px;
+  width: 145px;
+  z-index: 9;
+  display: none; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_day_left {
+      left: 335px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_day_left {
+      height: 38px;
+      left: 261px;
+      top: 130px;
+      width: 110px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_day_left {
+      display: none; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .romana_day_left {
+      left: 11px;
+      top: 795px; } }
+  .romana_day_left h2 {
+    color: #f5f1de;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 41px; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_day_left h2 {
+        font-size: 13px;
+        line-height: 37px; } }
+
+.romana_single_cause_text {
+  position: relative; }
+  .romana_single_cause_text h3 {
+    margin-top: 19px;
+    margin-bottom: 15px;
+    text-transform: inherit;
+    font-size: 24px; }
+    .romana_single_cause_text h3 a {
+      color: #000;
+      -webkit-transition-duration: 0.3s;
+      -moz-transition-duration: 0.3s;
+      -o-transition-duration: 0.3s;
+      transition-duration: 0.3s; }
+    @media only screen and (min-width: 992px) and (max-width: 1199px) {
+      .romana_single_cause_text h3 {
+        font-size: 23px; } }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_single_cause_text h3 {
+        font-size: 18px; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .romana_single_cause_text h3 {
+        font-size: 22px; } }
+  .romana_single_cause_text .romana_raise_right {
+    float: right;
+    color: #222;
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: capitalize; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_single_cause_text .romana_raise_right {
+        font-size: 15px; } }
+  .romana_single_cause_text .romana_raise_left {
+    display: block;
+    float: left;
+    color: #222;
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: capitalize; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_single_cause_text .romana_raise_left {
+        font-size: 15px; } }
+  .romana_single_cause_text span {
+    display: block;
+    font-size: 15px;
+    color: #888;
+    font-weight: 300; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_single_cause_text span {
+        font-size: 13px; } }
+
+.romana_cause_btn {
+  margin-top: 6px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_cause_btn a {
+      width: 152px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_cause_btn a {
+      font-size: 14px;
+      height: 44px;
+      line-height: 44px;
+      width: 120px; } }
+
+.romana_cause_img {
+  overflow: hidden; }
+  .romana_cause_img img {
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s; }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .romana_cause_img img {
+        width: 100%; } }
+    .romana_cause_img img:hover {
+      -webkit-transform: scale(1.1);
+      -moz-transform: scale(1.1);
+      -o-transform: scale(1.1);
+      transform: scale(1.1); }
+
+.barfiller {
+  background: #e3e2e2 none repeat scroll 0 0;
+  border: 0 solid #cccccc;
+  box-shadow: none;
+  height: 15px;
+  margin-top: 30px;
+  border-radius: 3px;
+  margin-bottom: 15px; }
+
+.barfiller .fill {
+  background: #ad102f;
+  border-radius: 3px; }
+
+.barfiller .tip {
+  background: #ad102f;
+  border: 3px solid #f5f1de;
+  border-radius: 50%;
+  color: #f5f1de;
+  font-size: 10px;
+  height: 30px;
+  line-height: 20px;
+  position: absolute;
+  text-align: center;
+  top: 21px;
+  width: 30px; }
+
+.barfiller .tip::after {
+  display: none; }
+
+.romana_single_cause_text_img:hover .romana_single_cause_text h3 a {
+  color: #ad102f; }
+
+.romana_single_cause_text_img:hover .romana_day_left {
+  display: block; }
+
+/* ==================================== romana_about_area Css ======================= */
+.romana_about_area {
+  padding-bottom: 66px; }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_about_text {
+    margin-top: -50px;
+    text-align: center; } }
+.romana_about_text h3 {
+  color: #000;
+  font-size: 30px;
+  margin-bottom: 20px;
+  margin-top: 93px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_about_text h3 {
+      font-size: 26px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_about_text h3 {
+      font-size: 20px;
+      margin-top: 67px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_about_text h3 {
+      font-size: 25px; } }
+.romana_about_text span {
+  color: #666666;
+  font-size: 17px;
+  font-weight: 500; }
+.romana_about_text .romana_about_btn {
+  margin-top: 27px; }
+
+.romana_about_video {
+  position: relative;
+  margin-top: 43px;
+  margin-bottom: 15px; }
+  .romana_about_video:after {
+    background: rgba(0, 0, 0, 0.7); }
+  .romana_about_video span {
+    left: 44%;
+    position: absolute;
+    top: 41%;
+    z-index: 9; }
+    @media only screen and (min-width: 992px) and (max-width: 1199px) {
+      .romana_about_video span {
+        left: 42%;
+        top: 38%; } }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_about_video span {
+        left: 39%;
+        top: 35%; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .romana_about_video span {
+        left: 50%;
+        margin-left: -15px;
+        top: 38%;
+        width: 30px; } }
+    @media only screen and (min-width: 480px) and (max-width: 767px) {
+      .romana_about_video span {
+        left: 50%;
+        top: 41%;
+        width: 50px;
+        margin-left: -25px; } }
+    .romana_about_video span img {
+      box-shadow: none !important;
+      border: 0px solid #000 !important; }
+
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+  .romana_volunteers_img {
+    width: 400px;
+    height: 180px;
+    margin: 0 auto;
+    overflow: hidden;} }
+.romana_volunteers_img img {
+  width: 100%; }
+
+.nivo-lightbox-overlay {
+  background: #000; }
+
+/* ==================================== romana_better_place_area Css ======================= */
+.romana_better_place_area {
+  background: url(../../images/bp_bg.jpg);
+  color: #f5f1de;
+  position: relative;
+  padding: 100px 0px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_better_place_area {
+      padding: 70px 0px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_better_place_area {
+      padding: 80px 0px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_better_place_area {
+      padding: 27px 0px; } }
+
+.romana_better_place_text {
+  color: #f5f1de;
+  position: relative;
+  z-index: 9; }
+  .romana_better_place_text h2 {
+    font-size: 48px;
+    font-weight: 100;
+    margin-bottom: 17px; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_better_place_text h2 {
+        font-size: 35px; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .romana_better_place_text h2 {
+        font-size: 30px; } }
+  .romana_better_place_text .romana_better_place_btn {
+    margin-top: 25px; }
+    .romana_better_place_text .romana_better_place_btn a {
+      text-transform: inherit;
+      width: 200px;
+      -webkit-transition-duration: 0.3s;
+      -moz-transition-duration: 0.3s;
+      -o-transition-duration: 0.3s;
+      transition-duration: 0.3s; }
+
+/* ==================================== romana_donation_area Css ======================= */
+.romana_donation_bottom {
+  padding-top: 43px; }
+
+.romana_single_donation {
+  border: 1px solid #d6d6d6;
+  height: 250px;
+  position: relative;
+  margin-bottom: 50px; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_single_donation {
+      max-width: 650px;
+      margin: 0 auto;
+      margin-bottom: 50px; } }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_single_donation {
+      height: 185px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_single_donation {
+      height: auto; } }
+  .romana_single_donation .romana_donation_img {
+    position: absolute;
+    right: 48%;
+    top: -7px;
+    width: 39%; }
+    @media only screen and (min-width: 992px) and (max-width: 1199px) {
+      .romana_single_donation .romana_donation_img {
+        left: 72px;
+        position: absolute;
+        top: -13px;
+        width: 37%; } }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_single_donation .romana_donation_img {
+        left: 76px;
+        position: absolute;
+        top: -11px;
+        width: 40%; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .romana_single_donation .romana_donation_img {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 50%; } }
+    @media only screen and (min-width: 480px) and (max-width: 767px) {
+      .romana_single_donation .romana_donation_img {
+        width: 43%; } }
+    .romana_single_donation .romana_donation_img img {
+      width: 100%; }
+
+.romana_donation_date {
+  padding-left: 21px;
+  padding-top: 84px; }
+
+.romana_donation_address {
+  padding-left: 360px;
+  padding-top: 42px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_donation_address {
+      padding-left: 283px;
+      padding-top: 42px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_donation_address {
+      padding-left: 20px;
+      padding-top: 181px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .romana_donation_address {
+      padding-top: 120px; } }
+
+.romana_donation_date {
+  float: left;
+  padding-left: 21px;
+  padding-top: 84px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_donation_date {
+      padding-left: 18px;
+      padding-top: 58px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .romana_donation_date {
+      padding-top: 22px; } }
+  .romana_donation_date h2 {
+    font-size: 48px;
+    font-weight: 700;
+    color: #ad102f; }
+    @media only screen and (min-width: 992px) and (max-width: 1199px) {
+      .romana_donation_date h2 {
+        font-size: 40px; } }
+  .romana_donation_date span {
+    display: block;
+    font-size: 23px;
+    font-weight: 400;
+    color: #000; }
+
+.romana_donation_address h3 {
+  color: #383838;
+  margin-bottom: 20px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_donation_address h3 {
+      font-size: 20px;
+      margin-bottom: 16px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_donation_address h3 {
+      font-size: 20px; } }
+.romana_donation_address i {
+  color: #383838;
+  float: left;
+  margin-top: 4px; }
+.romana_donation_address p {
+  padding-left: 24px; }
+
+.romana_donation_arrow i {
+  background: #ad102f;
+  border-radius: 50%;
+  bottom: 18px;
+  height: 37px;
+  position: absolute;
+  right: 20px;
+  text-align: center;
+  width: 37px;
+  line-height: 37px;
+  color: #f5f1de; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_donation_arrow i {
+      bottom: 16px; } }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_donation_arrow i {
+      bottom: 7px;
+      height: 32px;
+      line-height: 32px;
+      right: 11px;
+      width: 32px; } }
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .romana_single_donation3 {
+    max-width: 650px;
+    margin: 0 auto;
+    margin-bottom: 50px; } }
+.romana_single_donation3 .romana_donation_img img {
+  width: 100%; }
+.romana_single_donation3 .romana_donation_address {
+  border: 1px solid #d6d6d6; }
+.romana_single_donation3 .romana_donation_date {
+  padding-left: 54px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_single_donation3 .romana_donation_date {
+      padding-left: 30px; } }
+.romana_single_donation3 .romana_donation_address {
+  border: 1px solid #d6d6d6;
+  padding-left: 152px;
+  padding-top: 49px;
+  padding-bottom: 58px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_single_donation3 .romana_donation_address {
+      font-size: 14px;
+      padding-bottom: 4px;
+      padding-left: 123px;
+      padding-top: 40px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_single_donation3 .romana_donation_address {
+      font-size: 14px;
+      padding-bottom: 14px;
+      padding-left: 99px;
+      padding-top: 50px; } }
+.romana_single_donation3 .romana_donation_arrow i {
+  right: 36px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_single_donation3 .romana_donation_arrow i {
+      bottom: 8px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_single_donation3 .romana_donation_arrow i {
+      bottom: 70px;
+      right: 70px; } }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_view_more_btn {
+    margin-top: 50px; } }
+.romana_view_more_btn a {
+  margin-bottom: 80px;
+  background: #f5f1de;
+  border: 1px solid #adadad;
+  border-radius: 0px;
+  color: #666; }
+  .romana_view_more_btn a:hover {
+    background: #ad102f;
+    border: none;
+    color: #f5f1de; }
+
+/* ==================================== romana_client_area Css ======================= */
+.romana_client_area .owl-dots {
+  left: -210px;
+  position: absolute;
+  top: 35px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_client_area .owl-dots {
+      left: -128px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_client_area .owl-dots {
+      left: -100px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_client_area .owl-dots {
+      left: 0;
+      position: absolute;
+      top: 73px; } }
+.romana_client_area .owl-dots .owl-dot {
+  display: block; }
+.romana_client_area .owl-dots .owl-dot span {
+  backface-visibility: visible;
+  background: #ad102f;
+  border-radius: 30px;
+  display: block;
+  height: 17px;
+  margin: 10px 7px;
+  width: 17px;
+  border: 4px solid #f5f1de;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s; }
+.romana_client_area .owl-dots .owl-dot.active span, .romana_client_area .owl-theme .owl-dots .owl-dot:hover span {
+  background: #869791 none repeat scroll 0 0; }
+.romana_client_area .romana_single_client_text_img.text-center {
+  padding-bottom: 80px; }
+
+.romana_client_img {
+  left: 0px;
+  position: absolute;
+  top: 0; }
+
+.romana_single_client_text {
+  max-width: 697px;
+  padding-left: 69px;
+  margin-top: 34px; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_single_client_text {
+      padding-left: 70px; } }
+  .romana_single_client_text h3 {
+    font-size: 20px;
+    font-weight: 500;
+    text-transform: capitalize; }
+
+/* ==================================== romana_recentNews_area Css ======================= */
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_recentNews_area {
+    margin-bottom: -30px; } }
+.romana_recentNews_area .romana_section_title {
+  padding-bottom: 58px; }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_single_post {
+    margin-bottom: 30px; } }
+.romana_single_post .romana_post_thumb {
+  overflow: hidden; }
+  .romana_single_post .romana_post_thumb img {
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    width: 100%; }
+    .romana_single_post .romana_post_thumb img:hover {
+      -webkit-transform: scale(1.1);
+      -moz-transform: scale(1.1);
+      -o-transform: scale(1.1);
+      transform: scale(1.1); }
+.romana_single_post .romana_post_title h2 {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-size: 24px;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_single_post .romana_post_title h2 {
+      font-size: 22px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_single_post .romana_post_title h2 {
+      font-size: 27px; } }
+.romana_single_post .romana_post_date {
+  margin-bottom: 15px; }
+  .romana_single_post .romana_post_date li {
+    color: #666666;
+    display: inline-block;
+    font-size: 14px;
+    padding-right: 25px; }
+    .romana_single_post .romana_post_date li i {
+      margin-right: 8px;
+      -webkit-transition-duration: 0.3s;
+      -moz-transition-duration: 0.3s;
+      -o-transition-duration: 0.3s;
+      transition-duration: 0.3s; }
+.romana_single_post .romana_post_btn a {
+  color: #000;
+  font-size: 15px;
+  font-weight: 500;
+  position: relative;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s; }
+  .romana_single_post .romana_post_btn a:hover {
+    color: #ad102f; }
+  .romana_single_post .romana_post_btn a:hover i {
+    right: -25px; }
+  .romana_single_post .romana_post_btn a i {
+    font-size: 17px;
+    font-weight: 400;
+    position: absolute;
+    right: -19px;
+    top: 4px;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s; }
+
+.romana_single_post:hover h2 {
+  color: #ad102f; }
+
+.romana_single_post:hover i {
+  color: #ad102f; }
+
+/* ==================================== romana_footer_area Css ======================= */
+.romana_footer_top {
+  background: #333333;
+  color: #999999;
+  padding: 70px 0px; }
+  .romana_footer_top h2 {
+    font-size: 20px;
+    color: #bdbdbd;
+    margin-bottom: 35px; }
+
+.footer_logo {
+  margin-bottom: 35px; }
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .footer_left_text {
+    font-size: 14px; } }
+
+.footer_menu {
+  padding-left: 60px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .footer_menu {
+      margin-top: 40px;
+      padding-left: 2px; } }
+  .footer_menu ul li {
+    padding-bottom: 5px;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s; }
+    .footer_menu ul li:hover {
+      padding-left: 5px;
+      color: #ad102f; }
+    .footer_menu ul li a {
+      color: #999; }
+      @media only screen and (min-width: 992px) and (max-width: 1199px) {
+        .footer_menu ul li a {
+          font-size: 14px; } }
+      .footer_menu ul li a:hover {
+        color: #ad102f; }
+
+.footer_recent_news {
+  padding-left: 20px; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .footer_recent_news {
+      margin-top: 68px;
+      padding-left: 0px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .footer_recent_news {
+      margin-top: 40px;
+      padding-left: 2px; } }
+  .footer_recent_news .romana_single_footer_news {
+    margin-bottom: 25px; }
+  .footer_recent_news .romana_single_footer_news_img {
+    display: block;
+    float: left; }
+  .footer_recent_news .romana_single_footer_news_text {
+    padding-left: 64px;
+    font-size: 14px; }
+    .footer_recent_news .romana_single_footer_news_text h3 {
+      font-size: 18px;
+      color: #f5f1de;
+      -webkit-transition-duration: 0.3s;
+      -moz-transition-duration: 0.3s;
+      -o-transition-duration: 0.3s;
+      transition-duration: 0.3s; }
+      @media only screen and (min-width: 992px) and (max-width: 1199px) {
+        .footer_recent_news .romana_single_footer_news_text h3 {
+          font-size: 14px; } }
+      .footer_recent_news .romana_single_footer_news_text h3:hover {
+        color: #ad102f; }
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .footer_contact {
+    margin-top: 68px;
+    padding-left: 66px; } }
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .footer_contact {
+    margin-top: 40px; } }
+
+.romana_single_contact {
+  font-size: 18px;
+  color: #999; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_single_contact {
+      font-size: 16px; } }
+  .romana_single_contact span {
+    color: #777777;
+    display: block;
+    font-size: 16px; }
+    @media only screen and (min-width: 992px) and (max-width: 1199px) {
+      .romana_single_contact span {
+        font-size: 13px; } }
+
+.romana_footer_bottom {
+  background: #404040;
+  color: #666;
+  padding-bottom: 16px;
+  padding-top: 25px; }
+
+/* ==================================== Home-2 Css ======================= */
+.home2 nav#navbar ul.nav li.active a,
+.home2 nav#navbar ul.nav li a:hover,
+.home2 nav#navbar ul.nav li ul.dropdown-menu li a::before,
+.home2 ul.cartSearch .search a:hover, .home2 .romana_donation_date h2, .home2 .romana_single_post .romana_post_btn a:hover, .home2 .footer_menu ul li a:hover, .home2 .footer_menu ul li:hover, .home2 .romana_single_footer_news_text h3:hover {
+  color: #2ecc71; }
+.home2 .romana_slider_btn a, .home2 .romana_about_btn a, .home2 .romana_cause_btn a {
+  height: 45px;
+  line-height: 45px; }
+.home2 ul.cartSearch li.donation a:hover {
+  color: #000 !important; }
+.home2 nav#navbar ul.nav li ul.dropdown-menu {
+  border: 3px solid #2ecc71; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .home2 nav#navbar ul.nav li ul.dropdown-menu {
+      border: 0px solid #2ecc71; } }
+.home2 nav#navbar ul.nav li ul.dropdown-menu li a {
+  color: #000000; }
+.home2 nav#navbar ul.nav li ul.dropdown-menu li a:hover {
+  color: #2ecc71; }
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .home2 nav#navbar ul.nav li a:hover {
+    background: #2ecc71; } }
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .home2 nav#navbar ul.nav li ul.dropdown-menu li {
+    border-left: 3px solid #2ecc71; } }
+.home2 nav#navbar ul.nav li ul.dropdown-menu li a {
+  color: #000; }
+  .home2 nav#navbar ul.nav li ul.dropdown-menu li a:hover {
+    color: #2ecc71; }
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .home2 nav#navbar ul.nav li.active a:hover {
+    color: #f5f1de; } }
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .home2 nav#navbar ul.nav li ul.dropdown-menu li a:hover {
+    color: #2ecc71; } }
+.home2 nav#navbar ul.nav li a:hover {
+  background-color: #2ecc71;
+  color: #f5f1de; }
+.home2 nav#navbar ul.nav li > a, .home2 nav#navbar ul.nav li > a:focus, .home2 nav#navbar ul.nav li > a:hover {
+  background: transparent none repeat scroll 0 0; }
+  .home2 nav#navbar ul.nav li > a:hover, .home2 nav#navbar ul.nav li > a:focus:hover, .home2 nav#navbar ul.nav li > a:hover:hover {
+    color: #2ecc71; }
+.home2 ul.cartSearch li.donation a, .home2 .romana_about_btn a, .home2 .romana_cause_progress::after, .home2 .romana_cause_progress span, .home2 .romana_cause_btn a, .home2 .romana_better_place_btn a, .home2 .romana_donation_arrow i, .home2 .romana_client_area .owl-dots .owl-dot span {
+  background: #2ecc71; }
+.home2 .romana_client_area .owl-dots .owl-dot.active span, .home2 .romana_client_area .owl-theme .owl-dots .owl-dot:hover span {
+  background: #869791 none repeat scroll 0 0; }
+.home2 form.searchForm input + input {
+  background: #2ecc71; }
+.home2 .hero_slider_bg {
+  background: url(../../images/slider_bg2.jpg); }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .home2 .hero_slider_bg {
+      height: 1120px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .home2 .hero_slider_bg {
+      height: 1020px; } }
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .home2 .romana_hero_text {
+    padding-top: 80px; } }
+.home2 .romana_hero_text h1 {
+  font-size: 24px;
+  text-transform: inherit; }
+.home2 .romana_hero_text h2 {
+  font-size: 48px;
+  margin-bottom: 20px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .home2 .romana_hero_text h2 {
+      font-size: 45px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .home2 .romana_hero_text h2 {
+      font-size: 34px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .home2 .romana_hero_text h2 {
+      font-size: 40px; } }
+.home2 .romana_slider_btn a {
+  background: #2ecc71; }
+.home2 .romana_day_left {
+  background: #2ecc71;
+  left: 215px;
+  top: 233px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .home2 .romana_day_left {
+      left: 149px;
+      top: 183px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .home2 .romana_day_left {
+      left: 110px;
+      top: 131px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .home2 .romana_day_left {
+      left: 128px;
+      top: 166px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .home2 .romana_day_left {
+      left: 288px;
+      top: 289px; } }
+.home2 .romana_about_area {
+  margin-top: -9px; }
+.home2 .romana_recent_cause_area {
+  padding-bottom: 80px;
+  margin-top: -9px; }
+.home2 .romana_client_area {
+  background: transparent url("../../images/green_pattern_bg.jpg") repeat scroll 0 0; }
+.home2 .barfiller .tip {
+  background: #2ecc71 none repeat scroll 0 0; }
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .home2 .romana_count_down br {
+    display: none; } }
+.home2 .romana_count_down {
+  background: #f5f1de;
+  height: 410px;
+  margin-top: 85px;
+  position: relative;
+  text-align: center;
+  width: 503px;
+  z-index: 9;
+  color: #666;
+  font-size: 14px;
+  float: right; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .home2 .romana_count_down p {
+      padding: 0px 10px; } }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .home2 .romana_count_down {
+      width: 456px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .home2 .romana_count_down {
+      width: 370px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .home2 .romana_count_down {
+      display: block;
+      float: none;
+      height: 510px;
+      margin: 80px auto 0;
+      width: 293px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .home2 .romana_count_down {
+      width: 435px; } }
+  .home2 .romana_count_down h1 {
+    background: #2ecc71;
+    color: #f5f1de;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px;
+    width: 200px; }
+  .home2 .romana_count_down h2 {
+    margin-top: 25px;
+    margin-bottom: 30px; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .home2 .romana_count_down h2 {
+        font-size: 24px; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .home2 .romana_count_down h2 {
+        font-size: 24px;
+        margin-top: 50px; } }
+  .home2 .romana_count_down .romana_count_date_venu {
+    margin-bottom: 12px;
+    margin-top: 7px; }
+  .home2 .romana_count_down .romana_count_date_venu li {
+    color: #444444;
+    display: inline-block;
+    font-size: 13px;
+    padding: 10px;
+    text-transform: capitalize; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .home2 .romana_count_down .romana_count_date_venu li {
+        padding: 5px; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .home2 .romana_count_down .romana_count_date_venu li {
+        padding: 0px 10px; } }
+    .home2 .romana_count_down .romana_count_date_venu li i {
+      color: #2ecc71;
+      margin-right: 6px; }
+.home2 .romana_clock {
+  border: 1px solid #cdcdcd;
+  margin: 25px auto 0;
+  width: 400px;
+  position: relative; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .home2 .romana_clock {
+      width: 340px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .home2 .romana_clock {
+      margin-top: 40px;
+      width: 290px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .home2 .romana_clock {
+      margin-top: 40px;
+      width: 400px; } }
+.home2 .romana_clock:after {
+  background: #2ecc71;
+  height: 40%;
+  top: 100%;
+  width: 100.5%;
+  left: -1px; }
+.home2 .day_wrap {
+  position: relative;
+  display: inline-block;
+  color: #000;
+  font-size: 48px;
+  font-weight: 700;
+  border-right: 1px solid #cdcdcd;
+  padding: 30px 20px;
+  margin: 0px -3px;
+  text-align: center;
+  width: 100px;
+  height: 90px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .home2 .day_wrap span {
+      padding-left: 0px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .home2 .day_wrap span {
+      padding-left: 30px;
+      text-align: center; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .home2 .day_wrap {
+      font-size: 28px;
+      padding: 30px 10px;
+      width: 80px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .home2 .day_wrap {
+      font-size: 28px;
+      padding: 30px 20px;
+      width: 70px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .home2 .day_wrap {
+      width: 100px;
+      font-size: 40px; } }
+.home2 .day_wrap:last-child {
+  border-right: 0px solid #cdcdcd; }
+.home2 .days {
+  font-size: 18px;
+  display: inline-block;
+  position: absolute;
+  left: 25px;
+  top: 90px;
+  font-weight: 700;
+  text-align: center;
+  z-index: 9;
+  text-transform: capitalize;
+  color: #f5f1de; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .home2 .days {
+      font-size: 15px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .home2 .days {
+      font-size: 14px;
+      left: 0px; } }
+.home2 .romana_view_more_btn a:hover {
+  background: #2ecc71;
+  border: none; }
+.home2 form.searchForm i:hover {
+  color: #2ecc71; }
+.home2 .romana_single_post:hover h2 {
+  color: #2ecc71; }
+.home2 .romana_single_post:hover i {
+  color: #2ecc71; }
+
+/* ==================================== All_Page_Common Css ======================= */
+.romana_allPage_area {
+  background: url("../../images/all_page_bg.jpg");
+  background-position: bottom center;
+  height: 238px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_allPage_area {
+      height: 230px; } }
+  .romana_allPage_area .romana_allPage_text {
+    color: #f5f1de;
+    position: relative;
+    z-index: 9;
+    text-align: left; }
+    .romana_allPage_area .romana_allPage_text h1 {
+      font-size: 36px;
+      text-transform: capitalize;
+      font-weight: 500;
+      padding-top: 80px;
+      padding-bottom: 10px; }
+      @media only screen and (min-width: 0px) and (max-width: 767px) {
+        .romana_allPage_area .romana_allPage_text h1 {
+          font-size: 25px; } }
+
+.romana_allPage_area:after {
+  background: rgba(0, 0, 0, 0.7);
+  height: 100%; }
+
+.breadcrumb {
+  background: transparent;
+  padding: 0px; }
+  .breadcrumb a {
+    color: #f5f1de;
+    font-size: 18px; }
+
+.breadcrumb > li + li::before {
+  color: #f5f1de; }
+
+/* ==============================================================================================
+    ************** About Page Css ******************
+================================================================================================= */
+.romana_our_mission_area .romana_mission_img img {
+  width: auto; }
+.romana_our_mission_area .romana_profile_img img {
+  width: 100%; }
+.romana_our_mission_area .romana_about_text {
+  margin-top: -70px; }
+
+.romana_history_vision {
+  padding-top: 50px; }
+
+.romana_Volunteers_bottom {
+  padding-top: 27px; }
+
+.romana_volunteers_hover {
+  left: 25%;
+  position: absolute;
+  top: 0%;
+  overflow: hidden;
+  opacity: 0;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  z-index: 9; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_volunteers_hover {
+      left: 13%; } }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_volunteers_hover {
+      left: 17%; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .romana_volunteers_hover {
+      left: 28%; } }
+  .romana_volunteers_hover li {
+    display: inline-block;
+    float: left;
+    padding: 0 5px; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_volunteers_hover li {
+        padding: 0 4px; } }
+    @media only screen and (min-width: 480px) and (max-width: 767px) {
+      .romana_volunteers_hover li {
+        padding: 0 10px; } }
+    .romana_volunteers_hover li a {
+      color: #f5f1de;
+      -webkit-transition-duration: 0.3s;
+      -moz-transition-duration: 0.3s;
+      -o-transition-duration: 0.3s;
+      transition-duration: 0.3s; }
+      .romana_volunteers_hover li a:hover {
+        color: #ad102f; }
+      .romana_volunteers_hover li a .icofont.icofont-social-google-plus {
+        font-size: 20px; }
+
+.romana_volunteers_img {
+  height: 180px;
+  overflow: hidden;
+  position: relative; }
+  /*
+  .romana_volunteers_img:after {
+    background: rgba(0, 0, 0, 0.7) none repeat scroll 0 0;
+    content: "";
+    height: 0%;
+    left: 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s; }
+  */
+.romana_volunteers_text {
+  text-align: center; }
+  .romana_volunteers_text h3 {
+    font-size: 18px;
+    color: #000;
+    margin-top: 15px;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s; }
+
+.romana_team_text h3 {
+    font-size: 18px;
+    color: #000;
+    margin-top: 15px;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s; }
+
+.romana_single_volunteers:hover .romana_volunteers_hover {
+  top: 45%;
+  opacity: 1; }
+
+.romana_single_volunteers:hover .romana_volunteers_img:after {
+  height: 100%; }
+
+.romana_single_volunteers:hover .romana_volunteers_text h3 {
+  color: #ad102f; }
+
+.romana_about_video2 {
+  margin-bottom: 70px;
+  margin-top: 20px; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_about_video2 span {
+      left: 44%;
+      top: 37%; } }
+
+.romana_about_video img {
+  width: 100%; }
+
+/* ==============================================================================================
+    ************** Event Page ******************
+================================================================================================= */
+.romana_recent_cause_area2 {
+  margin-top: -30px; }
+
+.romana_day_left.romana_day_left2 {
+  top: 7px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_day_left.romana_day_left2 {
+      top: 663px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .romana_day_left.romana_day_left2 {
+      top: 730px; } }
+
+.romana_cause_top {
+  margin-top: 10px; }
+
+.romana_cause_bottom {
+  margin-top: 90px; }
+
+.romana_event_bottom a {
+  margin-bottom: 0px; }
+
+.romana_single_donation3.cause_margin_bottom {
+  margin-bottom: 50px; }
+
+.event .romana_single_donation3 .romana_donation_arrow i {
+  bottom: 70px; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .event .romana_single_donation3 .romana_donation_arrow i {
+      bottom: 70px; } }
+
+/* ==============================================================================================
+    ************** Event Detail Page ******************
+================================================================================================= */
+.romana_children_area h3 {
+  font-size: 30px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_children_area h3 {
+      font-size: 26px;
+      text-align: center; } }
+.romana_children_area .romana_children_bottom {
+  margin-top: 35px; }
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_children_area .romana_children_text {
+    text-align: center; } }
+.romana_children_area .romana_children_text h3 {
+  margin-bottom: 13px; }
+.romana_children_area .romana_children_text .romana_attend_btn {
+  margin-top: 40px; }
+  .romana_children_area .romana_children_text .romana_attend_btn a {
+    height: 45px;
+    width: 168px;
+    line-height: 45px; }
+.romana_children_area .romana_event_timeline {
+  border: 1px solid #c6c6c6;
+  margin-top: 47px;
+  padding-bottom: 24px;
+  padding-left: 24px;
+  padding-top: 36px; }
+  .romana_children_area .romana_event_timeline h4 {
+    font-size: 20px;
+    margin-bottom: 25px; }
+
+.romana_google_map {
+  height: 380px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 80px; }
+
+.romana_google_map #googleMap {
+  position: absolute;
+  left: -35%;
+  top: 70px;
+  width: 150%;
+  height: 100%; }
+
+/* ==============================================================================================
+    ************** Volunteer-Page ******************
+================================================================================================= */
+.romana_volunteer_bottom2 {
+  padding-top: 30px; }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_volunteers_img {
+    margin-top: 30px;
+    height: 180px;
+    overflow: hidden;} }
+
+/* ==============================================================================================
+    ************** News-Page ******************
+================================================================================================= */
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .news .romana_single_post {
+    margin-top: 30px; } }
+
+/* ==============================================================================================
+    ************** News-Detail-Page ******************
+================================================================================================= */
+.romana_news_detail_area {
+  margin-bottom: -40px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_news_detail_area h3 {
+      text-align: center;
+      font-size: 26px; } }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .romana_news_detail_text {
+    text-align: center; } }
+.romana_news_detail_text h3 {
+  margin-top: 36px; }
+.romana_news_detail_text p {
+  margin-top: 27px; }
+  .romana_news_detail_text p span {
+    color: #666;
+    font-weight: 500; }
+
+.romana_news_detail_sicon ul {
+  margin-top: 30px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_news_detail_sicon ul {
+      margin: 30px auto 0;
+      text-align: center;
+      width: 210px; } }
+  .romana_news_detail_sicon ul li {
+    color: #666666;
+    float: left; }
+    .romana_news_detail_sicon ul li a {
+      color: #666666;
+      font-size: 15px;
+      padding-left: 2px;
+      padding-right: 10px;
+      -webkit-transition-duration: 0.3s;
+      -moz-transition-duration: 0.3s;
+      -o-transition-duration: 0.3s;
+      transition-duration: 0.3s; }
+      .romana_news_detail_sicon ul li a:hover {
+        color: #000; }
+
+.romana_news_comments h3 {
+  margin: 50px 0px; }
+
+.romana_single_comments {
+  margin-bottom: 40px;
+  font-size: 14px;
+  color: #666; }
+  .romana_single_comments .romana_comments_img {
+    display: block;
+    float: left; }
+    .romana_single_comments .romana_comments_img img {
+      border-radius: 50%; }
+  .romana_single_comments .romana_comments_text {
+    padding-left: 77px; }
+    .romana_single_comments .romana_comments_text h4 {
+      font-size: 18px;
+      color: #000;
+      font-weight: 500; }
+    .romana_single_comments .romana_comments_text h5 {
+      font-weight: 300;
+      color: #888;
+      font-style: italic;
+      font-size: 14px;
+      margin: 12px 0px; }
+
+.romana_single_comments.romana_single_comments2 {
+  padding-left: 70px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_single_comments.romana_single_comments2 {
+      padding-left: 0px; } }
+
+.romana_news_detail_form.romana_common_form {
+  margin-top: 20px; }
+
+.romana_news_detail_form.romana_common_form h3 {
+  margin-bottom: 45px; }
+
+.romana_news_detail_form textarea {
+  height: 125px;
+  resize: none; }
+
+.romana_news_detail_form .text-field label {
+  height: 125px; }
+
+.romana_news_detail_form .romana_submit_btn input[type="submit"] {
+  margin-top: 74px;
+  height: 48px;
+  line-height: 48px; }
+
+.romana_common_form input[type="text"], .romana_common_form label {
+  height: 48px;
+  line-height: 48px; }
+
+.romana_news_detail_form .field {
+  margin-bottom: 20px; }
+
+/* ==============================================================================================
+    ************** Cause-Deail Page ******************
+================================================================================================= */
+.romana_cause_detail_area {
+  overflow: hidden; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_cause_detail_area h3 {
+      font-size: 25px; } }
+
+.romana_cause_btn.romana_cause_detail_bar.cause_detail_btn {
+  float: right; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_cause_btn.romana_cause_detail_bar.cause_detail_btn {
+      float: left; } }
+
+.romana_cause_detail_bar {
+  margin-top: 40px; }
+
+.romana_cause_detail_form.romana_common_form, .romana_donation_method2 {
+  margin-left: 15px;
+  margin-top: 42px; }
+
+.romana_cause_detail_form.romana_common_form h3 {
+  margin-bottom: 35px; }
+
+.cause_detail_btn a {
+  width: 166px; }
+
+.romana_donation_method {
+  margin-top: 30px; }
+
+.cause_detail_donate_btn {
+  margin-top: 48px; }
+
+.romana_donation_method span {
+  padding: 0 15px; }
+
+.romana_donation_method input {
+  border: 1px solid #c6c6c6;
+  font-size: 15px;
+  height: 50px;
+  padding: 15px;
+  width: 288px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_donation_method input {
+      width: 240px;
+      margin-top: 30px; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .romana_donation_method input {
+      width: 330px;
+      margin-left: 20px; } }
+
+.romana_donation_info {
+  margin-top: 30px; }
+  .romana_donation_info p {
+    font-size: 18px;
+    margin-bottom: -30px;
+    margin-top: 20px; }
+    .romana_donation_info p span {
+      color: #ad102f; }
+
+@media only screen and (min-width: 0px) and (max-width: 767px) {
+  .cause_detail .romana_common_form input[type="text"], .cause_detail .romana_common_form label, .cause_detail .romana_common_form textarea {
+    width: 95%; } }
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .cause_detail .romana_common_form input[type="text"], .cause_detail .romana_common_form label, .cause_detail .romana_common_form textarea {
+    width: 95%; } }
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .cause_detail .romana_common_form input[type="text"], .cause_detail .romana_common_form label, .cause_detail .romana_common_form textarea {
+    width: 95%; } }
+
+/* ==============================================================================================
+    ************** Donation Page ******************
+================================================================================================= */
+.romana_donation_page {
+  padding-top: 45px; }
+  .romana_donation_page h4 {
+    font-size: 18px;
+    color: #888;
+    font-weight: 300;
+    margin-top: 52px;
+    margin-bottom: 25px; }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .romana_donation_page h4 {
+        text-align: center; } }
+  .romana_donation_page .romana_donation_info2 {
+    margin-left: 45px;
+    margin-top: 117px; }
+    @media only screen and (min-width: 992px) and (max-width: 1199px) {
+      .romana_donation_page .romana_donation_info2 {
+        margin-top: 123px; } }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_donation_page .romana_donation_info2 {
+        margin-left: 90px;
+        margin-top: 65px; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .romana_donation_page .romana_donation_info2 {
+        margin-left: 0;
+        margin-top: 50px; } }
+  .romana_donation_page .romana_common_form input[type="text"], .romana_donation_page .romana_common_form label, .romana_donation_page .romana_common_form textarea {
+    width: 98%; }
+  .romana_donation_page .romana_donation_method ul li label {
+    padding: 11px 0 0 43px; }
+    @media only screen and (min-width: 992px) and (max-width: 1199px) {
+      .romana_donation_page .romana_donation_method ul li label {
+        padding: 11px 0 0 40px; } }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_donation_page .romana_donation_method input {
+      width: 183px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_donation_page .romana_donation_method input {
+      margin-top: 15px;
+      width: 345px; } }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_donation_page .select_option_one::after, .romana_donation_page .select_option_two::after {
+      right: 8px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_donation_page .select_option_one::after, .romana_donation_page .select_option_two::after {
+      right: -68px;
+      top: -3px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_donation_page .select_option_one::after, .romana_donation_page .select_option_two::after {
+      right: 6px;
+      top: -3px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_donation_page .romana_donation_info h3, .romana_donation_page .romana_cause_detail_form h3, .romana_donation_page .romana_donation_method h3 {
+      font-size: 22px;
+      text-align: center; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_donation_page .romana_donation_info h3, .romana_donation_page .romana_cause_detail_form h3, .romana_donation_page .romana_donation_method h3 {
+      font-size: 24px;
+      text-align: center; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_donation_page .cause_detail_donate_btn {
+      text-align: center; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_donation_page .romana_donation_method > ul {
+      text-align: center; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .romana_donation_page .romana_donation_method > ul {
+      text-align: left; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .romana_donation_page .romana_donation_method2 > ul {
+      text-align: center; } }
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    .romana_donation_page select {
+      width: 446px; } }
+
+/* ==============================================================================================
+    ************** 404 Page ******************
+================================================================================================= */
+.romana_404_area {
+  padding-bottom: 128px;
+  padding-top: 217px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_404_area {
+      padding-bottom: 80px;
+      padding-top: 120px; } }
+
+.romana_error_text {
+  text-align: center;
+  color: #000; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_error_text {
+      margin-top: 35px; } }
+  .romana_error_text h2 {
+    font-size: 48px;
+    font-weight: 300;
+    text-transform: capitalize;
+    margin-bottom: 20px; }
+  .romana_error_text .romana_error_btn {
+    margin-top: 30px; }
+    .romana_error_text .romana_error_btn a {
+      height: 45px;
+      line-height: 45px; }
+
+/* ==============================================================================================
+    ************** Contact Page ******************
+================================================================================================= */
+#g_Map {
+  height: 400px; }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    #g_Map {
+      height: 200px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    #g_Map {
+      margin-bottom: 40px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    #g_Map {
+      margin-bottom: 40px; } }
+
+.romana_contact_icon {
+  background: #ad102f;
+  display: block;
+  float: left;
+  height: 120px;
+  line-height: 120px;
+  text-align: center;
+  width: 120px; }
+  @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .romana_contact_icon {
+      width: 100px; } }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_contact_icon {
+      width: 50px; } }
+  @media only screen and (min-width: 0px) and (max-width: 767px) {
+    .romana_contact_icon {
+      width: 90px;
+      margin-bottom: 20px; } }
+  .romana_contact_icon a {
+    font-size: 40px;
+    color: #f5f1de; }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .romana_contact_icon a {
+        font-size: 20px; } }
+    @media only screen and (min-width: 0px) and (max-width: 767px) {
+      .romana_contact_icon a {
+        font-size: 30px; } }
+
+.romana_contact_info.text-center {
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  border-color: #c6c6c6;
+  border-image: none;
+  border-style: solid;
+  border-width: 1px 1px 1px 0;
+  color: #666666;
+  font-size: 15px;
+  padding-bottom: 19px;
+  padding-top: 26px; }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .romana_contact_info.text-center {
+      font-size: 13px; } }
+
+/* ==============================================================================================
+    ************** Preloder Css start ******************
+================================================================================================= */
+body.preloader_active {
+  position: relative;
+  overflow: hidden;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%; }
+
+#preloader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #F9F9FA;
+  z-index: 99999999999; }
+
+.preloader_spinner {
+  background: transparent url("../../images/spin.gif") no-repeat scroll center center;
+  display: block;
+  height: 120px;
+  left: 50%;
+  margin-left: -71px;
+  margin-top: -60px;
+  position: absolute;
+  top: 50%;
+  width: 142px;
+  z-index: 2147483647; }
+
+
+/*updated*/
+
+
+.hero_slider .owl-nav > div:hover{
+    background-color: #ad102f;
+    -webkit-transition: .1s;
+    -o-transition: .1s;
+    transition: .1s;
+}
+.hero_slider .owl-nav > div {
+    border: 1px solid #f5f1de;
+    color: #f5f1de;
+    display: inline-block ;
+    font-size: 12px;
+    line-height: 24px;
+    margin: 0 3px;
+    padding: 4px 15px;
+    text-transform: uppercase;
+}
+
+
+.hero_slider .owl-nav {
+    bottom: 30px;
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+}
+
+nav#navbar ul.nav li:hover ul.dropdown-menu {
+  opacity: 1;
+  top: 100%;
+  visibility: visible;
+}
+
+.romana_post_title h4 {
+  color: black;
+}
+
+.romana_post_title h4:hover {
+  color: #ad102f;
+}
+
+
+
+
+/*# sourceMappingURL=style.css.map */
