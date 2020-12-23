@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.components;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,12 +31,16 @@ import java.util.TreeMap;
 import lombok.Data;
 
 @Data
+@Config
 public class Shooter implements RobotComponent {
     public static final double FIRE = 0d;
     public static final double READY = 1d;
 
     public static final double INTAKE_POS = 0.470;
     private static final double OFFSET = -0.08;
+
+    public static int SHOOTING_INTERVAL_1 = 500;
+    public static int SHOOTING_INTERVAL_2 = 200;
 
     public enum SpinWheelMode { SPIN, STOP }
 
@@ -77,8 +82,8 @@ public class Shooter implements RobotComponent {
         rightServo.setDirection(Servo.Direction.REVERSE);
 
         MotorUtils.setZeroPowerMode(DcMotor.ZeroPowerBehavior.FLOAT, motor);
-        // MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motor);
-        // MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motor);
+        MotorUtils.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER, motor);
+        MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motor);
 
         // motor.setPositionPIDFCoefficients(0.5);
         // motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(1.689, 0.1689, 0, 16.89));
@@ -98,9 +103,9 @@ public class Shooter implements RobotComponent {
             ThreadUtils.getExecutorService().submit(() -> {
                 for(int ringCnt = 0; ringCnt < 3; ringCnt++) {
                     trigger.setPosition(FIRE);
-                    ThreadUtils.sleep(500);
+                    ThreadUtils.sleep(ringCnt > 0 ? SHOOTING_INTERVAL_2 : SHOOTING_INTERVAL_1);
                     trigger.setPosition(READY);
-                    ThreadUtils.sleep(500);
+                    ThreadUtils.sleep(200);
                 }
             });
         }

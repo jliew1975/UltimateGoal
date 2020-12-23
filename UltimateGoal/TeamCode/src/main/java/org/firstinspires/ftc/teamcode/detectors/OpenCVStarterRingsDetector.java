@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.detectors.enums.RingCount;
 import org.firstinspires.ftc.teamcode.util.OpModeUtils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -17,28 +18,27 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class StarterRingsDetector {
-    /*
-     * An enum to define the skystone position
-     */
-    public enum RingCount
-    {
-        FOUR,
-        ONE,
-        NONE
-    }
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+public class OpenCVStarterRingsDetector implements Detector {
     private OpenCvCamera robotCam;
     private RingsDeterminationPipeline pipeline;
 
     private int avg1;
+    private boolean isUseWebCam = false;
 
     // Volatile since accessed by OpMode thread w/o synchronization
-    private volatile RingCount ringCount = RingCount.FOUR;
+    private volatile RingCount ringCount = RingCount.ZERO;
 
     private Telemetry telemetry;
 
-    public void init() throws InterruptedException {
+    public OpenCVStarterRingsDetector(boolean isUseWebCam) {
+        this.isUseWebCam = isUseWebCam;
+    }
+
+    @Override
+    public void init() {
         HardwareMap hardwareMap = OpModeUtils.getHardwareMap();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
@@ -49,10 +49,11 @@ public class StarterRingsDetector {
         pipeline = new RingsDeterminationPipeline();
 
         // Uncomment below for web cam
-        robotCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
-        // Uncomment below for phone cam
-        // robotCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        if(isUseWebCam) {
+            robotCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        } else {
+            robotCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        }
 
         robotCam.setPipeline(pipeline); // different stages
     }
@@ -147,7 +148,7 @@ public class StarterRingsDetector {
             } else if (avg1 > ONE_RING_THRESHOLD) {
                 ringCount = RingCount.ONE;
             } else {
-                ringCount = RingCount.NONE;
+                ringCount = RingCount.ZERO;
             }
 
             telemetry.addData("Analysis", avg1);

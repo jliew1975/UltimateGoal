@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.detectors.StarterRingsDetector.RingCount;
+import org.firstinspires.ftc.teamcode.detectors.enums.RingCount;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryWrapper;
 import org.firstinspires.ftc.teamcode.util.AutoConstant.Side;
@@ -34,7 +32,7 @@ public class AutoRedRightApp extends AutoApp {
 
     private void performAutoLogic(RingCount ringCount) {
         switch(ringCount) {
-            case NONE:
+            case ZERO:
                 performNone();
                 break;
             case ONE:
@@ -46,7 +44,7 @@ public class AutoRedRightApp extends AutoApp {
     }
 
     private void performNone() {
-        List<TrajectoryWrapper> trajectories = trajectoryFactory.getTrajectories(RingCount.NONE);
+        List<TrajectoryWrapper> trajectories = trajectoryFactory.getTrajectories(RingCount.ZERO);
 
         SampleMecanumDrive drive = robot.getDrive();
 
@@ -72,7 +70,7 @@ public class AutoRedRightApp extends AutoApp {
 
 
     private void performOne() {
-        List<TrajectoryWrapper> trajectories = trajectoryFactory.getTrajectories(RingCount.NONE);
+        List<TrajectoryWrapper> trajectories = trajectoryFactory.getTrajectories(RingCount.ONE);
 
         SampleMecanumDrive drive = robot.getDrive();
 
@@ -97,7 +95,7 @@ public class AutoRedRightApp extends AutoApp {
     }
 
     private void performFour() {
-        List<TrajectoryWrapper> trajectories = trajectoryFactory.getTrajectories(RingCount.NONE);
+        List<TrajectoryWrapper> trajectories = trajectoryFactory.getTrajectories(RingCount.FOUR);
 
         SampleMecanumDrive drive = robot.getDrive();
 

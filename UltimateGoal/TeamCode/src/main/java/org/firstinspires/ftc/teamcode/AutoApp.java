@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.teamcode.components.Shooter;
-import org.firstinspires.ftc.teamcode.detectors.StarterRingsDetector;
+import org.firstinspires.ftc.teamcode.detectors.Detector;
+import org.firstinspires.ftc.teamcode.detectors.OpenCVStarterRingsDetector;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory;
 import org.firstinspires.ftc.teamcode.util.OpModeStore;
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
 public abstract class AutoApp extends CommonOpMode {
     protected AutoRobot robot;
-    protected StarterRingsDetector detector;
+    protected Detector detector;
 
     protected TrajectoryFactory trajectoryFactory;
 
@@ -36,14 +37,18 @@ public abstract class AutoApp extends CommonOpMode {
         robot = new AutoRobot();
         robot.init();
 
+        trajectoryFactory = new TrajectoryFactory();
         trajectoryFactory.init(robot);
 
-        detector = new StarterRingsDetector();
+        detector = new OpenCVStarterRingsDetector(true);
         detector.init();
         detector.activate();
 
         // wait for player to hit star
         waitForStart();
+
+        // deactivate detector to conserve battery
+        detector.deactivate();
 
         if(isStopRequested()) {
             return;

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.trajectory;
 
-import org.firstinspires.ftc.teamcode.detectors.StarterRingsDetector.RingCount;
+import org.firstinspires.ftc.teamcode.detectors.enums.RingCount;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 import org.firstinspires.ftc.teamcode.util.AutoConstant;
 import org.firstinspires.ftc.teamcode.util.AutonomousColor;

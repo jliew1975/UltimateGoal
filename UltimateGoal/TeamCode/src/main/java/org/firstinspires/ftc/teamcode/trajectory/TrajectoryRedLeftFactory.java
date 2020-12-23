@@ -3,15 +3,11 @@ package org.firstinspires.ftc.teamcode.trajectory;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
-import org.firstinspires.ftc.teamcode.components.Shooter;
-import org.firstinspires.ftc.teamcode.detectors.StarterRingsDetector.RingCount;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.detectors.enums.RingCount;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot.AutoRobot;
 import org.firstinspires.ftc.teamcode.util.GlobalStorage;
 import org.firstinspires.ftc.teamcode.util.Pose2dUtils;
-import org.firstinspires.ftc.teamcode.util.ShooterUtils;
-import org.firstinspires.ftc.teamcode.util.ThreadUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,7 +21,7 @@ public class TrajectoryRedLeftFactory {
         Pose2d startPose = new Pose2d(-63, -26, Math.toRadians(180));
 
         robot.getDrive().setPoseEstimate(startPose);
-        trajectoryMap.put(RingCount.NONE, buildNone(robot, startPose));
+        trajectoryMap.put(RingCount.ZERO, buildNone(robot, startPose));
         trajectoryMap.put(RingCount.ONE, buildOne(robot, startPose));
         trajectoryMap.put(RingCount.FOUR, buildFour(robot, startPose));
 
