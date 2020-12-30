@@ -22,7 +22,7 @@ public class AutoRobot extends CommonComponents implements Robot {
      */
     protected SampleMecanumDrive drive;
 
-    private static final int DOWN = 480;
+    private static final int DOWN = WobbleArm.WOBBLE_ARM_DOWN;
     private static final int UP = 0;
 
 
@@ -57,7 +57,7 @@ public class AutoRobot extends CommonComponents implements Robot {
 
         wobbleArm.runToPosition(DOWN);
         wobbleArm.unlatch();
-        ThreadUtils.sleep(500);
+        ThreadUtils.sleep(200);
 
         if(isLift) {
             ThreadUtils.getExecutorService().submit(() -> {
@@ -65,22 +65,6 @@ public class AutoRobot extends CommonComponents implements Robot {
             });
         }
         // ThreadUtils.sleep(800);
-    }
-
-    public void prepareArmToPickupWobbleGoal() {
-        ThreadUtils.getExecutorService().submit(() -> {
-            WobbleArm wobbleArm = get(WobbleArm.class);
-            wobbleArm.unlatch();
-            wobbleArm.runToPosition(DOWN);
-        });
-    }
-
-    public void prepareShooter() {
-        Shooter shooter = get(Shooter.class);
-        ThreadUtils.getExecutorService().submit(() -> {
-            shooter.liftShooter(0.45);
-            shooter.start();
-        });
     }
 
     public void pickupWobbleGoal() {
@@ -91,7 +75,23 @@ public class AutoRobot extends CommonComponents implements Robot {
         ThreadUtils.sleep(500);
 
         ThreadUtils.getExecutorService().submit(() -> {
-           wobbleArm.runToPosition(0);
+            wobbleArm.runToPosition(0);
+        });
+    }
+
+    public void prepareArmToPickupWobbleGoal() {
+        WobbleArm wobbleArm = get(WobbleArm.class);
+        ThreadUtils.getExecutorService().submit(() -> {
+            wobbleArm.unlatch();
+            wobbleArm.runToPosition(DOWN);
+        });
+    }
+
+    public void prepareShooter() {
+        Shooter shooter = get(Shooter.class);
+        ThreadUtils.getExecutorService().submit(() -> {
+            shooter.liftShooter(0.45);
+            shooter.start();
         });
     }
 

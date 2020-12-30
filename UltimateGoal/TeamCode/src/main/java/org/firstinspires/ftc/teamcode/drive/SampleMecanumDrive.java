@@ -62,7 +62,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5.75, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(11, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(15, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -239,7 +239,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         Pose2d currentPose = getPoseEstimate();
         Pose2d lastError = getLastError();
 
-        GlobalStorage.currentPose = currentPose;
+        // GlobalStorage.currentPose = currentPose;
 
         poseHistory.add(currentPose);
 
@@ -403,6 +403,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
+        // return imu.getAngularOrientation().firstAngle;
+        return 0d;
     }
 }

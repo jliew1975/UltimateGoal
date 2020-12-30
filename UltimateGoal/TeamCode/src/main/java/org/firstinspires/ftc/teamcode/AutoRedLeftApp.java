@@ -62,6 +62,7 @@ public class AutoRedLeftApp extends AutoApp {
             drive.followTrajectory(trajectories.get(driveIndex++).get()); // forward
         }
 
+        robot.prepareShooter();
         drive.followTrajectory(trajectories.get(driveIndex++).get()); // toLaunchZone
         shootPowerShot();
         drive.followTrajectory(trajectories.get(driveIndex++).get()); // toParking

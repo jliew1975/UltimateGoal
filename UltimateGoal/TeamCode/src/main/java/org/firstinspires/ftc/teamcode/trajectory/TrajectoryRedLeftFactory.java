@@ -38,14 +38,13 @@ public class TrajectoryRedLeftFactory {
 
         Trajectory forward1 =
                 drive.trajectoryBuilder(toZone1.end())
-                        .addDisplacementMarker(() -> robot.prepareShooter())
                         .forward(10.0)
                         .build();
 
         Trajectory toPickupWobble =
                 drive.trajectoryBuilder(toZone1.end(), Math.toRadians(90))
                         .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
-                        .splineToLinearHeading(new Pose2d(-33.0, -53.0, 0.0), Math.toRadians(180.0))
+                        .splineToLinearHeading(new Pose2d(-35.0, -53.0, Math.toRadians(-5.0)), Math.toRadians(180.0))
                         .build();
 
         Trajectory toZone2 =
@@ -105,7 +104,7 @@ public class TrajectoryRedLeftFactory {
         Trajectory toPickupWobble =
                 drive.trajectoryBuilder(toZone1.end(), Math.toRadians(170.0))
                         .addDisplacementMarker(() -> robot.prepareArmToPickupWobbleGoal())
-                        .splineToLinearHeading(new Pose2d(-33.5, -53.0, Math.toRadians(-15.0)), Math.toRadians(180.0))
+                        .splineToLinearHeading(new Pose2d(-34.0, -53.0, Math.toRadians(-15.0)), Math.toRadians(180.0))
                         .build();
 
         Trajectory toZone2 =

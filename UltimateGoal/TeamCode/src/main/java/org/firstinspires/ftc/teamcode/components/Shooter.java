@@ -42,9 +42,11 @@ public class Shooter implements RobotComponent {
     public static int SHOOTING_INTERVAL_1 = 500;
     public static int SHOOTING_INTERVAL_2 = 200;
 
+    public static double SHOOTING_SPEED = 6000d;
+
     public enum SpinWheelMode { SPIN, STOP }
 
-    private DcMotor motor;
+    private DcMotorEx motor;
     private Servo trigger;
 
     private Servo leftServo;
@@ -74,7 +76,7 @@ public class Shooter implements RobotComponent {
     @Override
     public void init() {
         HardwareMap hardwareMap = OpModeUtils.getHardwareMap();
-        motor = hardwareMap.get(DcMotor.class, "shooter");
+        motor = hardwareMap.get(DcMotorEx.class, "shooter");
         trigger = hardwareMap.get(Servo.class, "trigger");
 
         leftServo = hardwareMap.get(Servo.class, "leftServo");

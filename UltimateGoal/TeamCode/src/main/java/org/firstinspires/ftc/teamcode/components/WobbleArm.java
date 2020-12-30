@@ -18,12 +18,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class WobbleArm implements RobotComponent, Runnable {
-    private static final double SERVO_OPEN = 0d;
-    private static final double SERVO_CLOSE = 0.8;
+    public static final double SERVO_OPEN = 0d;
+    public static final double SERVO_CLOSE = 0.8;
 
-    private static final int WOBBLE_ARM_DOWN = 630;
-    private static final int WOBBLE_ARM_PARTIAL_DOWN = 280;
-    private static final int WOBBLE_ARM_LIFT = -200;
+    public static final int WOBBLE_ARM_DOWN = 500;
+    public static final int WOBBLE_ARM_PARTIAL_DOWN = 280;
+    public static final int WOBBLE_ARM_LIFT = -200;
 
     private enum Mode {DownForPickup, LiftForPickup, TargetZoneDrop, DropZoneDrop, ManualAdjustUp, ManualAdjustDown, Idle}
 
@@ -112,7 +112,7 @@ public class WobbleArm implements RobotComponent, Runnable {
         runtime.startTime();
         while (OpModeUtils.opModeIsActive() && MotorUtils.motorIsBusy(wobbleMotor)) {
             // wait for motor to reach target position
-            if (runtime.milliseconds() > 2000) {
+            if (runtime.milliseconds() > 1000) {
                 break;
             }
         }
