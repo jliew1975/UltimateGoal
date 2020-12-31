@@ -84,8 +84,10 @@ public class WobbleArm implements RobotComponent, Runnable {
             mode = Mode.DownForPickup;
         } else if (btnB.onPress()) {
             mode = Mode.DropZoneDrop;
-        } else if (dpadUp.isPressed()) {
+        } else if (dpadUp.onPress()) {
             mode = Mode.ManualAdjustUp;
+        } else if (dpadUp.onRelease() || dpadDown.onRelease()) {
+            mode = Mode.Idle;
         } else if (dpadDown.isPressed()) {
             mode = Mode.ManualAdjustDown;
         }
@@ -143,11 +145,9 @@ public class WobbleArm implements RobotComponent, Runnable {
                         break;
                     case ManualAdjustUp:
                         manualAdjustUp();
-                        mode = Mode.Idle;
                         break;
                     case ManualAdjustDown:
                         manualAdjustDown();
-                        mode = Mode.Idle;
                         break;
                     case Idle:
                         wobbleMotor.setPower(0d);
@@ -185,7 +185,7 @@ public class WobbleArm implements RobotComponent, Runnable {
     }
 
     private void manualAdjustUp() {
-        if (wobbleMotor.getCurrentPosition() > -200) {
+        if (wobbleMotor.getCurrentPosition() > WOBBLE_ARM_LIFT) {
             wobbleMotor.setPower(-0.5);
         } else {
             wobbleMotor.setPower(0d);
@@ -193,7 +193,7 @@ public class WobbleArm implements RobotComponent, Runnable {
     }
 
     private void manualAdjustDown() {
-        if (wobbleMotor.getCurrentPosition() < 630) {
+        if (wobbleMotor.getCurrentPosition() < WOBBLE_ARM_DOWN) {
             wobbleMotor.setPower(0.5);
         } else {
             wobbleMotor.setPower(0d);
