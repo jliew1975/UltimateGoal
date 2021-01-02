@@ -94,6 +94,22 @@ public class ShooterUtils {
         return Math.atan((targetPose.getY() - currPose.getY())/(targetPose.getX() - currPose.getX())) - heading + Math.atan(5.17 / distance);
     }
 
+    public static double calculatePowerShotAngle(Pose2d targetPose) {
+        Pose2d currPose = OpModeUtils.getRobotCurrentPose();
+
+        double heading = currPose.getHeading();
+        if(heading > Math.PI) {
+            heading = heading - (2 * Math.PI);
+        }
+
+        double distance = Math.sqrt(
+                Math.pow((targetPose.getY() - currPose.getY()), 2) +
+                        Math.pow((targetPose.getX() - currPose.getX()), 2)
+        );
+
+        return Math.atan((targetPose.getY() - currPose.getY())/(targetPose.getX() - currPose.getX())) - heading - Math.atan(5.17 / distance);
+    }
+
     private static double toMeter(double inputInInches) {
         return inputInInches/39.37;
     }

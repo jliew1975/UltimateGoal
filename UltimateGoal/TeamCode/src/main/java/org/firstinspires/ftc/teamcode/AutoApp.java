@@ -69,15 +69,15 @@ public abstract class AutoApp extends CommonOpMode {
         shooter.start();
 
         try {
-            robot.getDrive().turn(calculatePowerShotAngle(robot, PowerShotPos.One));
+            robot.getDrive().turn(calculatePowerShotAngle(PowerShotPos.One));
             shooter.liftShooter(pShotPose1, -0.015);
             ThreadUtils.sleep(500);
             shooter.fireSync();
-            robot.getDrive().turn(calculatePowerShotAngle(robot, PowerShotPos.Two));
+            robot.getDrive().turn(calculatePowerShotAngle(PowerShotPos.Two));
             shooter.liftShooter(pShotPose2, -0.015);
             ThreadUtils.sleep(500);
             shooter.fireSync();
-            robot.getDrive().turn(calculatePowerShotAngle(robot, PowerShotPos.Three));
+            robot.getDrive().turn(calculatePowerShotAngle(PowerShotPos.Three));
             shooter.liftShooter(pShotPose3, -0.015);
             ThreadUtils.sleep(500);
             shooter.fireSync();
