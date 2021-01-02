@@ -88,7 +88,7 @@ public class Shooter implements RobotComponent {
         MotorUtils.setMode(DcMotor.RunMode.RUN_USING_ENCODER, motor);
 
         // motor.setPositionPIDFCoefficients(0.5);
-        // motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(1.689, 0.1689, 0, 16.89));
+        motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(30.0, 0d, 0d, 16.89));
 
         leftServo.setPosition(0.39);
         rightServo.setPosition(0.39 + OFFSET);
@@ -103,9 +103,11 @@ public class Shooter implements RobotComponent {
 
         if(aBtn.onPress()) {
             ThreadUtils.getExecutorService().submit(() -> {
+                double currentVelocity = motor.getVelocity();
+
                 for(int ringCnt = 0; ringCnt < 3; ringCnt++) {
                     trigger.setPosition(FIRE);
-                    ThreadUtils.sleep(ringCnt > 0 ? SHOOTING_INTERVAL_2 : SHOOTING_INTERVAL_1);
+                    waitForMotorToRegainTargetVel(currentVelocity);
                     trigger.setPosition(READY);
                     ThreadUtils.sleep(200);
                 }
@@ -175,6 +177,12 @@ public class Shooter implements RobotComponent {
         telemetry.addData("ShooterHorizontalRobotAngle", Math.toDegrees(ShooterUtils.calculateHorizontalRobotAngle(towerPose)));
     }
 
+    private void waitForMotorToRegainTargetVel(double targetVelocity) {
+        while(motor.getVelocity() < targetVelocity) {
+            ThreadUtils.idle();
+        }
+    }
+
     public void start() {
         motor.setPower(1d);
     }
@@ -218,8 +226,8 @@ public class Shooter implements RobotComponent {
         });
     }
 
-    public void setMode(double mode) {
-        leftServo.setPosition(mode);
-        rightServo.setPosition(mode + OFFSET);
+    public void setTargetPosition(double targetPos) {
+        leftServo.setPosition(targetPos);
+        rightServo.setPosition(targetPos + OFFSET);
     }
 }

@@ -65,13 +65,13 @@ public class Intake implements RobotComponent {
 
     public void intake(double power) {
         motor.setPower(-1 * power);
-        shooter.setMode(Shooter.INTAKE_POS);
+        shooter.setTargetPosition(Shooter.INTAKE_POS);
         servo.setPosition(INTAKE_MODE);
     }
 
     public void outtake(double power) {
         motor.setPower(power);
-        shooter.setMode(Shooter.INTAKE_POS);
+        shooter.setTargetPosition(Shooter.INTAKE_POS);
         servo.setPosition(INTAKE_MODE);
     }
 
