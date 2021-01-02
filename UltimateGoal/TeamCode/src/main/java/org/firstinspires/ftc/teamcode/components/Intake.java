@@ -50,9 +50,9 @@ public class Intake implements RobotComponent {
         dpadDown.input(gamepad.dpad_down);
 
         if(dpadUp.onPress()) {
-            servo.setPosition(servo.getPosition() + 0.01);
+            servo.setPosition(servo.getPosition() + 0.005);
         } else if(dpadDown.onPress()) {
-            servo.setPosition(servo.getPosition() - 0.01);
+            servo.setPosition(servo.getPosition() - 0.005);
         }
 
         Telemetry telemetry = OpModeUtils.getTelemetry();
